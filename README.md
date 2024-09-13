@@ -9,8 +9,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    ```bash
    npm install
    ```
-2. Descargar la apk
-`https://expo.dev/accounts/lghosn/projects/TwitSnap/builds/11c2e4b0-41f4-4ebd-9af5-b8725265e8ea`
+2. [Descargar la apk](https://expo.dev/accounts/lghosn/projects/TwitSnap/builds/11c2e4b0-41f4-4ebd-9af5-b8725265e8ea)
 
 3. Start the app
    ```bash
