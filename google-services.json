@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "51208642510",
+    "project_id": "twitsnap-43ee3",
+    "storage_bucket": "twitsnap-43ee3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:51208642510:android:7bd0face945bc3ff09559f",
+        "android_client_info": {
+          "package_name": "com.twitsnap.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "51208642510-0k14pa6enn0pqs9p7m66shdku8gkb1cu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.twitsnap.app",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "51208642510-v7mgjmmgcsm79at0a0qfaqehgonmm3dt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.twitsnap.app",
+            "certificate_hash": "fbed63c963d2636607f3d503d990b01be68d9b76"
+          }
+        },
+        {
+          "client_id": "51208642510-ee5d1iurrlbvvrp8nqm6jvvishpk3708.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApBOc313w6Is4oBeumEYdOSJfY2V-3NO8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "51208642510-ee5d1iurrlbvvrp8nqm6jvvishpk3708.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
