@@ -14,14 +14,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "51208642510-0k14pa6enn0pqs9p7m66shdku8gkb1cu.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.twitsnap.app",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
-          }
-        },
-        {
           "client_id": "51208642510-v7mgjmmgcsm79at0a0qfaqehgonmm3dt.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -45,6 +37,13 @@
             {
               "client_id": "51208642510-ee5d1iurrlbvvrp8nqm6jvvishpk3708.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "51208642510-i7bbh92426rmm5c1mrred0vt96ln371o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.twitsnap.app"
+              }
             }
           ]
         }

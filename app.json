@@ -13,7 +13,10 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
       "package": "com.twitsnap.app",
@@ -21,7 +24,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "runtimeVersion": "1.0.0"
     },
     "web": {
       "bundler": "metro",
@@ -47,6 +51,9 @@
       "eas": {
         "projectId": "ac7a2427-1ed1-48af-8fc5-0e3f27931bd4"
       }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ac7a2427-1ed1-48af-8fc5-0e3f27931bd4"
     }
   }
 }
