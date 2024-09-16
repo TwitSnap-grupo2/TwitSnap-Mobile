@@ -73,7 +73,7 @@ export default function HomeScreen() {
             </View>
 
             <View className='px-8'>
-                <TouchableOpacity className='mb-4' onPress={() => router.push('./(login)/signin')}>
+                <TouchableOpacity className='mb-4' onPress={() => router.push('../profile')}>
                     <Text className='bg-blue-500 text-white text-center font-bold p-4 rounded-full'>
                         Iniciar sesión
                     </Text>
