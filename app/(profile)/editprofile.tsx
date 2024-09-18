@@ -1,4 +1,5 @@
-import { Image, SafeAreaView, Text, TextInput, TouchableOpacity, useColorScheme, View } from "react-native";
+import { Image, SafeAreaView, Text,TouchableOpacity, useColorScheme, View } from "react-native";
+import { TextInput } from "react-native-paper";
 
 export default function EditProfileScreen() {
     const colorScheme = useColorScheme();
@@ -7,15 +8,14 @@ export default function EditProfileScreen() {
         <View className='items-center'>
             <Image source={{uri:"https://www.clarin.com/2024/09/11/mQgzER_Lh_360x240__1.jpg" }} className="rounded-full h-40 w-40"/>  
         </View>
-        <View className='items-center'>
+        <View className=''>
             <TextInput
-                        placeholder='Nombre de usuario'
-                        placeholderTextColor={colorScheme === 'dark' ? '#fff' : '#000'}
-                        id="username"
-                        className='bg-gray-100 dark:bg-gray-700 text-dark dark:text-white p-4 mb-4 rounded-full'
+                        dense
+                        mode="outlined"
+                        label="username"
                     /> 
         </View>
-        <View className='items-center'>
+        <View className='items-center p-4'>
                 <TouchableOpacity>  
                         <Text className='bg-blue-500 text-white text-center font-bold w-40 p-4 rounded-full '>
                             Guardar
