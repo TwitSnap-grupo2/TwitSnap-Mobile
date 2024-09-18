@@ -1,3 +1,4 @@
+import TweetComponent from "@/components/TwitSnap";
 import { useRouter } from "expo-router";
 import { Image, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 
@@ -7,7 +8,7 @@ export default function ProfileHomeScreen() {
         <SafeAreaView>
         <View className='items-center mt-10'>
             <Image
-                source={require('@/assets/images/twitsnap-logo.webp')}
+                source={{uri: "https://www.clarin.com/2024/09/11/mQgzER_Lh_360x240__1.jpg"}}
                 className="h-20 w-20 rounded-full"
             />
         </View>
@@ -28,6 +29,8 @@ export default function ProfileHomeScreen() {
                     </TouchableOpacity>
             </View>
         </View>
+        <TweetComponent />
+
     </SafeAreaView>
 
     );
