@@ -1,5 +1,5 @@
 import { Image, Text, TouchableOpacity, View, StyleSheet } from "react-native";
-
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 export default function TweetComponent({ tweet = {
@@ -22,20 +22,18 @@ export default function TweetComponent({ tweet = {
         <Text style={styles.tweetText}>{tweet.content}</Text>
         <View style={styles.tweetActions}>
           <TouchableOpacity style={styles.actionButton}>
-            {/* <Icon name="message-circle" size={16} color="#657786" /> */}
+            <Icon name="share" size={16} color="#657786" /> 
             <Text style={styles.actionText}>{tweet.comments}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton}>
-            {/* <Icon name="repeat" size={16} color="#657786" /> */}
+            <Icon name="repeat" size={16} color="#657786" />
             <Text style={styles.actionText}>{tweet.retweets}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton}>
-            {/* <Icon name="heart" size={16} color="#657786" /> */}
+            <Icon name="heart" size={16} color="#657786" />
             <Text style={styles.actionText}>{tweet.likes}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
-            {/* <Icon name="share" size={16} color="#657786" /> */}
-          </TouchableOpacity>
+
         </View>
       </View>
     </View>
@@ -80,8 +78,8 @@ const styles = StyleSheet.create({
   },
   tweetActions: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 8,
+    justifyContent: 'space-around',
+    marginTop: 5,
   },
   actionButton: {
     flexDirection: 'row',

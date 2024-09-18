@@ -1,6 +1,6 @@
 import TweetComponent from "@/components/TwitSnap";
 import { useRouter } from "expo-router";
-import { Image, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 
 export default function ProfileHomeScreen() {
     const router = useRouter();
@@ -29,7 +29,11 @@ export default function ProfileHomeScreen() {
                     </TouchableOpacity>
             </View>
         </View>
-        <TweetComponent />
+        <FlatList
+            data={[1, 2, 3, 2, 2, 2, 2, 2, 2,2 ,2 ,2 , 2, 2, 2, 2, 2, 2, 2]}
+            renderItem={({ item }) => <TweetComponent />}
+            
+        />
 
     </SafeAreaView>
 
