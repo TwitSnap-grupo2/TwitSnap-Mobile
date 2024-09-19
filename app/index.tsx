@@ -57,7 +57,6 @@ export default function TopicSelectionScreen({ navigation }) {
         renderItem={renderTopic}
         keyExtractor={item => item}
         numColumns={2}
-        contentContainerStyle={styles.topicList}
       />
       
       <View style={styles.footer}>
@@ -93,20 +92,18 @@ const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 20,
   },
-  topicList: {
-    alignItems: 'flex-start',
-  },
   topicButton: {
     backgroundColor: '#D3D3D3',
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    flex: 1,
+    paddingVertical: 40,
+    paddingHorizontal: 30,
     margin: 5,
   },
   selectedTopic: {
     backgroundColor: '#1DA1F2',
   },
   topicText: {
+    textAlign: 'center',
     fontSize: 16,
     color: '#333',
   },
