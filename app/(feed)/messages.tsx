@@ -11,9 +11,9 @@ export default function TabTwoScreen() {
     return (
         <ParallaxScrollView
             headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-            headerImage={<Ionicons size={310} name="search" style={styles.headerImage} />}>
+            headerImage={<Ionicons size={310} name="mail" style={styles.headerImage} />}>
             <ThemedView style={styles.titleContainer}>
-                <ThemedText type="title">Search</ThemedText>
+                <ThemedText type="title">Mensajes</ThemedText>
             </ThemedView>
             <ThemedText>This app includes example code to help you get started.</ThemedText>
             <Collapsible title="File-based routing">
