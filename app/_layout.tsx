@@ -33,6 +33,7 @@ export default function RootLayout() {
         <Stack.Screen name="(login)" options={{ headerShown: false }} />
         <Stack.Screen name="(feed)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
+        <Stack.Screen name="(profile)" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider>
   );
