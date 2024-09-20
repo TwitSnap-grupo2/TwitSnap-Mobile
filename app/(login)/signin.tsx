@@ -1,9 +1,10 @@
-import { Link } from 'expo-router';
+import { Link, router, useRouter } from 'expo-router';
 import { View, Text, Image, TouchableOpacity, SafeAreaView, TextInput } from 'react-native';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function SignInScreen() {
     const colorScheme = useColorScheme();
+    const router = useRouter();
     return (
         <SafeAreaView className='flex-1 bg-white dark:bg-gray-800 justify-center'>
             <View className='items-center'>
@@ -32,7 +33,7 @@ export default function SignInScreen() {
 
             <View className='px-8'>
                 {/* TODO: agregar accion para enviar el form */}
-                <TouchableOpacity className='mb-4'>
+                <TouchableOpacity className='mb-4' onPress={() => { router.replace("/(feed)") }}>
                     <Text className='bg-blue-500 text-white text-center font-bold p-4 rounded-full'>
                         Iniciar sesión
                     </Text>

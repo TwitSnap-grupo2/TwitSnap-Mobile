@@ -6,12 +6,14 @@ import {
     isErrorWithCode,
     isSuccessResponse,
     statusCodes,
-    GoogleSigninButton
+    GoogleSigninButton,
+    User
 } from '@react-native-google-signin/google-signin';
 import { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 GoogleSignin.configure({
-    webClientId: '51208642510-0k14pa6enn0pqs9p7m66shdku8gkb1cu.apps.googleusercontent.com',
+    webClientId: '51208642510-ee5d1iurrlbvvrp8nqm6jvvishpk3708.apps.googleusercontent.com',
     scopes: ['https://www.googleapis.com/auth/drive.readonly'],
     offlineAccess: true,
     forceCodeForRefreshToken: true,
@@ -21,20 +23,14 @@ export default function HomeScreen() {
     const [isInProgress, setIsInProgress] = useState(false);
     const router = useRouter();
 
-
-    function setState(arg0: { userInfo: import("@react-native-google-signin/google-signin").User | null; }) {
-        setIsInProgress(false);
-        throw new Error('Function not implemented.');
-    }
-
     const signInWithGoogle = async () => {
         try {
             setIsInProgress(true);
             await GoogleSignin.hasPlayServices();
             const response = await GoogleSignin.signIn();
-            console.log(response);
             if (isSuccessResponse(response)) {
-                setState({ userInfo: response.data });
+                await AsyncStorage.setItem('user', JSON.stringify(response.data?.user));
+                router.replace('./(feed)');
             } else {
                 // sign in was cancelled by user
             }
