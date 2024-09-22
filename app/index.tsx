@@ -11,6 +11,7 @@ import {
 } from '@react-native-google-signin/google-signin';
 import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { UserProvider } from '@/context/context';
 
 GoogleSignin.configure({
     webClientId: '51208642510-ee5d1iurrlbvvrp8nqm6jvvishpk3708.apps.googleusercontent.com',
@@ -74,6 +75,7 @@ export default function HomeScreen() {
                         Iniciar sesión
                     </Text>
                 </TouchableOpacity>
+
                 <TouchableOpacity className='mb-6 border-opacity-100 border-black' onPress={() => router.push("./(login)/signup")}>
                     <Text className='bg-gray-100 dark:bg-white text-black text-center font-bold p-4 rounded-full'>
                         Registrarse

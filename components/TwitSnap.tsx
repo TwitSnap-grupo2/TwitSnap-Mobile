@@ -1,16 +1,9 @@
+import { Tweet } from "@/types/tweets";
 import { Image, Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 
-export default function TweetComponent({ tweet = {
-  avatar: 'https://www.clarin.com/2024/09/11/mQgzER_Lh_360x240__1.jpg',
-  name: 'Palito',
-  username: 'palito',
-  content: 'Que onda la banda',
-  likes: 42,
-  retweets: 7,
-  comments: 3,
-} }) {
+export default function TweetComponent({ tweet }: { tweet: Tweet }) {
   return (
     <View style={styles.container}>
       <Image source={{ uri: tweet.avatar }} style={styles.avatar} />
