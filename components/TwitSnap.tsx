@@ -22,7 +22,7 @@ export default function TweetComponent({ tweet = {
         <Text style={styles.tweetText}>{tweet.content}</Text>
         <View style={styles.tweetActions}>
           <TouchableOpacity style={styles.actionButton}>
-            <Icon name="share" size={16} color="#657786" /> 
+            <Icon name="share" size={16} color="#657786" />
             <Text style={styles.actionText}>{tweet.comments}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton}>

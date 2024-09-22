@@ -3,36 +3,29 @@ import { View, ScrollView } from 'react-native';
 import { Avatar, Button, Card, Paragraph, FAB } from 'react-native-paper';
 import { styled } from "nativewind"; // Importar para aplicar tailwind
 import { useRouter } from 'expo-router';
+import TweetComponent from "@/components/TwitSnap";
+import { User } from '@/types/User';
 
 const StyledView = styled(View);
 const StyledScrollView = styled(ScrollView);
 
 const FeedScreen = () => {
     const [tweets, setTweets] = useState([]);
+    const [user, setUser] = useState<User>();
     const dummyData = [
-        { author: { name: 'Messi', username: 'messi' }, content: 'Gol', likes: 100 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
-        { author: { name: 'Messi', username: 'messi' }, content: 'Abro hilo 🧵', likes: 10 },
+        { avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg", name: 'Messi', username: 'messi', content: 'Gol', likes: 100, retweets: 50, comments: 10 },
+        { avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg", name: 'Messi', username: 'messi', content: 'Gol', likes: 100, retweets: 50, comments: 10 },
+        { avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg", name: 'Messi', username: 'messi', content: 'Gol', likes: 100, retweets: 50, comments: 10 },
+        { avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg", name: 'Messi', username: 'messi', content: 'Gol', likes: 100, retweets: 50, comments: 10 },
+        { avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg", name: 'Messi', username: 'messi', content: 'Gol', likes: 100, retweets: 50, comments: 10 },
+        { avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg", name: 'Messi', username: 'messi', content: 'Gol', likes: 100, retweets: 50, comments: 10 },
+        { avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg", name: 'Messi', username: 'messi', content: 'Gol', likes: 100, retweets: 50, comments: 10 },
+        { avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg", name: 'Messi', username: 'messi', content: 'Gol', likes: 100, retweets: 50, comments: 10 },
+        { avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg", name: 'Messi', username: 'messi', content: 'Gol', likes: 100, retweets: 50, comments: 10 },
+        { avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg", name: 'Messi', username: 'messi', content: 'Gol', likes: 100, retweets: 50, comments: 10 },
+        { avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg", name: 'Messi', username: 'messi', content: 'Gol', likes: 100, retweets: 50, comments: 10 },
+        { avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg", name: 'Messi', username: 'messi', content: 'Gol', likes: 100, retweets: 50, comments: 10 },
+        { avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg", name: 'Messi', username: 'messi', content: 'Gol', likes: 100, retweets: 50, comments: 10 },
     ];
     const router = useRouter();
 
@@ -45,6 +38,7 @@ const FeedScreen = () => {
         // };
 
         // fetchTweets();
+        setUser({ id: "1", name: 'Messi', username: 'messi', avatar: 'https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg', followers: 100, following: 50 });
     }, []);
 
     return (
@@ -52,24 +46,25 @@ const FeedScreen = () => {
             <StyledScrollView className="px-4 py-2">
                 <StyledView className="flex flex-row space-x-28  my-4">
                     {/* TODO: crear el hamburger */}
-                    <Avatar.Icon size={50} icon="account" onTouchEnd={() => { router.push("/(feed)/search") }} />
+                    <Avatar.Icon
+                        size={50}
+                        icon="account"
+                        onTouchEnd={() => {
+                            if (user?.id) {
+                                router.push({
+                                    // @ts-ignore
+                                    pathname: "/(profile)/[id]",
+                                    params: { id: user.id },
+                                });
+                            }
+                        }}
+                    />
+
                     <Avatar.Image size={50} source={require('@/assets/images/twitsnap-logo.webp')} />
                 </StyledView>
 
                 {dummyData.map((tweet, index) => (
-                    <Card key={index} className="mb-4">
-                        <Card.Title
-                            title={tweet.author.name}
-                            subtitle={`@${tweet.author.username}`}
-                            left={(props) => <Avatar.Icon {...props} icon="account" />}
-                        />
-                        <Card.Content>
-                            <Paragraph>{tweet.content}</Paragraph>
-                        </Card.Content>
-                        <Card.Actions>
-                            <Button icon="heart-outline">{tweet.likes} mil</Button>
-                        </Card.Actions>
-                    </Card>
+                    <TweetComponent key={index} tweet={tweet} />
                 ))}
             </StyledScrollView>
 
