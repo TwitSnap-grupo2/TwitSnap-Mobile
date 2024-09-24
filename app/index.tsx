@@ -11,7 +11,6 @@ import {
 } from '@react-native-google-signin/google-signin';
 import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UserProvider } from '@/context/context';
 
 GoogleSignin.configure({
     webClientId: '51208642510-ee5d1iurrlbvvrp8nqm6jvvishpk3708.apps.googleusercontent.com',

@@ -18,7 +18,7 @@ export default function SignInScreen() {
 
     const handleLogin = () => {
         saveUser({
-            id: "1",
+            id: "6585b4c5-15dc-47a3-9d75-843e7c317203",
             name: "Erwele",
             username: "elPibeHilos",
             avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg",

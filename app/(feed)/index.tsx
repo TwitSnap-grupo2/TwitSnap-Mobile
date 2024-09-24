@@ -69,6 +69,7 @@ const FeedScreen = () => {
                             router.push({
                                 // @ts-ignore
                                 pathname: "/(profile)/[id]",
+                                // @ts-ignore
                                 params: { id: usuario?.id },
                             });
                         }}
@@ -86,7 +87,8 @@ const FeedScreen = () => {
                 className="absolute bottom-4 right-4"
                 icon="plus"
                 onPress={() => {
-                    // Acción cuando se presiona el botón de crear nuevo tweet
+                    //@ts-ignore
+                    router.push('/(feed)/createTwit');
                 }}
             />
         </StyledView>
