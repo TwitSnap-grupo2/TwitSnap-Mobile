@@ -16,15 +16,24 @@ export default function SignInScreen() {
     const { saveUser } = userContext;
     const router = useRouter();
 
-    const handleLogin = () => {
-        saveUser({
-            id: "6585b4c5-15dc-47a3-9d75-843e7c317203",
-            name: "Erwele",
-            username: "elPibeHilos",
-            avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg",
-            followers: 123,
-            following: 543,
-        } as User);
+    const handleLogin = async () => {
+        const id = "670cb959-521b-4a3c-ba6a-1202accd452d";
+        const response = await fetch(`https://api-gateway-ccbe.onrender.com/users/${id}`);
+        if (response.status === 200) {
+            const data = await response.json();
+            const user = {
+                id: data.id,
+                name: data.name,
+                user: data.user,
+                avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg",
+                followers: data.followers.length,
+                following: 0,
+            };
+            saveUser(user);
+            alert('Usuario logueado correctamente');
+        } else {
+            alert('Error al loguear el usuario ' + response.status);
+        }
         router.replace('/(feed)');
     };
 
@@ -55,7 +64,6 @@ export default function SignInScreen() {
             </View>
 
             <View className='px-8'>
-                {/* TODO: agregar accion para enviar el form */}
                 <TouchableOpacity className='mb-4' onPress={handleLogin}>
                     <Text className='bg-blue-500 text-white text-center font-bold p-4 rounded-full'>
                         Iniciar sesión

@@ -45,7 +45,7 @@ export default function SignUpScreen() {
                         saveUser({
                             id: data.id,
                             name: data.name,
-                            username: data.user,
+                            user: data.user,
                             avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg",
                             followers: data.followers.length,
                             following: 0,

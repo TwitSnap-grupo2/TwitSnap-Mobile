@@ -1,30 +1,54 @@
 import { Tweet } from "@/types/tweets";
+import { Avatar } from 'react-native-paper';
 import { Image, Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useRouter } from "expo-router";
 
 
 export default function TweetComponent({ tweet }: { tweet: Tweet }) {
+  const router = useRouter();
   return (
+
     <View style={styles.container}>
-      <Image source={{ uri: tweet.avatar }} style={styles.avatar} />
+      <Avatar.Image
+        size={50}
+        source={{ uri: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg" }}
+        onTouchEnd={() => {
+          router.push({
+            pathname: "/(profile)/[id]",
+            // @ts-ignore
+            params: { id: tweet?.createdBy },
+          });
+        }}
+      />
+
+      {/* <Image source={{ uri: tweet.avatar }} style={styles.avatar} /> */}
       <View style={styles.tweetContent}>
         <View style={styles.tweetHeader}>
-          <Text style={styles.name}>{tweet.name}</Text>
-          <Text style={styles.username}>@{tweet.username}</Text>
+          <Text style={styles.name}>prueba</Text>
+
+          {/* <Text style={styles.name}>{tweet.name}</Text> */}
+          <Text style={styles.username}>@hola</Text>
+          {/* <Text style={styles.username}>@{tweet.username}</Text> */}
         </View>
-        <Text style={styles.tweetText}>{tweet.content}</Text>
+        <Text style={styles.tweetText}>{tweet.message}</Text>
         <View style={styles.tweetActions}>
           <TouchableOpacity style={styles.actionButton}>
             <Icon name="share" size={16} color="#657786" />
-            <Text style={styles.actionText}>{tweet.comments}</Text>
+            <Text style={styles.actionText}>10</Text>
+
+            {/* <Text style={styles.actionText}>{tweet.comments}</Text> */}
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton}>
             <Icon name="repeat" size={16} color="#657786" />
-            <Text style={styles.actionText}>{tweet.retweets}</Text>
+            <Text style={styles.actionText}>2</Text>
+
+            {/* <Text style={styles.actionText}>{tweet.retweets}</Text> */}
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton}>
             <Icon name="heart" size={16} color="#657786" />
-            <Text style={styles.actionText}>{tweet.likes}</Text>
+            <Text style={styles.actionText}>43</Text>
+            {/* <Text style={styles.actionText}>{tweet.likes}</Text> */}
           </TouchableOpacity>
 
         </View>
@@ -49,6 +73,7 @@ const styles = StyleSheet.create({
   },
   tweetContent: {
     flex: 1,
+    marginLeft: 15,
   },
   tweetHeader: {
     flexDirection: 'row',

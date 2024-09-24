@@ -15,8 +15,8 @@ export default function ProfileHomeScreen() {
         {
             avatar: user?.avatar,
             name: user?.name,
-            username: user?.username,
-            content: 'Que onda la banda',
+            username: user?.user,
+            message: 'Que onda la banda',
             likes: 42,
             retweets: 7,
             comments: 3,
@@ -24,7 +24,7 @@ export default function ProfileHomeScreen() {
         {
             avatar: user?.avatar,
             name: user?.name,
-            username: user?.username, content: 'prueba', likes: 100, retweets: 50, comments: 10
+            username: user?.user, message: 'prueba', likes: 100, retweets: 50, comments: 10
         },
     ];
 
@@ -41,7 +41,7 @@ export default function ProfileHomeScreen() {
             <View className="flex-row justify-between items-center mt-4 px-6">
                 <View className="flex-1">
                     <Text className="text-2xl font-bold text-gray-900">{user?.name}</Text>
-                    <Text className="text-md text-gray-500">{user?.username}</Text>
+                    <Text className="text-md text-gray-500">{user?.user}</Text>
 
                     <View className="flex-row space-x-4 mt-2">
                         <Text className="text-sm text-gray-600">

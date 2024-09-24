@@ -26,7 +26,7 @@ const CreateTweetScreen = () => {
             }).then(response => {
                 if (response.status === 201) {
                     alert('Twit creado correctamente');
-                    router.back();
+                    router.replace('/(feed)');
 
                 } else {
                     alert('Error al crear el twit ' + response.status);
@@ -42,7 +42,7 @@ const CreateTweetScreen = () => {
     };
 
     return (
-        <KeyboardAvoidingView behavior="padding" className="flex-1 bg-white dark:bg-black">
+        <KeyboardAvoidingView behavior="padding" className="flex flex-1 bg-white dark:bg-black">
             <View style={{ flexDirection: 'row', padding: 10, alignItems: 'center' }}>
                 {/* Botón de cerrar */}
                 <TouchableOpacity onPress={() => router.back()}>
