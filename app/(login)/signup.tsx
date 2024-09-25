@@ -3,6 +3,9 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { useContext, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { UserContext } from '@/context/context';
+import { createUserWithEmailAndPassword, sendEmailVerification, UserCredential } from "firebase/auth";
+import { auth } from '@/services/config';
+
 
 export default function SignUpScreen() {
     const colorScheme = useColorScheme();
@@ -18,48 +21,83 @@ export default function SignUpScreen() {
         throw new Error("UserContext is null");
     }
 
-    const { saveUser } = userContext;
+    const { saveUser } = userContext
 
+    async function emailVerification() {
+        try {
+            const user = auth?.currentUser;
+            if (!user) {
+                throw new Error("User is null");
+            }
+            await sendEmailVerification(user);
+        }
+        catch (error) {
+            console.error("failed to send email verification:", error);
+        }
+    }
+
+
+    async function signup(email: string, pass: string) {
+        try {
+            const userCredentials = await createUserWithEmailAndPassword(auth, email, pass);
+            await emailVerification();
+            const user = userCredentials.user;
+            console.log(user);
+            return user;
+        }
+
+        catch (error) {
+            console.error("failed to sign up:", error);
+        }
+    }
 
     async function handleSignUp() {
         try {
-            await fetch('https://api-gateway-ccbe.onrender.com/users/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    // @ts-ignore
-                    email: email,
-                    // @ts-ignore
-                    password: password,
-                    // @ts-ignore
-                    user: username,
-                    // @ts-ignore
-                    name: name,
-                })
-            }).then(response => {
-                if (response.status === 201) {
-                    //guardo al usuario en el contexto
-                    response.json().then(data => {
-                        saveUser({
-                            id: data.id,
-                            name: data.name,
-                            user: data.user,
-                            avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg",
-                            followers: data.followers.length,
-                            following: 0,
+            const user = await signup(email, password);
+            const token = await user?.getIdToken();
+            if (user) {
+                await fetch('https://api-gateway-ccbe.onrender.com/users/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token,
+                    },
+                    body: JSON.stringify({
+                        // @ts-ignore
+                        email: email,
+                        // @ts-ignore
+                        password: password,
+                        // @ts-ignore
+                        user: username,
+                        // @ts-ignore
+                        name: name,
+                    })
+                }).then(response => {
+                    if (response.status === 201) {
+                        //guardo al usuario en el contexto
+                        response.json().then(data => {
+                            saveUser({
+                                id: data.id,
+                                name: data.name,
+                                user: data.user,
+                                avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg",
+                                followers: data.followers.length,
+                                following: 0,
+                            });
+                            alert('Usuario creado correctamente');
+                            router.replace('/(feed)');
                         });
-                        alert('Usuario creado correctamente');
-                        router.replace('/(feed)');
-                    });
 
-                } else {
-                    alert('Error al crear el usuario ' + response.status);
+                    } else {
+                        alert('Error al crear el usuario ' + response.status);
+                    }
                 }
+                );
+                alert('Usuario creado correctamente');
+                router.replace('/(feed)');
             }
-            );
-        } catch (error) {
+        }
+        catch (error) {
             console.error("failed to sign up:", error);
         }
     }

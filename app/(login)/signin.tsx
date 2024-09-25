@@ -1,13 +1,17 @@
 import { Link, router, useRouter } from 'expo-router';
 import { View, Text, Image, TouchableOpacity, SafeAreaView, TextInput } from 'react-native';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { UserContext } from '@/context/context';
 import { User } from '@/types/User';
+import { auth } from '@/services/config';
+import { sendEmailVerification, signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function SignInScreen() {
     const colorScheme = useColorScheme();
     const userContext = useContext(UserContext);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     if (!userContext) {
         throw new Error("UserContext is null");
@@ -16,25 +20,58 @@ export default function SignInScreen() {
     const { saveUser } = userContext;
     const router = useRouter();
 
-    const handleLogin = async () => {
-        const id = "670cb959-521b-4a3c-ba6a-1202accd452d";
-        const response = await fetch(`https://api-gateway-ccbe.onrender.com/users/${id}`);
-        if (response.status === 200) {
-            const data = await response.json();
-            const user = {
-                id: data.id,
-                name: data.name,
-                user: data.user,
-                avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg",
-                followers: data.followers.length,
-                following: 0,
-            };
-            saveUser(user);
-            alert('Usuario logueado correctamente');
-        } else {
-            alert('Error al loguear el usuario ' + response.status);
+    async function login(email: string, pass: string) {
+        try {
+            const userCredentials = await signInWithEmailAndPassword(auth, email, pass);
+            const user = userCredentials.user;
+            return user;
+        } catch (error) {
+            console.error("failed to log in:", error);
         }
-        router.replace('/(feed)');
+    }
+
+    const handleLogin = async () => {
+        try {
+            let user = await login(email, password);
+
+            if (user) {
+                if (!user.emailVerified) {
+                    alert('Por favor, verifica tu correo electrónico');
+                    return;
+                }
+
+                const token = await user.getIdToken();
+                const id = "5977b24c-cc07-4d81-9a08-5995723e8c72"
+                const response = await fetch(`https://api-gateway-ccbe.onrender.com/users/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token,
+                    },
+                }
+                );
+                if (response.status === 200) {
+                    const data = await response.json();
+                    const user = {
+                        id: data.id,
+                        name: data.name,
+                        user: data.user,
+                        avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg",
+                        followers: 0,
+                        following: 0,
+                    };
+                    saveUser(user);
+                    alert('Usuario logueado correctamente');
+                    router.replace('/(feed)');
+
+                } else {
+                    alert('Error al loguear el usuario ' + response.status);
+                }
+            }
+        }
+        catch (error) {
+            console.error("failed to log in:", error);
+        }
     };
 
     return (
@@ -49,9 +86,10 @@ export default function SignInScreen() {
 
             <View className='px-8'>
                 <TextInput
-                    placeholder='Nombre de usuario'
+                    placeholder='Email'
                     placeholderTextColor={colorScheme === 'dark' ? '#fff' : '#000'}
-                    id="username"
+                    id="email"
+                    onChangeText={setEmail}
                     className='bg-gray-100 dark:bg-gray-700 text-dark dark:text-white p-4 mb-4 rounded-full'
                 />
                 <TextInput
@@ -59,6 +97,7 @@ export default function SignInScreen() {
                     placeholderTextColor={colorScheme === 'dark' ? '#fff' : '#000'}
                     secureTextEntry={true}
                     id="password"
+                    onChangeText={setPassword}
                     className='bg-gray-100 dark:bg-gray-700 text-dark dark:text-white p-4 mb-4 rounded-full'
                 />
             </View>

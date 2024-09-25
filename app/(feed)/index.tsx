@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 import TweetComponent from "@/components/TwitSnap";
 import { User } from '@/types/User';
 import { UserContext } from '@/context/context';
+import { auth } from '@/services/config';
 
 const StyledView = styled(View);
 const StyledScrollView = styled(ScrollView);
@@ -29,7 +30,16 @@ const FeedScreen = () => {
     }, []);
 
     const fetchTweets = async () => {
-        const response = await fetch('https://api-gateway-ccbe.onrender.com/twits/');
+        const token = await auth.currentUser?.getIdToken();
+
+        const response = await fetch('https://api-gateway-ccbe.onrender.com/twits/',
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Autorization': 'Bearer ' + token,
+                },
+            });
         const data = await response.json();
         setTweets(data);
     };
