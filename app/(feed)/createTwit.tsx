@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Image, KeyboardAvoidingView } from 'react
 import { useContext, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { UserContext } from '@/context/context';
+import { auth } from '@/services/config';
 
 const CreateTweetScreen = () => {
     const [tweet, setTweet] = useState('');
@@ -12,10 +13,12 @@ const CreateTweetScreen = () => {
 
     async function handleSubmit() {
         try {
-            await fetch('https://api-gateway-ccbe.onrender.com/twits/', {
+            const token = await auth.currentUser?.getIdToken();
+            await fetch('https://api-gateway-ccbe.onrender.com/users/twits/', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
                 },
                 body: JSON.stringify({
                     // @ts-ignore

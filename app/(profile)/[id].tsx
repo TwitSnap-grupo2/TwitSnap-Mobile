@@ -2,12 +2,13 @@ import BackHeader from "@/components/BackHeader";
 import TweetComponent from "@/components/TwitSnap";
 import { UserContext } from "@/context/context";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FlatList, Image, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import { Tweet } from "@/types/tweets";
+import { auth } from "@/services/config";
 
 export default function ProfileHomeScreen() {
-    const { id } = useLocalSearchParams();
+    const [tweets, setTweets] = useState([])
     const userContext = useContext(UserContext);
     const user = userContext ? userContext.user : null;
     const router = useRouter();
@@ -27,6 +28,42 @@ export default function ProfileHomeScreen() {
             username: user?.user, message: 'prueba', likes: 100, retweets: 50, comments: 10
         },
     ];
+
+    const fetchTweets = async () => {
+        const token = await auth.currentUser?.getIdToken();
+
+        const response = await fetch(`https://api-gateway-ccbe.onrender.com/users/twits/${user?.id}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                },
+            });
+        if (response.status === 200) {
+            const data = await response.json();
+            const data_tweets = data.map((tweet: Tweet) => {
+                return {
+                    avatar: user?.avatar,
+                    name: user?.name,
+                    username: user?.user,
+                    message: tweet.message,
+                    likes: 0,
+                    retweets: 0,
+                    comments: 0,
+                };
+            });
+            setTweets(data_tweets);
+
+        } else {
+            alert('Error al obtener los twits ' + response.status);
+        }
+
+    };
+
+    useEffect(() => {
+        fetchTweets();
+    }, []);
 
     return (
         <SafeAreaView>
@@ -62,7 +99,7 @@ export default function ProfileHomeScreen() {
                 </View>
             </View>
 
-            {dummyData.map((tweet, index) => (
+            {tweets.map((tweet, index) => (
                 // @ts-ignore
                 <TweetComponent key={index} tweet={tweet} />
             ))}

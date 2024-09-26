@@ -42,7 +42,6 @@ export default function SignUpScreen() {
             const userCredentials = await createUserWithEmailAndPassword(auth, email, pass);
             await emailVerification();
             const user = userCredentials.user;
-            console.log(user);
             return user;
         }
 
@@ -56,7 +55,7 @@ export default function SignUpScreen() {
             const user = await signup(email, password);
             const token = await user?.getIdToken();
             if (user) {
-                await fetch('https://api-gateway-ccbe.onrender.com/users/signup', {
+                const response = await fetch('https://api-gateway-ccbe.onrender.com/users/users/signup', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -72,29 +71,23 @@ export default function SignUpScreen() {
                         // @ts-ignore
                         name: name,
                     })
-                }).then(response => {
-                    if (response.status === 201) {
-                        //guardo al usuario en el contexto
-                        response.json().then(data => {
-                            saveUser({
-                                id: data.id,
-                                name: data.name,
-                                user: data.user,
-                                avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg",
-                                followers: data.followers.length,
-                                following: 0,
-                            });
-                            alert('Usuario creado correctamente');
-                            router.replace('/(feed)');
-                        });
+                });
+                if (response.status === 201) {
+                    const data = await response.json();
+                    saveUser({
+                        id: data.id,
+                        name: name,
+                        user: username,
+                        avatar: "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg",
+                        followers: 0,
+                        following: 0,
+                    });
+                    alert('Usuario creado correctamente');
+                    router.replace('/(feed)');
 
-                    } else {
-                        alert('Error al crear el usuario ' + response.status);
-                    }
+                } else {
+                    alert('Error al crear el usuario ' + response.status);
                 }
-                );
-                alert('Usuario creado correctamente');
-                router.replace('/(feed)');
             }
         }
         catch (error) {
