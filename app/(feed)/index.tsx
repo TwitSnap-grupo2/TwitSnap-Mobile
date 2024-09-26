@@ -8,9 +8,6 @@ import { User } from '@/types/User';
 import { UserContext } from '@/context/context';
 import { auth } from '@/services/config';
 
-const StyledView = styled(View);
-const StyledScrollView = styled(ScrollView);
-
 const FeedScreen = () => {
     const [tweets, setTweets] = useState([]);
     const [usuario, setUser] = useState<User | null | undefined>();
@@ -37,11 +34,17 @@ const FeedScreen = () => {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Autorization': 'Bearer ' + token,
+                    'Authorization': 'Bearer ' + token,
                 },
             });
-        const data = await response.json();
-        setTweets(data);
+        if (response.status === 200) {
+            const data = await response.json();
+            setTweets(data);
+
+        } else {
+            alert('Error al obtener los twits ' + response.status);
+        }
+
     };
 
     useEffect(() => {
@@ -50,10 +53,10 @@ const FeedScreen = () => {
     }, []);
 
     useEffect(() => {
-        if (user) {
+        if (user && tweets.length > 0) {
             setLoading(false);
         }
-    }, [user]);
+    }, [user, tweets]);
 
     if (loading) {
         return (
