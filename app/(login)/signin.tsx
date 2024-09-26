@@ -42,7 +42,7 @@ export default function SignInScreen() {
 
                 const token = await user.getIdToken();
                 const id = "b56377cb-5cd9-4c6b-a1d0-124b66ad7951"
-                const response = await fetch(`https://api-gateway-ccbe.onrender.com/users/users/${id}`, {
+                const response = await fetch(`https://api-gateway-ccbe.onrender.com/users/${id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

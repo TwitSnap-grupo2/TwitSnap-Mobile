@@ -14,7 +14,7 @@ const CreateTweetScreen = () => {
     async function handleSubmit() {
         try {
             const token = await auth.currentUser?.getIdToken();
-            await fetch('https://api-gateway-ccbe.onrender.com/users/twits/', {
+            await fetch('https://api-gateway-ccbe.onrender.com/twits/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -55,7 +55,7 @@ export default function SignUpScreen() {
             const user = await signup(email, password);
             const token = await user?.getIdToken();
             if (user) {
-                const response = await fetch('https://api-gateway-ccbe.onrender.com/users/users/signup', {
+                const response = await fetch('https://api-gateway-ccbe.onrender.com/users/signup', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

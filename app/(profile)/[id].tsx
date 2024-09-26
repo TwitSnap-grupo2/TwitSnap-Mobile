@@ -32,7 +32,7 @@ export default function ProfileHomeScreen() {
     const fetchTweets = async () => {
         const token = await auth.currentUser?.getIdToken();
 
-        const response = await fetch(`https://api-gateway-ccbe.onrender.com/users/twits/${user?.id}`,
+        const response = await fetch(`https://api-gateway-ccbe.onrender.com/twits/${user?.id}`,
             {
                 method: 'GET',
                 headers: {

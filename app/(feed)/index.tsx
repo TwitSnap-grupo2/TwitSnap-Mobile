@@ -29,7 +29,7 @@ const FeedScreen = () => {
     const fetchTweets = async () => {
         const token = await auth.currentUser?.getIdToken();
 
-        const response = await fetch('https://api-gateway-ccbe.onrender.com/users/twits/',
+        const response = await fetch('https://api-gateway-ccbe.onrender.com/twits/',
             {
                 method: 'GET',
                 headers: {
