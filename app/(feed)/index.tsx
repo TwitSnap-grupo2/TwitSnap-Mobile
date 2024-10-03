@@ -5,12 +5,12 @@ import { useRouter } from "expo-router";
 import TweetComponent from "@/components/TwitSnap";
 import { User } from "@/types/User";
 import { UserContext } from "@/context/context";
-import { auth } from "@/services/config";
 import { fetch_to } from "@/utils/fetch";
 import Loading from "@/components/Loading";
+import { Tweet } from "@/types/tweets";
 
 const FeedScreen = () => {
-  const [tweets, setTweets] = useState([]);
+  const [tweets, setTweets] = useState<Tweet[]>([]);
   const [usuario, setUser] = useState<User | null | undefined>();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -29,15 +29,58 @@ const FeedScreen = () => {
   }, []);
 
   const fetchTweets = async () => {
-    const response = await fetch_to(
-      "https://api-gateway-ccbe.onrender.com/twits/",
-      "GET"
-    );
-    if (response.status === 200) {
-      const data = await response.json();
-      setTweets(data);
-    } else {
-      setMessage("Error al obtener los twits " + response.status);
+    try {
+      const response = await fetch_to(
+        "https://api-gateway-ccbe.onrender.com/twits/",
+        "GET"
+      );
+
+      if (response.status === 200) {
+        const data = await response.json();
+
+        const uniqueUserIds = Array.from(
+          new Set(data.map((tweet: Tweet) => tweet.createdBy))
+        );
+
+        const userResponses = await Promise.all(
+          uniqueUserIds.map((userId) =>
+            fetch_to(
+              `https://api-gateway-ccbe.onrender.com/users/${userId}`,
+              "GET"
+            )
+          )
+        );
+
+        const users = await Promise.all(
+          userResponses
+            .filter((res) => res.status === 200)
+            .map((res) => res.json())
+        );
+
+        const userMap: { [key: string]: any } = {};
+        users.forEach((user) => {
+          userMap[user.id] = user;
+        });
+        const mappedTweets = data.map((tweet: Tweet) => {
+          const user = userMap[tweet.createdBy] || {};
+          return {
+            avatar: `https://robohash.org/${user.id}.png`,
+            name: user?.name || "Desconocido",
+            username: user?.user || "unknown",
+            message: tweet.message,
+            likes: 0,
+            retweets: 0,
+            comments: 0,
+            createdBy: user.id,
+          };
+        });
+        setTweets(mappedTweets);
+      } else {
+        setMessage("Error al obtener los twits " + response.status);
+      }
+    } catch (error) {
+      setMessage("Error de red o servidor: ");
+      console.error(error);
     }
   };
 
@@ -53,7 +96,11 @@ const FeedScreen = () => {
   }, [user, tweets]);
 
   if (loading) {
-    return <Loading />;
+    return (
+      <View className="flex-1 justify-center items-center h-full w-full">
+        <Loading />
+      </View>
+    );
   }
 
   return (
@@ -94,7 +141,7 @@ const FeedScreen = () => {
         className="absolute bottom-4 right-4"
         icon="plus"
         onPress={() => {
-          router.replace("/(feed)/createTwit");
+          router.replace("../createTwit");
         }}
       />
 

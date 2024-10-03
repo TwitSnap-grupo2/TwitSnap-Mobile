@@ -90,8 +90,8 @@ export default function SignUpScreen() {
             id: data.id,
             name: name,
             user: username,
-            avatar:
-              "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg",
+            email: email,
+            avatar: `https://robohash.org/${data.id}.png`,
             followers: 0,
             following: 0,
           });

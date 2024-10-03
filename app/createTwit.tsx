@@ -1,22 +1,14 @@
-import {
-  TextInput,
-  Button,
-  Avatar,
-  IconButton,
-  Snackbar,
-} from "react-native-paper";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  KeyboardAvoidingView,
-} from "react-native";
+import { TextInput, Button, Avatar, IconButton } from "react-native-paper";
+import { View, TouchableOpacity, KeyboardAvoidingView } from "react-native";
 import { useContext, useState } from "react";
 import { useRouter } from "expo-router";
 import { UserContext } from "@/context/context";
-import { auth } from "@/services/config";
 import { fetch_to } from "@/utils/fetch";
+import { styled } from "nativewind";
+import SnackBarComponent from "@/components/Snackbar";
+import BackHeader from "@/components/BackHeader";
+
+const StyledView = styled(View);
 
 const CreateTweetScreen = () => {
   const [tweet, setTweet] = useState("");
@@ -40,17 +32,24 @@ const CreateTweetScreen = () => {
       );
 
       if (response.status === 201) {
-        setMessage("Twit snapeado correctamente");
         setVisible(true);
-        router.replace("/(feed)");
+        setMessage("Twit snapeado correctamente");
+        handleBack();
       } else {
         setMessage("Error al crear el usuario " + response.status);
       }
     } catch (error) {
       console.error("failed to sign up:", error);
     }
+  }
 
-    // Navegar de vuelta al feed después de crear el tweet
+  function handleBack() {
+    setTweet("");
+    // espero 1 segundo y vuelvo a la pantalla anterior
+    setTimeout(() => {
+      setMessage("");
+      router.replace("/(feed)");
+    }, 1000);
   }
 
   return (
@@ -59,8 +58,7 @@ const CreateTweetScreen = () => {
       className="flex flex-1 bg-white dark:bg-black"
     >
       <View style={{ flexDirection: "row", padding: 10, alignItems: "center" }}>
-        {/* Botón de cerrar */}
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={handleBack}>
           <IconButton icon="close" size={24} />
         </TouchableOpacity>
       </View>
@@ -111,7 +109,7 @@ const CreateTweetScreen = () => {
           <IconButton icon="image" size={30} onPress={() => {}} />
         </View>
       </View>
-      <View className="px-8">
+      <View className="flex  px-8">
         <Button
           mode="contained"
           onPress={handleSubmit}
@@ -120,18 +118,13 @@ const CreateTweetScreen = () => {
         >
           Publicar
         </Button>
-        <Snackbar
+      </View>
+      <View className="flex-1 ">
+        <SnackBarComponent
           visible={visible}
-          onDismiss={() => {}}
-          action={{
-            label: "X",
-            onPress: () => {
-              setVisible(false);
-            },
-          }}
-        >
-          {message}
-        </Snackbar>
+          action={() => setVisible(false)}
+          message={message}
+        />
       </View>
     </KeyboardAvoidingView>
   );

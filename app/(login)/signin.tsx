@@ -1,22 +1,11 @@
-import { Link, router, useRouter } from "expo-router";
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  SafeAreaView,
-  TextInput,
-} from "react-native";
+import { useRouter } from "expo-router";
+import { View, Text, Image, SafeAreaView, TextInput } from "react-native";
 import { Snackbar, Button } from "react-native-paper";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useContext, useState } from "react";
 import { UserContext } from "@/context/context";
-import { User } from "@/types/User";
 import { auth } from "@/services/config";
-import {
-  sendEmailVerification,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { fetch_to } from "@/utils/fetch";
 import Loading from "@/components/Loading";
 
@@ -71,8 +60,8 @@ export default function SignInScreen() {
             id: data.id,
             name: data.name,
             user: data.user,
-            avatar:
-              "https://media.diariopopular.com.ar/p/3652d6f7d60de6f88670130b02610406/adjuntos/143/imagenes/006/926/0006926517/messijpg.jpg",
+            email: data.email,
+            avatar: `https://robohash.org/${data.id}.png`,
             followers: 0,
             following: 0,
           };
