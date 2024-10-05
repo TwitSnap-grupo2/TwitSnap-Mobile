@@ -50,9 +50,7 @@ export default function EditProfileScreen() {
 
   return (
     <SafeAreaView className="flex flex-1 bg-white dark:bg-black">
-      <BackHeader />
-
-      <View className="items-center">
+      <View className="items-center mt-16">
         <Image
           source={{ uri: user?.avatar }}
           className="rounded-full h-40 w-40"

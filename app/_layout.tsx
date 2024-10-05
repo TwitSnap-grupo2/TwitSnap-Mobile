@@ -35,12 +35,13 @@ export default function RootLayout() {
     <UserProvider>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="(access)" options={{ headerShown: false }} />
           <Stack.Screen name="(login)" options={{ headerShown: false }} />
           <Stack.Screen name="(feed)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
           <Stack.Screen name="(profile)" options={{ headerShown: false }} />
-          <Stack.Screen name="createTwit" options={{ headerShown: false }} />
+          <Stack.Screen name="(twit)" options={{ headerShown: false }} />
+          <Stack.Screen name="(config)" options={{ headerShown: false }} />
         </Stack>
       </ThemeProvider>
     </UserProvider>

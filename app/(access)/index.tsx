@@ -1,4 +1,4 @@
-import { Link, Stack, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import {
   View,
   Text,
@@ -13,10 +13,13 @@ import {
   isSuccessResponse,
   statusCodes,
   GoogleSigninButton,
-  User,
 } from "@react-native-google-signin/google-signin";
-import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "@/context/context";
+import { auth } from "@/services/config";
+import { fetch_to } from "@/utils/fetch";
 
 GoogleSignin.configure({
   webClientId:
@@ -29,6 +32,61 @@ GoogleSignin.configure({
 export default function HomeScreen() {
   const [isInProgress, setIsInProgress] = useState(false);
   const router = useRouter();
+  const user_auth = auth.currentUser;
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const userContext = useContext(UserContext);
+
+  if (!userContext) {
+    throw new Error("UserContext is null");
+  }
+  const { saveUser } = userContext;
+
+  const handleLogin = async () => {
+    setLoading(true);
+    try {
+      let user = auth.currentUser;
+      if (user) {
+        if (!user.emailVerified) {
+          alert("Por favor, verifica tu correo electrónico");
+          return;
+        }
+
+        const response = await fetch_to(
+          `https://api-gateway-ccbe.onrender.com/users/email/${user.email}`,
+          "GET"
+        );
+        if (response.status === 200) {
+          const data = await response.json();
+          const user = {
+            id: data.id,
+            name: data.name,
+            user: data.user,
+            email: data.email,
+            avatar: `https://robohash.org/${data.id}.png`,
+            followers: 0,
+            following: 0,
+          };
+          saveUser(user);
+          router.replace("/(feed)");
+        } else {
+          alert("Error al obtener el usuario " + response.status);
+        }
+      } else {
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("failed to log in:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (user_auth) {
+      handleLogin();
+    } else {
+      setLoading(false);
+    }
+  }, []);
 
   const signInWithGoogle = async () => {
     try {

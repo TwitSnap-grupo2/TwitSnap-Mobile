@@ -1,13 +1,17 @@
 import { useRouter } from "expo-router";
 import { View, Text, Image, SafeAreaView, TextInput } from "react-native";
-import { Snackbar, Button } from "react-native-paper";
+import { Button } from "react-native-paper";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useContext, useState } from "react";
 import { UserContext } from "@/context/context";
 import { auth } from "@/services/config";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { fetch_to } from "@/utils/fetch";
 import Loading from "@/components/Loading";
+import SnackBarComponent from "@/components/Snackbar";
 
 export default function SignInScreen() {
   const colorScheme = useColorScheme();
@@ -78,12 +82,20 @@ export default function SignInScreen() {
     }
   };
 
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center h-full w-full">
+        <Loading />
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-gray-800 justify-center">
       <View className="items-center">
         <Image
           source={require("@/assets/images/twitsnap-logo.webp")}
-          className="h-64 w-64 rounded-full mb-12"
+          className="h-64 w-64 rounded-full mb-12 mt-16"
         />
         <Text className="text-4xl text-black dark:text-white font-bold mb-6">
           Iniciar sesión
@@ -118,18 +130,23 @@ export default function SignInScreen() {
         >
           Iniciar sesión
         </Button>
-        <Snackbar
-          visible={visible}
-          onDismiss={() => {}}
-          action={{
-            label: "Cerrar",
-            onPress: () => {
-              setVisible(false);
-            },
-          }}
+      </View>
+      <View className="flex-1 ">
+        <Button
+          mode="text"
+          onPress={() => router.push("./resetPassword")}
+          className="mb-4"
         >
-          {message}
-        </Snackbar>
+          Restablecer contraseña
+        </Button>
+      </View>
+
+      <View className="flex-1 ">
+        <SnackBarComponent
+          visible={visible}
+          action={() => setVisible(false)}
+          message={message}
+        />
       </View>
     </SafeAreaView>
   );

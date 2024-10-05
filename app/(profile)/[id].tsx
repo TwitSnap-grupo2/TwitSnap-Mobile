@@ -96,7 +96,6 @@ export default function ProfileHomeScreen() {
 
   return (
     <SafeAreaView>
-      <BackHeader />
       <View className="items-center mt-10">
         <Image
           source={{ uri: user?.avatar }}

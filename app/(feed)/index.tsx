@@ -128,6 +128,15 @@ const FeedScreen = () => {
             size={50}
             source={require("@/assets/images/twitsnap-logo.webp")}
           />
+
+          <Avatar.Icon
+            size={60}
+            icon="dots-vertical"
+            style={{ backgroundColor: "white" }}
+            onTouchEnd={() => {
+              router.push("../(config)");
+            }}
+          />
         </View>
 
         {/* Renderizar los tweets */}
@@ -141,7 +150,7 @@ const FeedScreen = () => {
         className="absolute bottom-4 right-4"
         icon="plus"
         onPress={() => {
-          router.replace("../createTwit");
+          router.replace("../(twit)/createTwit");
         }}
       />
 
