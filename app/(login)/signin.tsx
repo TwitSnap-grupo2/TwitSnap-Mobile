@@ -12,6 +12,7 @@ import {
 import { fetch_to } from "@/utils/fetch";
 import Loading from "@/components/Loading";
 import SnackBarComponent from "@/components/Snackbar";
+import { LoginWithEmailAndPassword } from "@/utils/login";
 
 export default function SignInScreen() {
   const colorScheme = useColorScheme();
@@ -29,56 +30,15 @@ export default function SignInScreen() {
   const { saveUser } = userContext;
   const router = useRouter();
 
-  async function login(email: string, pass: string) {
-    try {
-      const userCredentials = await signInWithEmailAndPassword(
-        auth,
-        email,
-        pass
-      );
-      const user = userCredentials.user;
-      return user;
-    } catch (error) {
-      console.error("failed to log in:", error);
-    }
-  }
-
   const handleLogin = async () => {
-    setLoading(true);
-    try {
-      let user = await login(email, password);
-
-      if (user) {
-        if (!user.emailVerified) {
-          alert("Por favor, verifica tu correo electrónico");
-          return;
-        }
-
-        const response = await fetch_to(
-          `https://api-gateway-ccbe.onrender.com/users/email/${email}`,
-          "GET"
-        );
-        if (response.status === 200) {
-          const data = await response.json();
-          const user = {
-            id: data.id,
-            name: data.name,
-            user: data.user,
-            email: data.email,
-            avatar: `https://robohash.org/${data.id}.png`,
-            followers: 0,
-            following: 0,
-          };
-          saveUser(user);
-          setMessage("Bienvenid@ a TwitSnap " + user.name);
-          setVisible(true);
-          router.replace("/(feed)");
-        } else {
-          setMessage("Error al obtener el usuario " + response.status);
-        }
-      }
-    } catch (error) {
-      console.error("failed to log in:", error);
+    const currentUser = await LoginWithEmailAndPassword(email, password);
+    if (currentUser) {
+      saveUser(currentUser);
+      setMessage("Bienvenid@ a TwitSnap " + currentUser.name);
+      setVisible(true);
+      router.replace("/(feed)");
+    } else {
+      setMessage("Error al obtener el usuario ");
     }
   };
 

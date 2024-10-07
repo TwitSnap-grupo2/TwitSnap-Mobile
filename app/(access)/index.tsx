@@ -14,12 +14,15 @@ import {
   statusCodes,
   GoogleSigninButton,
 } from "@react-native-google-signin/google-signin";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
 
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "@/context/context";
 import { auth } from "@/services/config";
 import { fetch_to } from "@/utils/fetch";
+import { FindUserByEmail } from "@/utils/login";
+import Loading from "@/components/Loading";
 
 GoogleSignin.configure({
   webClientId:
@@ -33,7 +36,6 @@ export default function HomeScreen() {
   const [isInProgress, setIsInProgress] = useState(false);
   const router = useRouter();
   const user_auth = auth.currentUser;
-  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const userContext = useContext(UserContext);
 
@@ -52,25 +54,12 @@ export default function HomeScreen() {
           return;
         }
 
-        const response = await fetch_to(
-          `https://api-gateway-ccbe.onrender.com/users/email/${user.email}`,
-          "GET"
-        );
-        if (response.status === 200) {
-          const data = await response.json();
-          const user = {
-            id: data.id,
-            name: data.name,
-            user: data.user,
-            email: data.email,
-            avatar: `https://robohash.org/${data.id}.png`,
-            followers: 0,
-            following: 0,
-          };
-          saveUser(user);
+        const currentUser = await FindUserByEmail(user.email);
+        if (currentUser) {
+          saveUser(currentUser);
           router.replace("/(feed)");
         } else {
-          alert("Error al obtener el usuario " + response.status);
+          alert("Error al obtener el usuario " + user.email);
         }
       } else {
         setLoading(false);
@@ -94,8 +83,26 @@ export default function HomeScreen() {
       await GoogleSignin.hasPlayServices();
       const response = await GoogleSignin.signIn();
       if (isSuccessResponse(response)) {
-        await AsyncStorage.setItem("user", JSON.stringify(response.data?.user));
-        router.replace("./(feed)");
+        const credential = GoogleAuthProvider.credential(
+          response.data?.idToken
+        );
+        const result = await signInWithCredential(auth, credential);
+        if (result.user) {
+          setLoading(true);
+          const currentUser = await FindUserByEmail(result.user.email);
+          setIsInProgress(false);
+          if (currentUser) {
+            saveUser(currentUser);
+            router.replace("/(feed)");
+          } else {
+            router.push({
+              pathname: "./info",
+              params: {
+                email: result.user.email,
+              },
+            });
+          }
+        }
       } else {
         // sign in was cancelled by user
       }
@@ -116,6 +123,14 @@ export default function HomeScreen() {
       }
     }
   };
+
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center h-full w-full">
+        <Loading />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-gray-800 justify-center">
@@ -138,7 +153,7 @@ export default function HomeScreen() {
       <View className="px-8">
         <TouchableOpacity
           className="mb-4"
-          onPress={() => router.push("./(login)/signin")}
+          onPress={() => router.push("../(login)/signin")}
         >
           <Text className="bg-blue-500 text-white text-center font-bold p-4 rounded-full">
             Iniciar sesión
@@ -147,7 +162,7 @@ export default function HomeScreen() {
 
         <TouchableOpacity
           className="mb-6 border-opacity-100 border-black"
-          onPress={() => router.push("./(login)/signup")}
+          onPress={() => router.push("../(login)/signup")}
         >
           <Text className="bg-gray-100 dark:bg-white text-black text-center font-bold p-4 rounded-full">
             Registrarse
