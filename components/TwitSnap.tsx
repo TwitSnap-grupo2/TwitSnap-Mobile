@@ -3,9 +3,41 @@ import { Avatar } from "react-native-paper";
 import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useRouter } from "expo-router";
+import { fetch_to } from "@/utils/fetch";
+import { useContext, useState } from "react";
+import { UserContext } from "@/context/context";
 
-export default function TweetComponent({ tweet }: { tweet: Tweet }) {
+export default function TweetComponent({
+  initialTweet,
+}: {
+  initialTweet: Tweet;
+}) {
   const router = useRouter();
+  const userContext = useContext(UserContext);
+  const user = userContext ? userContext.user : null;
+  const [tweet, setTweet] = useState<Tweet>(initialTweet);
+
+  async function handleLike() {
+    const updatedTweet = {
+      ...tweet,
+      likedByMe: true,
+      likes_count: (parseInt(tweet.likes_count) + 1).toString(),
+    };
+
+    setTweet(updatedTweet);
+    const response = await fetch_to(
+      `https://api-gateway-ccbe.onrender.com/twits/${tweet.id}/like`,
+      "POST",
+      {
+        likedBy: user?.id,
+      }
+    );
+
+    if (response.status != 201) {
+      console.error("Error al dar like al tweet", response.status);
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Avatar.Image
@@ -23,6 +55,13 @@ export default function TweetComponent({ tweet }: { tweet: Tweet }) {
 
       {/* <Image source={{ uri: tweet.avatar }} style={styles.avatar} /> */}
       <View style={styles.tweetContent}>
+        {tweet.sharedBy != null && (
+          <View style={styles.tweetHeader}>
+            <Text style={styles.username}>
+              re-snapeado por {tweet.sharedBy}
+            </Text>
+          </View>
+        )}
         <View style={styles.tweetHeader}>
           <Text style={styles.name}>{tweet.name}</Text>
 
@@ -35,12 +74,20 @@ export default function TweetComponent({ tweet }: { tweet: Tweet }) {
             <Text style={styles.actionText}>{tweet.comments}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton}>
-            <Icon name="repeat" size={16} color="#657786" />
-            <Text style={styles.actionText}>{tweet.retweets}</Text>
+            <Icon
+              name="repeat"
+              size={16}
+              color={tweet.sharedByMe ? "#1DA1F2" : "#657786"}
+            />
+            <Text style={styles.actionText}>{tweet.shares_count}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
-            <Icon name="heart" size={16} color="#657786" />
-            <Text style={styles.actionText}>{tweet.likes}</Text>
+          <TouchableOpacity style={styles.actionButton} onPress={handleLike}>
+            <Icon
+              name="heart"
+              size={16}
+              color={tweet.likedByMe ? "#EE0000" : "#657786"}
+            />
+            <Text style={styles.actionText}>{tweet.likes_count}</Text>
           </TouchableOpacity>
         </View>
       </View>

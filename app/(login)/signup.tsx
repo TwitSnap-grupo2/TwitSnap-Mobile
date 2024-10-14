@@ -74,13 +74,9 @@ export default function SignUpScreen() {
           "https://api-gateway-ccbe.onrender.com/users/signup",
           "POST",
           {
-            // @ts-ignore
             email: email,
-            // @ts-ignore
             password: password,
-            // @ts-ignore
             user: username,
-            // @ts-ignore
             name: name,
           }
         );

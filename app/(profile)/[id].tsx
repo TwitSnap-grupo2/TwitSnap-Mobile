@@ -42,7 +42,7 @@ export default function ProfileHomeScreen() {
         avatar: `https://robohash.org/${data.id}.png`,
         email: data.email,
         followers: data.followers.length,
-        following: data.following ? data.following.length : 0,
+        following: data.followeds ? data.followeds.length : 0,
       };
       setUser(data_user);
     } else {
@@ -52,7 +52,7 @@ export default function ProfileHomeScreen() {
 
   const fetchTweets = async () => {
     const response = await fetch_to(
-      `https://api-gateway-ccbe.onrender.com/twits/${id}`,
+      `https://api-gateway-ccbe.onrender.com/twits/user/${id}`,
       "GET"
     );
     if (response.status === 200) {
@@ -63,8 +63,8 @@ export default function ProfileHomeScreen() {
           name: user?.name,
           username: user?.user,
           message: tweet.message,
-          likes: 0,
-          retweets: 0,
+          likes_count: 0,
+          shares_count: 0,
           comments: 0,
         };
       });
@@ -139,7 +139,7 @@ export default function ProfileHomeScreen() {
       </View>
       {tweets.map((tweet, index) => (
         // @ts-ignore
-        <TweetComponent key={index} tweet={tweet} />
+        <TweetComponent key={index} initialTweet={tweet} />
       ))}
       <View className="flex-1">
         <SnackBarComponent

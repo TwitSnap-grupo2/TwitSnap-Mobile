@@ -8,6 +8,7 @@ import { UserContext } from "@/context/context";
 import { fetch_to } from "@/utils/fetch";
 import Loading from "@/components/Loading";
 import { Tweet } from "@/types/tweets";
+import { linkWithCredential } from "firebase/auth";
 
 const FeedScreen = () => {
   const [tweets, setTweets] = useState<Tweet[]>([]);
@@ -28,10 +29,13 @@ const FeedScreen = () => {
     }, 2000);
   }, []);
 
-  const fetchTweets = async () => {
+  const fetchTweets = async (timestamp?: Date) => {
     try {
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 2);
       const response = await fetch_to(
-        "https://api-gateway-ccbe.onrender.com/twits/",
+        `https://api-gateway-ccbe.onrender.com/twits/feed?timestamp_start=${tomorrow.toISOString()}&limit=10`,
         "GET"
       );
 
@@ -40,6 +44,25 @@ const FeedScreen = () => {
 
         const uniqueUserIds = Array.from(
           new Set(data.map((tweet: Tweet) => tweet.createdBy))
+        );
+
+        const sharedTwit: { [key: string]: any } = {};
+        data.forEach((tweet: Tweet) => {
+          const resnapeado = tweet.sharedBy == user?.id;
+          if (resnapeado) {
+            sharedTwit[tweet.id] = resnapeado;
+            if (!uniqueUserIds.includes(tweet.sharedBy)) {
+              uniqueUserIds.push(tweet.sharedBy);
+            }
+          }
+        });
+
+        const uniqueTwitIds = Array.from(
+          new Set(
+            data
+              .filter((tweet: Tweet) => tweet.likes_count != "0")
+              .map((tweet: Tweet) => tweet.id)
+          )
         );
 
         const userResponses = await Promise.all(
@@ -51,8 +74,22 @@ const FeedScreen = () => {
           )
         );
 
+        const likesResponses = await Promise.all(
+          uniqueTwitIds.map((twitId) =>
+            fetch_to(
+              `https://api-gateway-ccbe.onrender.com/twits/${twitId}/like`,
+              "GET"
+            )
+          )
+        );
+
         const users = await Promise.all(
           userResponses
+            .filter((res) => res.status === 200)
+            .map((res) => res.json())
+        );
+        const likes = await Promise.all(
+          likesResponses
             .filter((res) => res.status === 200)
             .map((res) => res.json())
         );
@@ -61,17 +98,33 @@ const FeedScreen = () => {
         users.forEach((user) => {
           userMap[user.id] = user;
         });
+
+        const userLikes: { [key: string]: any } = {};
+        likes.flat().forEach((like) => {
+          const megusteado = like.likedBy == user?.id;
+          if (megusteado) {
+            userLikes[like.twitsnapId] = megusteado;
+          }
+        });
+
         const mappedTweets = data.map((tweet: Tweet) => {
-          const user = userMap[tweet.createdBy] || {};
+          const mappedUser = userMap[tweet.createdBy] || {};
+          const sharedBy = userMap[tweet.sharedBy] || {};
+          const likedByMe = userLikes[tweet.id] || false;
+          const sharedByMe = sharedTwit[tweet.id] || false;
           return {
-            avatar: `https://robohash.org/${user.id}.png`,
-            name: user?.name || "Desconocido",
-            username: user?.user || "unknown",
+            id: tweet.id,
+            avatar: `https://robohash.org/${mappedUser.id}.png`,
+            name: mappedUser?.name || "Desconocido",
+            username: mappedUser?.user || "unknown",
             message: tweet.message,
-            likes: 0,
-            retweets: 0,
+            likes_count: tweet.likes_count,
+            shares_count: tweet.shares_count,
+            sharedBy: sharedBy?.name || null,
             comments: 0,
-            createdBy: user.id,
+            createdBy: mappedUser.id,
+            likedByMe: likedByMe,
+            sharedByMe: sharedByMe,
           };
         });
         setTweets(mappedTweets);
@@ -85,6 +138,7 @@ const FeedScreen = () => {
   };
 
   useEffect(() => {
+    console.log("fetching tweets");
     fetchTweets();
     setUser(user);
   }, []);
@@ -120,7 +174,7 @@ const FeedScreen = () => {
               router.push({
                 pathname: "/(profile)/[id]",
                 // @ts-ignore
-                params: { id: usuario?.id },
+                params: { id: user?.id },
               });
             }}
           />
@@ -141,7 +195,7 @@ const FeedScreen = () => {
 
         {/* Renderizar los tweets */}
         {tweets.map((tweet, index) => (
-          <TweetComponent key={index} tweet={tweet} />
+          <TweetComponent key={index} initialTweet={tweet} />
         ))}
       </ScrollView>
 
