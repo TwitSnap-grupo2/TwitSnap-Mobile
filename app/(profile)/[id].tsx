@@ -23,10 +23,48 @@ export default function ProfileHomeScreen() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const { id } = useLocalSearchParams();
+  const { id, initialFollowed } = useLocalSearchParams();
   const userContext = useContext(UserContext);
   const currentUser = userContext ? userContext.user : null;
+
   const isCurrentUserProfile = currentUser?.id === id;
+  const [followed, setFollowed] = useState(
+    initialFollowed == "1" ? true : false
+  );
+
+  async function handleFollow() {
+    if (followed) {
+      const response = await fetch_to(
+        `https://api-gateway-ccbe.onrender.com/users/follow/${currentUser?.id}?followed_id=${id}`,
+        "DELETE",
+        id
+      );
+
+      if (response.status === 200) {
+        setFollowed(false);
+        setMessage("Usuario dejado de seguir correctamente");
+        setVisible(true);
+      } else {
+        setMessage("Error al dejar de seguir al usuario " + response.status);
+        setVisible(true);
+      }
+      return;
+    } else {
+      const response = await fetch_to(
+        `https://api-gateway-ccbe.onrender.com/users/${currentUser?.id}/follow`,
+        "POST",
+        id
+      );
+
+      if (response.status === 201) {
+        setMessage("Usuario seguido correctamente");
+        setVisible(true);
+      } else {
+        setMessage("Error al seguir al usuario " + response.status);
+        setVisible(true);
+      }
+    }
+  }
 
   const fetchUser = async () => {
     const response = await fetch_to(
@@ -41,8 +79,8 @@ export default function ProfileHomeScreen() {
         user: data.user,
         avatar: `https://robohash.org/${data.id}.png`,
         email: data.email,
-        followers: data.followers.length,
-        following: data.followeds ? data.followeds.length : 0,
+        followers: data.followers,
+        followeds: data.followeds,
       };
       setUser(data_user);
     } else {
@@ -110,10 +148,12 @@ export default function ProfileHomeScreen() {
 
           <View className="flex-row space-x-4 mt-2">
             <Text className="text-sm text-gray-600">
-              <Text className="font-semibold">{user?.following}</Text> Following
+              <Text className="font-semibold">{user?.followeds.length}</Text>{" "}
+              Following
             </Text>
             <Text className="text-sm text-gray-600">
-              <Text className="font-semibold">{user?.followers}</Text> Followers
+              <Text className="font-semibold">{user?.followers.length}</Text>{" "}
+              Followers
             </Text>
           </View>
         </View>
@@ -128,10 +168,15 @@ export default function ProfileHomeScreen() {
               </Text>
             </TouchableOpacity>
           ) : (
-            // TODO: fetch para seguir usuario
-            <TouchableOpacity onPress={() => console.log("Seguir usuario")}>
-              <Text className="bg-blue-500 text-white text-sm font-bold py-2 px-4 rounded-full shadow-md">
-                Seguir
+            <TouchableOpacity onPress={handleFollow}>
+              <Text
+                className={
+                  followed
+                    ? "bg-white text-blue-500 text-sm font-bold py-2 px-4 rounded-full shadow-md"
+                    : "bg-blue-500 text-white text-sm font-bold py-2 px-4 rounded-full shadow-md"
+                }
+              >
+                {followed ? "Siguiendo" : "Seguir"}
               </Text>
             </TouchableOpacity>
           )}

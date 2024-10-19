@@ -11,11 +11,16 @@ import { Tweet } from "@/types/tweets";
 
 const FeedScreen = () => {
   const [tweets, setTweets] = useState<Tweet[]>([]);
-  const [usuario, setUser] = useState<User | null | undefined>();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const userContext = useContext(UserContext);
-  const user = userContext ? userContext.user : null;
+  if (!userContext) {
+    throw new Error("UserContext is null");
+  }
+  if (!userContext.user) {
+    throw new Error("UserContext.user is null");
+  }
+  const user = userContext.user;
   const router = useRouter();
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
@@ -143,9 +148,7 @@ const FeedScreen = () => {
   };
 
   useEffect(() => {
-    console.log("fetching tweets");
     fetchTweets();
-    setUser(user);
   }, []);
 
   useEffect(() => {
@@ -174,12 +177,14 @@ const FeedScreen = () => {
         <View className="flex flex-row space-x-28 my-4">
           <Avatar.Image
             size={50}
-            source={{ uri: usuario?.avatar }}
+            source={{ uri: user?.avatar }}
             onTouchEnd={() => {
               router.push({
                 pathname: "/(profile)/[id]",
                 // @ts-ignore
-                params: { id: user?.id },
+                params: {
+                  id: user.id,
+                },
               });
             }}
           />

@@ -51,8 +51,8 @@ export async function FindUserByEmail(email: string | null) {
         user: data.user,
         email: data.email,
         avatar: `https://robohash.org/${data.id}.png`,
-        followers: 0,
-        following: 0,
+        followers: data.followers,
+        followeds: data.followeds,
         };
         return user;
     } else {

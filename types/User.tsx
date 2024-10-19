@@ -4,6 +4,6 @@ export interface User {
   user: string;
   avatar: string;
   email: string;
-  followers: number;
-  following: number;
+  followers: Array<string>;
+  followeds: Array<string>;
 }

@@ -16,7 +16,13 @@ export default function TweetComponent({
 }) {
   const router = useRouter();
   const userContext = useContext(UserContext);
-  const user = userContext ? userContext.user : null;
+  if (!userContext) {
+    throw new Error("UserContext is null");
+  }
+  if (!userContext.user) {
+    throw new Error("UserContext.user is null");
+  }
+  const user = userContext.user;
   const [tweet, setTweet] = useState<Tweet>(initialTweet);
 
   async function handleShare() {
@@ -102,7 +108,12 @@ export default function TweetComponent({
         onTouchEnd={() => {
           router.push({
             pathname: "/(profile)/[id]",
-            params: { id: tweet?.createdBy },
+            params: {
+              id: tweet?.createdBy,
+              initialFollowed: user.followeds.includes(tweet.createdBy)
+                ? "1"
+                : "0",
+            },
           });
         }}
       />
