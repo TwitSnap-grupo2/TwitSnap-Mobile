@@ -6,7 +6,7 @@ export interface Tweet {
   message: string;
   createdBy: string;
   likes_count: string;
-  shares_count: number;
+  shares_count: string;
   sharedBy: string;
   comments: number;
   likedByMe: boolean;

@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { View, ScrollView, RefreshControl } from "react-native";
+import { View, ScrollView, RefreshControl, Text } from "react-native";
 import { Avatar, FAB, Snackbar } from "react-native-paper";
 import { useRouter } from "expo-router";
 import TweetComponent from "@/components/TwitSnap";
@@ -8,7 +8,6 @@ import { UserContext } from "@/context/context";
 import { fetch_to } from "@/utils/fetch";
 import Loading from "@/components/Loading";
 import { Tweet } from "@/types/tweets";
-import { linkWithCredential } from "firebase/auth";
 
 const FeedScreen = () => {
   const [tweets, setTweets] = useState<Tweet[]>([]);
@@ -22,10 +21,10 @@ const FeedScreen = () => {
   const [message, setMessage] = useState("");
   const onRefresh = useCallback(() => {
     setRefreshing(true);
+    fetchTweets();
 
     setTimeout(() => {
       setRefreshing(false);
-      fetchTweets();
     }, 2000);
   }, []);
 
@@ -35,8 +34,10 @@ const FeedScreen = () => {
       const tomorrow = new Date(today);
       tomorrow.setDate(today.getDate() + 2);
       const response = await fetch_to(
-        `https://api-gateway-ccbe.onrender.com/twits/feed?timestamp_start=${tomorrow.toISOString()}&limit=10`,
-        "GET"
+        `https://api-gateway-ccbe.onrender.com/twits/${
+          user?.id
+        }/feed?timestamp_start=${tomorrow.toISOString()}&limit=10`,
+        "POST"
       );
 
       if (response.status === 200) {
@@ -48,12 +49,15 @@ const FeedScreen = () => {
 
         const sharedTwit: { [key: string]: any } = {};
         data.forEach((tweet: Tweet) => {
+          if (tweet.sharedBy == null) {
+            return;
+          }
           const resnapeado = tweet.sharedBy == user?.id;
           if (resnapeado) {
             sharedTwit[tweet.id] = resnapeado;
-            if (!uniqueUserIds.includes(tweet.sharedBy)) {
-              uniqueUserIds.push(tweet.sharedBy);
-            }
+          }
+          if (!uniqueUserIds.includes(tweet.sharedBy)) {
+            uniqueUserIds.push(tweet.sharedBy);
           }
         });
 
@@ -107,6 +111,7 @@ const FeedScreen = () => {
           }
         });
 
+        setTweets([]);
         const mappedTweets = data.map((tweet: Tweet) => {
           const mappedUser = userMap[tweet.createdBy] || {};
           const sharedBy = userMap[tweet.sharedBy] || {};
@@ -120,7 +125,7 @@ const FeedScreen = () => {
             message: tweet.message,
             likes_count: tweet.likes_count,
             shares_count: tweet.shares_count,
-            sharedBy: sharedBy?.name || null,
+            sharedBy: sharedBy?.user || null,
             comments: 0,
             createdBy: mappedUser.id,
             likedByMe: likedByMe,
@@ -144,7 +149,7 @@ const FeedScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (user && tweets.length > 0) {
+    if (user) {
       setLoading(false);
     }
   }, [user, tweets]);
@@ -194,9 +199,14 @@ const FeedScreen = () => {
         </View>
 
         {/* Renderizar los tweets */}
-        {tweets.map((tweet, index) => (
-          <TweetComponent key={index} initialTweet={tweet} />
-        ))}
+        {tweets.length > 0 &&
+          tweets.map((tweet, index) => (
+            <TweetComponent
+              key={index}
+              initialTweet={tweet}
+              shareTweet={onRefresh}
+            />
+          ))}
       </ScrollView>
 
       {/* Botón flotante */}

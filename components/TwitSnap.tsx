@@ -9,32 +9,86 @@ import { UserContext } from "@/context/context";
 
 export default function TweetComponent({
   initialTweet,
+  shareTweet,
 }: {
   initialTweet: Tweet;
+  shareTweet: () => void;
 }) {
   const router = useRouter();
   const userContext = useContext(UserContext);
   const user = userContext ? userContext.user : null;
   const [tweet, setTweet] = useState<Tweet>(initialTweet);
 
-  async function handleLike() {
+  async function handleShare() {
+    const actual_shared = tweet.sharedByMe;
     const updatedTweet = {
       ...tweet,
-      likedByMe: true,
-      likes_count: (parseInt(tweet.likes_count) + 1).toString(),
+      sharedByMe: !actual_shared,
+      shares_count: actual_shared
+        ? (parseInt(tweet.shares_count) + -1).toString()
+        : (parseInt(tweet.shares_count) + 1).toString(),
     };
-
     setTweet(updatedTweet);
-    const response = await fetch_to(
-      `https://api-gateway-ccbe.onrender.com/twits/${tweet.id}/like`,
-      "POST",
-      {
-        likedBy: user?.id,
-      }
-    );
+    shareTweet();
 
-    if (response.status != 201) {
-      console.error("Error al dar like al tweet", response.status);
+    if (actual_shared) {
+      const response = await fetch_to(
+        `https://api-gateway-ccbe.onrender.com/twits/${tweet.id}/share?unsharedBy=${user?.id}`,
+        "DELETE"
+      );
+
+      if (response.status != 204) {
+        console.error("Error al quitar share al tweet", response.status);
+      }
+      return;
+    } else {
+      const response = await fetch_to(
+        `https://api-gateway-ccbe.onrender.com/twits/${tweet.id}/share`,
+        "POST",
+        {
+          sharedBy: user?.id,
+        }
+      );
+
+      if (response.status != 201) {
+        console.error("Error al dar share al tweet", response.status);
+      }
+    }
+  }
+
+  async function handleLike() {
+    const actual_liked = tweet.likedByMe;
+    const updatedTweet = {
+      ...tweet,
+      likedByMe: !actual_liked,
+      likes_count: actual_liked
+        ? (parseInt(tweet.likes_count) + -1).toString()
+        : (parseInt(tweet.likes_count) + 1).toString(),
+    };
+    setTweet(updatedTweet);
+
+    if (actual_liked) {
+      const response = await fetch_to(
+        `https://api-gateway-ccbe.onrender.com/twits/${tweet.id}/like?unlikedBy=${user?.id}`,
+        "DELETE"
+      );
+
+      if (response.status != 204) {
+        console.error("Error al quitar like al tweet", response.status);
+      }
+      return;
+    } else {
+      const response = await fetch_to(
+        `https://api-gateway-ccbe.onrender.com/twits/${tweet.id}/like`,
+        "POST",
+        {
+          likedBy: user?.id,
+        }
+      );
+
+      if (response.status != 201) {
+        console.error("Error al dar like al tweet", response.status);
+      }
     }
   }
 
@@ -73,7 +127,7 @@ export default function TweetComponent({
             <Icon name="share" size={16} color="#657786" />
             <Text style={styles.actionText}>{tweet.comments}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity style={styles.actionButton} onPress={handleShare}>
             <Icon
               name="repeat"
               size={16}
