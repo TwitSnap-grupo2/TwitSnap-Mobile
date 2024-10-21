@@ -2,10 +2,12 @@ import BackHeader from "@/components/BackHeader";
 import TweetComponent from "@/components/TwitSnap";
 import { UserContext } from "@/context/context";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import {
   Image,
+  RefreshControl,
   SafeAreaView,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -22,6 +24,7 @@ export default function ProfileHomeScreen() {
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
   const { id, initialFollowed } = useLocalSearchParams();
   const userContext = useContext(UserContext);
@@ -31,6 +34,15 @@ export default function ProfileHomeScreen() {
   const [followed, setFollowed] = useState(
     initialFollowed == "1" ? true : false
   );
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchTweets();
+
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
   async function handleFollow() {
     if (followed) {
@@ -93,17 +105,42 @@ export default function ProfileHomeScreen() {
       `https://api-gateway-ccbe.onrender.com/twits/user/${id}`,
       "GET"
     );
+    
     if (response.status === 200) {
-      const data = await response.json();
+      let data = await response.json();
       const data_tweets = data.map((tweet: Tweet) => {
+        let sharedByMe = false;
+        let sharedBy = null;
+        if (tweet.sharedBy) {
+          sharedByMe = tweet.sharedBy == currentUser?.id;
+          sharedBy = user?.user;
+        }
+        let likedByMe = false;
+        const likeResponse = fetch_to(
+          `https://api-gateway-ccbe.onrender.com/twits/${tweet.id}/like`,
+          "GET"
+        );
+        likeResponse.then((res) => {
+          if (res.status === 200) {
+            likedByMe = true;
+          } else {
+            likedByMe = false;
+          }
+
+        });
         return {
+          id: tweet.id,
           avatar: user?.avatar,
           name: user?.name,
           username: user?.user,
           message: tweet.message,
-          likes_count: 0,
-          shares_count: 0,
+          likes_count: tweet.likes_count,
+          shares_count: tweet.shares_count,
+          sharedBy: sharedBy,
           comments: 0,
+          createdBy: user?.id,
+          likedByMe: likedByMe,
+          sharedByMe: sharedByMe,
         };
       });
       setTweets(data_tweets);
@@ -182,10 +219,20 @@ export default function ProfileHomeScreen() {
           )}
         </View>
       </View>
-      {tweets.map((tweet, index) => (
-        // @ts-ignore
-        <TweetComponent key={index} initialTweet={tweet} />
-      ))}
+      <ScrollView
+      refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
+       {tweets.length > 0 &&
+          tweets.map((tweet, index) => (
+            <TweetComponent
+              key={index}
+              initialTweet={tweet}
+              shareTweet={onRefresh}
+            />
+          ))}
+      </ScrollView>
+     
       <View className="flex-1">
         <SnackBarComponent
           visible={visible}
@@ -196,3 +243,4 @@ export default function ProfileHomeScreen() {
     </SafeAreaView>
   );
 }
+
