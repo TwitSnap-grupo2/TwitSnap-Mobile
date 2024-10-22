@@ -19,7 +19,7 @@ import Loading from "@/components/Loading";
 import SnackBarComponent from "@/components/Snackbar";
 
 export default function ProfileHomeScreen() {
-  const [tweets, setTweets] = useState([]);
+  const [tweets, setTweets] = useState<Tweet[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
@@ -108,48 +108,58 @@ export default function ProfileHomeScreen() {
     
     if (response.status === 200) {
       let data = await response.json();
-      const data_tweets = data.map((tweet: Tweet) => {
-        let sharedByMe = false;
-        let sharedBy = null;
-        if (tweet.sharedBy) {
-          sharedByMe = tweet.sharedBy == currentUser?.id;
-          sharedBy = user?.user;
-        }
-        let likedByMe = false;
-        const likeResponse = fetch_to(
-          `https://api-gateway-ccbe.onrender.com/twits/${tweet.id}/like`,
-          "GET"
-        );
-        likeResponse.then((res) => {
-          if (res.status === 200) {
-            likedByMe = true;
+      
+      // Utilizamos Promise.all para esperar a todas las promesas de los map
+      const data_tweets = await Promise.all(
+        data.map(async (tweet: Tweet) => {
+          let sharedByMe = false;
+          let sharedBy = null;
+          if (tweet.sharedBy) {
+            sharedByMe = tweet.sharedBy == currentUser?.id;
+            sharedBy = user?.user;
+          }
+          
+          let likedByMe = false;
+          const likeResponse = await fetch_to(
+            `https://api-gateway-ccbe.onrender.com/twits/${tweet.id}/like`,
+            "GET"
+          );
+  
+          if (likeResponse.status === 200) {
+            const data = await likeResponse.json();
+            data.forEach((like: any) => {
+              if (like.likedBy == currentUser?.id) {
+                likedByMe = true;
+              }
+            });
           } else {
             likedByMe = false;
           }
-
-        });
-        return {
-          id: tweet.id,
-          avatar: user?.avatar,
-          name: user?.name,
-          username: user?.user,
-          message: tweet.message,
-          likes_count: tweet.likes_count,
-          shares_count: tweet.shares_count,
-          sharedBy: sharedBy,
-          comments: 0,
-          createdBy: user?.id,
-          likedByMe: likedByMe,
-          sharedByMe: sharedByMe,
-        };
-      });
+  
+          return {
+            id: tweet.id,
+            avatar: user?.avatar,
+            name: user?.name,
+            username: user?.user,
+            message: tweet.message,
+            likes_count: tweet.likes_count,
+            shares_count: tweet.shares_count,
+            sharedBy: sharedBy,
+            comments: 0,
+            createdBy: user?.id,
+            likedByMe: likedByMe,
+            sharedByMe: sharedByMe,
+          };
+        })
+      );
+  
       setTweets(data_tweets);
       setLoading(false);
     } else {
       setMessage("Error al obtener los twits " + response.status);
     }
   };
-
+  
   useEffect(() => {
     fetchUser();
   }, []);
