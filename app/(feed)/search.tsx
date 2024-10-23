@@ -47,7 +47,7 @@ export default function SearchScreen() {
         value={searchQuery}
       />
       {listOfUsers.map((user) => (
-        <View className="p-1">
+        <View className="p-1" key={user.id}>
           <UserCard user={user} />
         </View>
       ))}

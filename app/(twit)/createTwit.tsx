@@ -1,12 +1,14 @@
 import { TextInput, Button, Avatar, IconButton } from "react-native-paper";
 import { View, TouchableOpacity, KeyboardAvoidingView } from "react-native";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "expo-router";
 import { UserContext } from "@/context/context";
 import { fetch_to } from "@/utils/fetch";
 import { styled } from "nativewind";
 import SnackBarComponent from "@/components/Snackbar";
-import BackHeader from "@/components/BackHeader";
+import { User } from "@/types/User";
+import UserCard from "@/components/UserCard";
+import Loading from "@/components/Loading";
 
 const StyledView = styled(View);
 
@@ -17,10 +19,108 @@ const CreateTweetScreen = () => {
   const user = userContext ? userContext.user : null;
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [searching, setSearching] = useState(false);
+  const [mentionedUsers, setMentionedUsers] = useState<Array<User>>([]);
+  const [cursorPosition, setCursorPosition] = useState(0);
+  const [currentWord, setCurrentWord] = useState("");
+  const typingTimeout = useRef<NodeJS.Timeout | null>(null);
+  const [listOfUsers, setListOfUsers] = useState<Array<User>>([]);
+
+  async function handleTypingStop(input: string) {
+    setSearching(true);
+    const response = await fetch_to(
+      `https://api-gateway-ccbe.onrender.com/users/search/?user=${input}&limit=10`,
+      "GET"
+    );
+    if (response.status === 200) {
+      const data = await response.json();
+      setSearching(false);
+      setListOfUsers(data);
+    } else {
+      console.error(
+        "Error al obtener los usuarios",
+        response.status,
+        response.text
+      );
+    }
+  }
+
+  const findWordAtCursor = (text: string, cursorPosition: number) => {
+    const start = text.lastIndexOf(" ", cursorPosition - 1) + 1;
+    const end = text.indexOf(" ", cursorPosition);
+    return text.substring(start, end === -1 ? text.length : end);
+  };
+
+  const handleSelectionChange = ({
+    nativeEvent: { selection },
+  }: {
+    nativeEvent: { selection: { start: number; end: number } };
+  }) => {
+    setCursorPosition(selection.start);
+    setCurrentWord(findWordAtCursor(tweet, selection.start));
+  };
+
+  const handleTextChange = (input: string) => {
+    const ant_tweet = tweet;
+    setTweet(input);
+
+    // si el nuevo input solo tiene un espacio en blanco mas que el anterior, no hago nada
+    if (
+      input.length === ant_tweet.length + 1 &&
+      input[input.length - 1] === " "
+    ) {
+      return;
+    }
+
+    let word = "";
+    if (input.length < ant_tweet.length) {
+      word = findWordAtCursor(input, cursorPosition - 1);
+      const ant_word = findWordAtCursor(ant_tweet, cursorPosition - 1);
+
+      if (word.length > 1 && word[0] === "@") {
+        const user = mentionedUsers.find(
+          (user) => user.user === ant_word.slice(1)
+        );
+        if (user) {
+          const filteredUsers = mentionedUsers.filter((u) => u.id !== user.id);
+          setMentionedUsers(filteredUsers);
+        }
+      }
+    } else {
+      word = findWordAtCursor(input, cursorPosition);
+    }
+
+    if (word.length > 1 && word[0] === "@") {
+      if (typingTimeout.current) {
+        clearTimeout(typingTimeout.current);
+      }
+
+      typingTimeout.current = setTimeout(() => {
+        // le paso la ultima palabra sin el arroba
+        handleTypingStop(word.slice(1));
+      }, 500);
+    }
+  };
+
+  function mencionUser(user: User) {
+    //reemplazo la ultima palabra por el usuario
+    const nuevaMencion = tweet.replace(currentWord, `@${user.user}`);
+
+    if (!mentionedUsers.includes(user)) {
+      setMentionedUsers([...mentionedUsers, user]);
+    }
+    setTweet(nuevaMencion);
+    setListOfUsers([]);
+  }
+
+  useEffect(() => {
+    setCurrentWord(findWordAtCursor(tweet, cursorPosition));
+  }, [tweet, cursorPosition]);
 
   async function handleSubmit() {
     try {
+      let tweetId = "";
       const response = await fetch_to(
         "https://api-gateway-ccbe.onrender.com/twits/",
         "POST",
@@ -32,12 +132,34 @@ const CreateTweetScreen = () => {
       );
 
       if (response.status === 201) {
+        const data = await response.json();
+        tweetId = data.id;
         setVisible(true);
         setMessage("Twit snapeado correctamente");
-        handleBack();
+        setLoading(true);
       } else {
         setMessage("Error al crear el usuario " + response.status);
       }
+
+      // Por cada usuario mencionado, se crea un nuevo twit
+      mentionedUsers.forEach(async (user) => {
+        const response = await fetch_to(
+          `https://api-gateway-ccbe.onrender.com/twits/${tweetId}/mention`,
+          "POST",
+          {
+            mentionedUser: user.id,
+          }
+        );
+
+        if (response.status === 201) {
+          setVisible(true);
+          setMessage("Twit snapeado correctamente");
+          // handleBack();
+        } else {
+          setMessage("Error al crear el usuario " + response.status);
+        }
+      });
+      handleBack();
     } catch (error) {
       console.error("failed to sign up:", error);
     }
@@ -52,6 +174,13 @@ const CreateTweetScreen = () => {
     }, 1000);
   }
 
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center h-full w-full">
+        <Loading />
+      </View>
+    );
+  }
   return (
     <KeyboardAvoidingView
       behavior="padding"
@@ -78,19 +207,33 @@ const CreateTweetScreen = () => {
           placeholderTextColor="#aaa"
           multiline
           value={tweet}
-          onChangeText={setTweet}
+          onChangeText={handleTextChange}
+          onSelectionChange={handleSelectionChange}
           style={{
             flex: 1,
             marginLeft: 10,
             color: "white",
             fontSize: 18,
             backgroundColor: "transparent",
-            marginBottom: 100,
+            marginBottom: 80,
           }}
           underlineColor="transparent"
           activeUnderlineColor="transparent"
         />
       </View>
+
+      {/* Lista de usuarios */}
+      {searching && (
+        <View>
+          <Loading />
+        </View>
+      )}
+      {listOfUsers.length > 0 &&
+        listOfUsers.map((user) => (
+          <View key={user.id}>
+            <UserCard user={user} customHandle={mencionUser} />
+          </View>
+        ))}
 
       {/* Barra inferior con íconos */}
       <View

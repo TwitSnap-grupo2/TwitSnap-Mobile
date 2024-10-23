@@ -122,7 +122,7 @@ export default function ProfileHomeScreen() {
         if (tweet.sharedBy == null) {
           return;
         }
-        const resnapeado = tweet.sharedBy == user?.id;
+        const resnapeado = tweet.sharedBy == currentUser?.id;
         if (resnapeado) {
           sharedTwit[tweet.id] = resnapeado;
         }
@@ -175,7 +175,7 @@ export default function ProfileHomeScreen() {
 
       const userLikes: { [key: string]: any } = {};
       likes.flat().forEach((like) => {
-        const megusteado = like.likedBy == user?.id;
+        const megusteado = like.likedBy == currentUser?.id;
         if (megusteado) {
           userLikes[like.twitsnapId] = megusteado;
         }

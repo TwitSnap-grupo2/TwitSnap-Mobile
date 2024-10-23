@@ -3,9 +3,19 @@ import { Card, Avatar } from "react-native-paper";
 import { User } from "@/types/User";
 import { useRouter } from "expo-router";
 
-export default function UserCard({ user }: { user: User }) {
+export default function UserCard({
+  user,
+  customHandle,
+}: {
+  user: User;
+  customHandle?: (user: User) => void;
+}) {
   const router = useRouter();
   function handleUser() {
+    if (customHandle) {
+      customHandle(user);
+      return;
+    }
     router.push(`/(profile)/${user.id}`);
   }
 
