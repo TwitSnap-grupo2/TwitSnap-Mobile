@@ -172,7 +172,7 @@ const FeedScreen = () => {
   }
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-white dark:bg-black">
       <ScrollView
         className="px-4 py-2"
         refreshControl={
