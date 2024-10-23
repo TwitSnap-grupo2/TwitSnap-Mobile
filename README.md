@@ -3,7 +3,30 @@
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
 ## Get started
+### Install eas
+```bash
+npm install -g eas-cli
+```
 
+### Correr en Emulador
+1. Install dependencies
+   ```bash
+   npm install
+   ```
+2. Pre build
+   ```bash
+   npx expo prebuild --clean
+   ```  
+3. Start the app
+   ```bash
+   npx expo start
+   ```
+4. Open app in emulator (just click 'a' in console)
+   ```bash
+   a
+   ```
+
+### Correr en Android
 1. Install dependencies
 
    ```bash
