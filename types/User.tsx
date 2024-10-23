@@ -6,4 +6,6 @@ export interface User {
   email: string;
   followers: Array<string>;
   followeds: Array<string>;
+  location: string;
+  interests: Array<string>;
 }

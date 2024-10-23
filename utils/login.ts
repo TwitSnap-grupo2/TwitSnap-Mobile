@@ -53,6 +53,8 @@ export async function FindUserByEmail(email: string | null) {
         avatar: `https://robohash.org/${data.id}.png`,
         followers: data.followers,
         followeds: data.followeds,
+        location: data.location,
+        interests: data.interests,
         };
         return user;
     } else {

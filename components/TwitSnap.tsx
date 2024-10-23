@@ -93,7 +93,10 @@ export default function TweetComponent({
       );
 
       if (response.status != 201) {
-        console.error("Error al dar like al tweet", response.status);
+        console.error(
+          "Error al dar like al tweet",
+          response.status + " " + response.statusText
+        );
       }
     }
   }

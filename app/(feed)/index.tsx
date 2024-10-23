@@ -8,6 +8,7 @@ import { UserContext } from "@/context/context";
 import { fetch_to } from "@/utils/fetch";
 import Loading from "@/components/Loading";
 import { Tweet } from "@/types/tweets";
+import { useIsFocused } from "@react-navigation/native";
 
 const FeedScreen = () => {
   const [tweets, setTweets] = useState<Tweet[]>([]);
@@ -24,6 +25,8 @@ const FeedScreen = () => {
   const router = useRouter();
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
+  const isFocused = useIsFocused();
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchTweets();
@@ -138,6 +141,7 @@ const FeedScreen = () => {
           };
         });
         setTweets(mappedTweets);
+        setLoading(false);
       } else {
         setMessage("Error al obtener los twits " + response.status);
       }
@@ -148,14 +152,16 @@ const FeedScreen = () => {
   };
 
   useEffect(() => {
-    fetchTweets();
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      setLoading(false);
+    if (isFocused) {
+      onRefresh();
     }
-  }, [user, tweets]);
+  }, [isFocused]);
+
+  // useEffect(() => {
+  //   if (user) {
+  //     setLoading(false);
+  //   }
+  // }, [user, tweets]);
 
   if (loading) {
     return (
@@ -204,6 +210,11 @@ const FeedScreen = () => {
         </View>
 
         {/* Renderizar los tweets */}
+        {tweets.length === 0 && (
+          <Text className="text-center text-gray-500 text-lg">
+            No hay twits para mostrar
+          </Text>
+        )}
         {tweets.length > 0 &&
           tweets.map((tweet, index) => (
             <TweetComponent
