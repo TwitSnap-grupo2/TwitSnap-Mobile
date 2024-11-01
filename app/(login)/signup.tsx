@@ -19,13 +19,17 @@ import { fetch_to } from "@/utils/fetch";
 import { Snackbar } from "react-native-paper";
 import * as Yup from "yup";
 import { Formik } from "formik";
+import Input from "@/components/Input";
+
+interface SignUpValues {
+  email: string;
+  password: string;
+  name: string;
+  username: string;
+}
 
 export default function SignUpScreen() {
   const colorScheme = useColorScheme();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
-  const [name, setName] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
   const userContext = useContext(UserContext);
@@ -55,9 +59,15 @@ export default function SignUpScreen() {
     email: Yup.string()
       .email("Por favor, ingrese un email valido")
       .required("El email es obligatorio"),
-    password: Yup.string().min(6).required("La contraseña es obligatoria"),
-    name: Yup.string().min(6).required("La contraseña es obligatoria"),
-    username: Yup.string().min(6).required("La contraseña es obligatoria"),
+    password: Yup.string()
+      .min(6, "La contraseña debe tener al menos seis caracteres")
+      .required("La contraseña es obligatoria"),
+    name: Yup.string()
+      .min(6, "El nombre debe tener al menos seis caracteres")
+      .required("El nombre es obligatorio"),
+    username: Yup.string()
+      .min(6, "El nombre de usuario debe tener al menos seis caracteres")
+      .required("El nombre de usuario es obligatorio"),
   });
 
   async function signup(email: string, pass: string) {
@@ -75,7 +85,12 @@ export default function SignUpScreen() {
     }
   }
 
-  async function handleSignUp() {
+  async function handleSignUp({
+    email,
+    password,
+    username,
+    name,
+  }: SignUpValues) {
     try {
       const user = await signup(email, password);
       if (user) {
@@ -132,38 +147,51 @@ export default function SignUpScreen() {
       >
         {({ errors, touched, handleChange, handleBlur, values }) => (
           <View className="px-8">
-            <TextInput
+            <Input
+              name="email"
               placeholder="Email"
-              keyboardType="email-address"
-              placeholderTextColor={colorScheme === "dark" ? "#fff" : "#000"}
-              id="email"
-              onChangeText={setEmail}
-              className="bg-gray-100 dark:bg-gray-700 text-dark dark:text-white p-4 mb-4 rounded-full"
+              onChangeText={handleChange("email")}
+              value={values.email}
+              onBlur={handleBlur("email")}
+              errorMessage={errors.email}
+              isTouched={touched.email}
             />
-            <TextInput
-              placeholder="Contraseña"
-              placeholderTextColor={colorScheme === "dark" ? "#fff" : "#000"}
-              secureTextEntry={true}
-              id="password"
-              onChangeText={setPassword}
-              className="bg-gray-100 dark:bg-gray-700 text-dark dark:text-white p-4 mb-4 rounded-full"
+
+            <Input
+              name="password"
+              placeholder="Password"
+              onChangeText={handleChange("password")}
+              value={values.password}
+              onBlur={handleBlur("password")}
+              errorMessage={errors.password}
+              isTouched={touched.password}
             />
-            <TextInput
+
+            <Input
+              name="name"
               placeholder="Nombre"
-              placeholderTextColor={colorScheme === "dark" ? "#fff" : "#000"}
-              id="name"
-              onChangeText={setName}
-              className="bg-gray-100 dark:bg-gray-700 text-dark dark:text-white p-4 mb-4 rounded-full"
+              onChangeText={handleChange("name")}
+              value={values.name}
+              onBlur={handleBlur("name")}
+              errorMessage={errors.name}
+              isTouched={touched.name}
             />
-            <TextInput
+
+            <Input
+              name="username"
               placeholder="Nombre de usuario"
-              placeholderTextColor={colorScheme === "dark" ? "#fff" : "#000"}
-              id="username"
-              onChangeText={setUsername}
-              className="bg-gray-100 dark:bg-gray-700 text-dark dark:text-white p-4 mb-4 rounded-full"
+              onChangeText={handleChange("username")}
+              value={values.username}
+              onBlur={handleBlur("username")}
+              errorMessage={errors.username}
+              isTouched={touched.username}
             />
-            <View className="px-8">
-              <TouchableOpacity className="mb-4" onPress={handleSignUp}>
+
+            <View className="mt-5">
+              <TouchableOpacity
+                className="mb-4"
+                onPress={() => handleSignUp(values)}
+              >
                 <Text className="bg-blue-500 text-white text-center font-bold p-4 rounded-full">
                   Registrarse
                 </Text>
@@ -172,42 +200,6 @@ export default function SignUpScreen() {
           </View>
         )}
       </Formik>
-      {/* <View className="px-8">
-        <TextInput
-          placeholder="Email"
-          keyboardType="email-address"
-          placeholderTextColor={colorScheme === "dark" ? "#fff" : "#000"}
-          id="email"
-          onChangeText={setEmail}
-          className="bg-gray-100 dark:bg-gray-700 text-dark dark:text-white p-4 mb-4 rounded-full"
-        />
-        <TextInput
-          placeholder="Contraseña"
-          placeholderTextColor={colorScheme === "dark" ? "#fff" : "#000"}
-          secureTextEntry={true}
-          id="password"
-          onChangeText={setPassword}
-          className="bg-gray-100 dark:bg-gray-700 text-dark dark:text-white p-4 mb-4 rounded-full"
-        />
-        <TextInput
-          placeholder="Nombre"
-          placeholderTextColor={colorScheme === "dark" ? "#fff" : "#000"}
-          id="name"
-          onChangeText={setName}
-          className="bg-gray-100 dark:bg-gray-700 text-dark dark:text-white p-4 mb-4 rounded-full"
-        />
-        <TextInput
-          placeholder="Nombre de usuario"
-          placeholderTextColor={colorScheme === "dark" ? "#fff" : "#000"}
-          id="username"
-          onChangeText={setUsername}
-          className="bg-gray-100 dark:bg-gray-700 text-dark dark:text-white p-4 mb-4 rounded-full"
-        />
-      </View>
-
-      {errorMessage ? (
-        <Text className="text-red-700 mb-12">{errorMessage}</Text>
-      ) : null} */}
 
       <View className="px-8">
         <Snackbar
