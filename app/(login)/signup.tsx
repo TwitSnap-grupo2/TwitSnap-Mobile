@@ -13,11 +13,12 @@ import { UserContext } from "@/context/context";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
-  UserCredential,
 } from "firebase/auth";
 import { auth } from "@/services/config";
 import { fetch_to } from "@/utils/fetch";
 import { Snackbar } from "react-native-paper";
+import * as Yup from "yup";
+import { Formik } from "formik";
 
 export default function SignUpScreen() {
   const colorScheme = useColorScheme();
@@ -49,6 +50,15 @@ export default function SignUpScreen() {
       console.error("failed to send email verification:", error);
     }
   }
+
+  const signUpSchema = Yup.object().shape({
+    email: Yup.string()
+      .email("Por favor, ingrese un email valido")
+      .required("El email es obligatorio"),
+    password: Yup.string().min(6).required("La contraseña es obligatoria"),
+    name: Yup.string().min(6).required("La contraseña es obligatoria"),
+    username: Yup.string().min(6).required("La contraseña es obligatoria"),
+  });
 
   async function signup(email: string, pass: string) {
     try {
@@ -115,7 +125,54 @@ export default function SignUpScreen() {
         </Text>
       </View>
 
-      <View className="px-8">
+      <Formik
+        initialValues={{ email: "", password: "", username: "", name: "" }}
+        validationSchema={signUpSchema}
+        onSubmit={() => console.log()}
+      >
+        {({ errors, touched, handleChange, handleBlur, values }) => (
+          <View className="px-8">
+            <TextInput
+              placeholder="Email"
+              keyboardType="email-address"
+              placeholderTextColor={colorScheme === "dark" ? "#fff" : "#000"}
+              id="email"
+              onChangeText={setEmail}
+              className="bg-gray-100 dark:bg-gray-700 text-dark dark:text-white p-4 mb-4 rounded-full"
+            />
+            <TextInput
+              placeholder="Contraseña"
+              placeholderTextColor={colorScheme === "dark" ? "#fff" : "#000"}
+              secureTextEntry={true}
+              id="password"
+              onChangeText={setPassword}
+              className="bg-gray-100 dark:bg-gray-700 text-dark dark:text-white p-4 mb-4 rounded-full"
+            />
+            <TextInput
+              placeholder="Nombre"
+              placeholderTextColor={colorScheme === "dark" ? "#fff" : "#000"}
+              id="name"
+              onChangeText={setName}
+              className="bg-gray-100 dark:bg-gray-700 text-dark dark:text-white p-4 mb-4 rounded-full"
+            />
+            <TextInput
+              placeholder="Nombre de usuario"
+              placeholderTextColor={colorScheme === "dark" ? "#fff" : "#000"}
+              id="username"
+              onChangeText={setUsername}
+              className="bg-gray-100 dark:bg-gray-700 text-dark dark:text-white p-4 mb-4 rounded-full"
+            />
+            <View className="px-8">
+              <TouchableOpacity className="mb-4" onPress={handleSignUp}>
+                <Text className="bg-blue-500 text-white text-center font-bold p-4 rounded-full">
+                  Registrarse
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+      </Formik>
+      {/* <View className="px-8">
         <TextInput
           placeholder="Email"
           keyboardType="email-address"
@@ -150,15 +207,8 @@ export default function SignUpScreen() {
 
       {errorMessage ? (
         <Text className="text-red-700 mb-12">{errorMessage}</Text>
-      ) : null}
+      ) : null} */}
 
-      <View className="px-8">
-        <TouchableOpacity className="mb-4" onPress={handleSignUp}>
-          <Text className="bg-blue-500 text-white text-center font-bold p-4 rounded-full">
-            Registrarse
-          </Text>
-        </TouchableOpacity>
-      </View>
       <View className="px-8">
         <Snackbar
           visible={visible}
