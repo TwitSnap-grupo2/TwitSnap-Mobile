@@ -24,8 +24,6 @@ interface loginValues {
 export default function SignInScreen() {
   const colorScheme = useColorScheme();
   const userContext = useContext(UserContext);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -38,7 +36,9 @@ export default function SignInScreen() {
   const router = useRouter();
 
   const loginSchema = Yup.object().shape({
-    email: Yup.string().email().required("El email es obligatorio"),
+    email: Yup.string()
+      .email("Por favor, ingrese un email valido")
+      .required("El email es obligatorio"),
     password: Yup.string().min(6).required("La contraseña es obligatoria"),
   });
 
@@ -80,8 +80,7 @@ export default function SignInScreen() {
         <Formik
           initialValues={{ email: "", password: "" }}
           validationSchema={loginSchema}
-          // onSubmit={handleLogin}
-          onSubmit={(values) => console.log(values)}
+          onSubmit={handleLogin}
         >
           {({ errors, touched, handleChange, handleBlur, values }) => (
             <View className="flex">
