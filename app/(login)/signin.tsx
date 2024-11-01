@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { View, Text, Image, SafeAreaView, TextInput } from "react-native";
-import { Button } from "react-native-paper";
+import { Button, HelperText } from "react-native-paper";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useContext, useState } from "react";
 import { UserContext } from "@/context/context";
@@ -13,6 +13,13 @@ import { fetch_to } from "@/utils/fetch";
 import Loading from "@/components/Loading";
 import SnackBarComponent from "@/components/Snackbar";
 import { LoginWithEmailAndPassword } from "@/utils/login";
+import { Formik, FormikErrors, FormikHelpers } from "formik";
+import * as Yup from "yup";
+
+interface loginValues {
+  email: string;
+  password: string;
+}
 
 export default function SignInScreen() {
   const colorScheme = useColorScheme();
@@ -30,7 +37,12 @@ export default function SignInScreen() {
   const { saveUser } = userContext;
   const router = useRouter();
 
-  const handleLogin = async () => {
+  const loginSchema = Yup.object().shape({
+    email: Yup.string().email().required("El email es obligatorio"),
+    password: Yup.string().min(6).required("La contraseña es obligatoria"),
+  });
+
+  const handleLogin = async ({ email, password }: loginValues) => {
     const currentUser = await LoginWithEmailAndPassword(email, password);
     if (currentUser) {
       saveUser(currentUser);
@@ -38,7 +50,8 @@ export default function SignInScreen() {
       setVisible(true);
       router.replace("/(feed)");
     } else {
-      setMessage("Error al obtener el usuario ");
+      setVisible(true);
+      setMessage("Credenciales incorrectas");
     }
   };
 
@@ -64,44 +77,96 @@ export default function SignInScreen() {
 
       <View className="px-8">
         {loading && <Loading />}
-        <TextInput
-          placeholder="Email"
-          placeholderTextColor={colorScheme === "dark" ? "#fff" : "#000"}
-          id="email"
-          onChangeText={setEmail}
-          className="bg-gray-100 dark:bg-gray-700 text-dark dark:text-white p-4 mb-4 rounded-full"
-        />
-        <TextInput
-          placeholder="Contraseña"
-          placeholderTextColor={colorScheme === "dark" ? "#fff" : "#000"}
-          secureTextEntry={true}
-          id="password"
-          onChangeText={setPassword}
-          className="bg-gray-100 dark:bg-gray-700 text-dark dark:text-white p-4 mb-4 rounded-full"
-        />
+        <Formik
+          initialValues={{ email: "", password: "" }}
+          validationSchema={loginSchema}
+          // onSubmit={handleLogin}
+          onSubmit={(values) => console.log(values)}
+        >
+          {({ errors, touched, handleChange, handleBlur, values }) => (
+            <View className="flex">
+              <View>
+                <TextInput
+                  placeholder="Email"
+                  id="email"
+                  onChangeText={handleChange("email")}
+                  value={values.email}
+                  onBlur={handleBlur("email")}
+                  placeholderTextColor={
+                    errors.email && touched.email
+                      ? "#FF0000"
+                      : colorScheme === "dark"
+                      ? "#ccc"
+                      : "#888"
+                  }
+                  className={`p-3 rounded-lg border ${
+                    errors.email && touched.email
+                      ? "border-red-500 bg-red-50 text-red-600" // Red border, light red background, and red text color for errors
+                      : "border-transparent bg-gray-100 dark:bg-gray-700 text-black dark:text-white"
+                  } rounded-full`}
+                />
+                <View
+                  style={{
+                    minHeight: 15,
+                    marginLeft: 11,
+                    marginVertical: 1,
+                  }}
+                >
+                  {errors.email && touched.email ? (
+                    <Text className="mb-1 text-red-600 ">{errors.email}</Text>
+                  ) : null}
+                </View>
+              </View>
+              <View>
+                <TextInput
+                  placeholder="Contraseña"
+                  secureTextEntry={true}
+                  value={values.password}
+                  id="password"
+                  onChangeText={handleChange("password")}
+                  onBlur={handleBlur("password")}
+                  placeholderTextColor={
+                    errors.password && touched.password
+                      ? "#FF0000"
+                      : colorScheme === "dark"
+                      ? "#ccc"
+                      : "#888"
+                  }
+                  className={`p-3 rounded-lg border ${
+                    errors.password && touched.password
+                      ? "border-red-500 bg-red-50 text-red-600" // Red border, light red background, and red text color for errors
+                      : "border-transparent bg-gray-100 dark:bg-gray-700 text-black dark:text-white"
+                  } rounded-full`}
+                />
+                <View
+                  style={{ minHeight: 15, marginLeft: 11, marginVertical: 1 }}
+                >
+                  {errors.password && touched.password ? (
+                    <Text className="mb-1 text-red-600">{errors.password}</Text>
+                  ) : null}
+                </View>
+              </View>
+              <Button
+                mode="contained"
+                onPress={() => handleLogin(values)}
+                style={{ backgroundColor: "#1DA1F2" }}
+                className="mb-4 mt-1 p-1 rounded-full"
+              >
+                Iniciar sesión
+              </Button>
+              <Button
+                mode="contained"
+                onPress={() => router.push("./resetPassword")}
+                className="bg-slate-600 mb-4 p-1 rounded-full"
+              >
+                Restablecer contraseña
+              </Button>
+            </View>
+          )}
+        </Formik>
       </View>
 
-      <View className="px-8">
-        <Button
-          mode="contained"
-          onPress={handleLogin}
-          style={{ backgroundColor: "#1DA1F2" }}
-          className="mb-4"
-        >
-          Iniciar sesión
-        </Button>
-      </View>
-      <View className="flex-1 ">
-        <Button
-          mode="text"
-          onPress={() => router.push("./resetPassword")}
-          className="mb-4"
-        >
-          Restablecer contraseña
-        </Button>
-      </View>
-
-      <View className="flex-1 ">
+      <View className="flex-1">
         <SnackBarComponent
           visible={visible}
           action={() => setVisible(false)}
