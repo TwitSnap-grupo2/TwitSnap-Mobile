@@ -1,5 +1,11 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { View, ScrollView, RefreshControl, Text } from "react-native";
+import {
+  View,
+  ScrollView,
+  RefreshControl,
+  Text,
+  BackHandler,
+} from "react-native";
 import { Avatar, FAB, Snackbar } from "react-native-paper";
 import { useRouter } from "expo-router";
 import TweetComponent from "@/components/TwitSnap";
@@ -28,6 +34,26 @@ const FeedScreen = () => {
   const [message, setMessage] = useState("");
   const isFocused = useIsFocused();
 
+  useEffect(() => {
+    const backAction = () => {
+      if (user) {
+        // exit the app if the user is logged in and on the home screen
+        BackHandler.exitApp();
+        return true;
+      } else {
+        // Otherwise, go back to the previous screen (e.g., login)
+        router.back();
+        return true;
+      }
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [user, router]);
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchTweets();

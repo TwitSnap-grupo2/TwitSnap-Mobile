@@ -1,5 +1,12 @@
-import { TextInput, Button, Avatar, IconButton } from "react-native-paper";
-import { View, TouchableOpacity, KeyboardAvoidingView } from "react-native";
+import { Button, Avatar, IconButton } from "react-native-paper";
+import {
+  TextInput,
+  View,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  BackHandler,
+  ScrollView,
+} from "react-native";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "expo-router";
 import { UserContext } from "@/context/context";
@@ -9,10 +16,14 @@ import SnackBarComponent from "@/components/Snackbar";
 import { User } from "@/types/User";
 import UserCard from "@/components/UserCard";
 import Loading from "@/components/Loading";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { useNavigation } from "@react-navigation/native";
 
 const StyledView = styled(View);
 
 const CreateTweetScreen = () => {
+  const colorScheme = useColorScheme();
   const [tweet, setTweet] = useState("");
   const router = useRouter();
   const userContext = useContext(UserContext);
@@ -26,6 +37,22 @@ const CreateTweetScreen = () => {
   const [currentWord, setCurrentWord] = useState("");
   const typingTimeout = useRef<NodeJS.Timeout | null>(null);
   const [listOfUsers, setListOfUsers] = useState<Array<User>>([]);
+
+  // const navigation = useNavigation();
+
+  useEffect(() => {
+    const backAction = () => {
+      router.replace("/(feed)");
+      return true; // prevent default back action
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   async function handleTypingStop(input: string) {
     setSearching(true);
@@ -186,89 +213,112 @@ const CreateTweetScreen = () => {
       behavior="padding"
       className="flex flex-1 bg-white dark:bg-black"
     >
-      <View style={{ flexDirection: "row", padding: 10, alignItems: "center" }}>
-        <TouchableOpacity onPress={handleBack}>
-          <IconButton icon="close" size={24} />
-        </TouchableOpacity>
-      </View>
-
-      <View
-        style={{ flexDirection: "row", paddingHorizontal: 10, paddingTop: 20 }}
-      >
-        {/* Avatar del usuario */}
-        <Avatar.Image
-          size={50}
-          source={{ uri: user?.avatar || "https://example.com/avatar.png" }}
-        />
-
-        {/* Input para el tweet */}
-        <TextInput
-          placeholder="¿Qué está pasando?"
-          placeholderTextColor="#aaa"
-          multiline
-          value={tweet}
-          onChangeText={handleTextChange}
-          onSelectionChange={handleSelectionChange}
-          style={{
-            flex: 1,
-            marginLeft: 10,
-            color: "white",
-            fontSize: 18,
-            backgroundColor: "transparent",
-            marginBottom: 80,
-          }}
-          underlineColor="transparent"
-          activeUnderlineColor="transparent"
-        />
-      </View>
-
-      {/* Lista de usuarios */}
-      {searching && (
-        <View>
-          <Loading />
-        </View>
-      )}
-      {listOfUsers.length > 0 &&
-        listOfUsers.map((user) => (
-          <View key={user.id}>
-            <UserCard user={user} customHandle={mencionUser} />
-          </View>
-        ))}
-
-      {/* Barra inferior con íconos */}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          paddingVertical: 0,
-          paddingHorizontal: 10,
-          borderTopWidth: 1,
-          borderTopColor: "#333",
-        }}
-      >
-        {/* Íconos de la barra inferior */}
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <IconButton icon="image" size={30} onPress={() => {}} />
-        </View>
-      </View>
-      <View className="flex  px-8">
-        <Button
-          mode="contained"
-          onPress={handleSubmit}
-          style={{ backgroundColor: "#1DA1F2" }}
-          className="mb-4"
+      <SafeAreaView>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
         >
-          Publicar
-        </Button>
-      </View>
-      <View className="flex-1 ">
-        <SnackBarComponent
-          visible={visible}
-          action={() => setVisible(false)}
-          message={message}
-        />
-      </View>
+          <View
+            className="flex flex-row p-2 justify-between"
+            // style={{ flexDirection: "row", padding: 10, alignItems: "center" }}
+          >
+            <TouchableOpacity onPress={handleBack}>
+              <IconButton
+                iconColor={colorScheme == "dark" ? "white" : "black"}
+                icon="close"
+                size={24}
+              />
+            </TouchableOpacity>
+            <Button
+              mode="contained"
+              onPress={handleSubmit}
+              style={{ backgroundColor: "#1DA1F2" }}
+              className="mb-4 mt-1"
+            >
+              Publicar
+            </Button>
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              paddingHorizontal: 10,
+              paddingTop: 20,
+            }}
+          >
+            {/* Avatar del usuario */}
+            <Avatar.Image
+              size={50}
+              source={{ uri: user?.avatar || "https://example.com/avatar.png" }}
+            />
+
+            {/* Input para el tweet */}
+            <TextInput
+              placeholder="¿Qué está pasando?"
+              placeholderTextColor="#aaa"
+              multiline
+              value={tweet}
+              onChangeText={handleTextChange}
+              onSelectionChange={handleSelectionChange}
+              autoFocus={true}
+              style={{
+                flex: 1,
+                marginLeft: 12,
+                color: "#cfcccc",
+                fontSize: 18,
+                backgroundColor: "transparent",
+                marginBottom: 80,
+              }}
+              selectionColor="rgba(0, 122, 255, 0.5)" // semi-transparent blue
+            />
+          </View>
+
+          {/* Lista de usuarios */}
+          {searching && (
+            <View>
+              <Loading />
+            </View>
+          )}
+          {listOfUsers.length > 0 &&
+            listOfUsers.map((user) => (
+              <View key={user.id}>
+                <UserCard user={user} customHandle={mencionUser} />
+              </View>
+            ))}
+
+          {/* Barra inferior con íconos */}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              display: "flex",
+              paddingVertical: 0,
+              paddingHorizontal: 10,
+              borderTopWidth: 1,
+              borderTopColor: "#333",
+            }}
+          >
+            {/* Íconos de la barra inferior */}
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <IconButton
+                iconColor={colorScheme === "dark" ? "#1DA1F2" : "black"}
+                icon="image"
+                size={30}
+                onPress={() => {}}
+              />
+            </View>
+          </View>
+
+          <View className="flex-1 ">
+            <SnackBarComponent
+              visible={visible}
+              action={() => setVisible(false)}
+              message={message}
+            />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     </KeyboardAvoidingView>
   );
 };

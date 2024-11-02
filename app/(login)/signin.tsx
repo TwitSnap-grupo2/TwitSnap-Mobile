@@ -38,15 +38,21 @@ export default function SignInScreen() {
       .required("La contraseña es obligatoria"),
   });
 
-  const handleLogin = async ({ email, password }: loginValues) => {
+  const handleLogin = async (
+    { email, password }: loginValues,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) => {
+    setSubmitting(true);
     const currentUser = await LoginWithEmailAndPassword(email, password);
     if (currentUser) {
       saveUser(currentUser);
       setMessage("Bienvenid@ a TwitSnap " + currentUser.name);
       setVisible(true);
+      setSubmitting(false);
       router.replace("/(feed)");
     } else {
       setVisible(true);
+      setSubmitting(false);
       setMessage("Credenciales incorrectas");
     }
   };
@@ -76,9 +82,17 @@ export default function SignInScreen() {
         <Formik
           initialValues={{ email: "", password: "" }}
           validationSchema={loginSchema}
-          onSubmit={handleLogin}
+          onSubmit={() => console.log()}
         >
-          {({ errors, touched, handleChange, handleBlur, values }) => (
+          {({
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            values,
+            isSubmitting,
+            setSubmitting,
+          }) => (
             <View className="flex">
               <Input
                 name="email"
@@ -100,11 +114,13 @@ export default function SignInScreen() {
               />
               <Button
                 mode="contained"
-                onPress={() => handleLogin(values)}
+                onPress={() => {
+                  handleLogin(values, setSubmitting);
+                }}
                 style={{ backgroundColor: "#1DA1F2" }}
                 className="mb-4 mt-1 p-1 rounded-full"
               >
-                Iniciar sesión
+                {isSubmitting ? "Logging in..." : "Iniciar sesión"}
               </Button>
               <Button
                 mode="contained"
