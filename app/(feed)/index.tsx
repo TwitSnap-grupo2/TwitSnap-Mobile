@@ -9,6 +9,7 @@ import { fetch_to } from "@/utils/fetch";
 import Loading from "@/components/Loading";
 import { Tweet } from "@/types/tweets";
 import { useIsFocused } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const FeedScreen = () => {
   const [tweets, setTweets] = useState<Tweet[]>([]);
@@ -143,6 +144,7 @@ const FeedScreen = () => {
         setTweets(mappedTweets);
         setLoading(false);
       } else {
+        console.log("ERROR: ", response);
         setMessage("Error al obtener los twits " + response.status);
       }
     } catch (error) {
@@ -172,7 +174,7 @@ const FeedScreen = () => {
   }
 
   return (
-    <View className="flex-1 bg-white dark:bg-black">
+    <SafeAreaView className="flex-1 bg-white dark:bg-black">
       <ScrollView
         className="px-4 py-2"
         refreshControl={
@@ -180,7 +182,7 @@ const FeedScreen = () => {
         }
       >
         {/* Sección del encabezado con los Avatares */}
-        <View className="flex flex-row space-x-28 my-4">
+        <View className="flex flex-row justify-between my-4 mx-2">
           <Avatar.Image
             size={50}
             source={{ uri: user?.avatar }}
@@ -194,15 +196,15 @@ const FeedScreen = () => {
               });
             }}
           />
-          <Avatar.Image
+          {/* <Avatar.Image
             size={50}
             source={require("@/assets/images/twitsnap-logo.webp")}
-          />
+          /> */}
 
           <Avatar.Icon
-            size={60}
+            size={50}
             icon="dots-vertical"
-            style={{ backgroundColor: "white" }}
+            className="bg-black -mr-2"
             onTouchEnd={() => {
               router.push("../(config)");
             }}
@@ -211,7 +213,7 @@ const FeedScreen = () => {
 
         {/* Renderizar los tweets */}
         {tweets.length === 0 && (
-          <Text className="text-center text-gray-500 text-lg">
+          <Text className="text-center text-gray-500 text-lg mt-10">
             No hay twits para mostrar
           </Text>
         )}
@@ -248,7 +250,7 @@ const FeedScreen = () => {
           {message}
         </Snackbar>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

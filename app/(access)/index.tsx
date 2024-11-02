@@ -65,7 +65,7 @@ export default function HomeScreen() {
         setLoading(false);
       }
     } catch (error) {
-      console.error("failed to log in:", error);
+      console.log("failed to log in:", error);
     }
   };
 
@@ -175,7 +175,7 @@ export default function HomeScreen() {
       <View className="flex-row justify-center">
         <GoogleSigninButton
           size={GoogleSigninButton.Size.Icon}
-          color={GoogleSigninButton.Color.Dark}
+          color={GoogleSigninButton.Color.Light}
           onPress={signInWithGoogle}
           disabled={isInProgress}
         />

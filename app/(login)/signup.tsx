@@ -63,10 +63,10 @@ export default function SignUpScreen() {
       .min(6, "La contraseña debe tener al menos seis caracteres")
       .required("La contraseña es obligatoria"),
     name: Yup.string()
-      .min(6, "El nombre debe tener al menos seis caracteres")
+      .min(3, "El nombre debe tener al menos seis caracteres")
       .required("El nombre es obligatorio"),
     username: Yup.string()
-      .min(6, "El nombre de usuario debe tener al menos seis caracteres")
+      .min(3, "El nombre de usuario debe tener al menos seis caracteres")
       .required("El nombre de usuario es obligatorio"),
   });
 

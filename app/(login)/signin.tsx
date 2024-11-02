@@ -17,7 +17,6 @@ interface loginValues {
 }
 
 export default function SignInScreen() {
-  const colorScheme = useColorScheme();
   const userContext = useContext(UserContext);
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");

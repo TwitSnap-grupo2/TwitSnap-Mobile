@@ -61,6 +61,10 @@ export default function EditProfileScreen() {
   );
   const [selectedInterests, setSelectedInterests] =
     useState<string[]>(initialInterests);
+  const [accordionIsExpanded, setAccordionIsExpanded] = useState(false);
+  const [expandedId, setExpandedId] = useState<string | number | undefined>(
+    undefined
+  );
 
   const toggleSelection = (interest: string) => {
     if (selectedInterests.includes(interest)) {
@@ -178,7 +182,7 @@ export default function EditProfileScreen() {
           {interests.map((interest) => (
             <Chip
               key={interest}
-              className="w-30 m-1"
+              className="w-30 m-1 rounded-full"
               icon={() =>
                 selectedInterests.includes(interest) ? (
                   <MaterialIcons name="check" size={20} />
@@ -199,14 +203,33 @@ export default function EditProfileScreen() {
           ))}
         </View>
 
-        <Text className="mt-2">Nacionalidad</Text>
-        <View>
-          <List.AccordionGroup>
-            <List.Accordion title={selectedCountry} id="1">
+        <View
+          className={`${
+            accordionIsExpanded
+              ? "rounded-none rounded-t-3xl rounded-b-3xl"
+              : "rounded-full "
+          } overflow-hidden mt-10`}
+        >
+          <List.AccordionGroup
+            expandedId={expandedId}
+            onAccordionPress={(newExpandedId: string | number) => {
+              expandedId
+                ? setExpandedId(undefined)
+                : setExpandedId(newExpandedId);
+              setAccordionIsExpanded(!accordionIsExpanded);
+            }}
+          >
+            <List.Accordion
+              style={{ paddingLeft: 10, height: 60 }}
+              title={selectedCountry}
+              id="1"
+            >
               <ScrollView className="h-40">
                 {countriesList.map((country) => (
                   // @ts-ignore
                   <List.Item
+                    style={{ paddingLeft: 10 }}
+                    className={`dark:bg-white`}
                     // @ts-ignore
                     key={country.code}
                     // @ts-ignore
@@ -225,7 +248,7 @@ export default function EditProfileScreen() {
           mode="contained"
           onPress={handleEditProfile}
           style={{ backgroundColor: "#1DA1F2" }}
-          className="mb-4"
+          className="mb-4 p-2 rounded-full"
         >
           Guardar
         </Button>
