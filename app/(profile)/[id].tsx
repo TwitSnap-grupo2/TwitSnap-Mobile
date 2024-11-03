@@ -16,8 +16,10 @@ import { fetch_to } from "@/utils/fetch";
 import Loading from "@/components/Loading";
 import SnackBarComponent from "@/components/Snackbar";
 import { ScrollView, RefreshControl } from "react-native";
+import { useColorScheme } from "@/hooks/useColorScheme";
 
 export default function ProfileHomeScreen() {
+  const colorScheme = useColorScheme();
   const [tweets, setTweets] = useState([]);
   const [user, setUser] = useState<User | null>(null);
   const [visible, setVisible] = useState(false);
@@ -238,15 +240,19 @@ export default function ProfileHomeScreen() {
 
       <View className="flex-row justify-between items-center mt-4 p-4">
         <View className="flex-1">
-          <Text className="text-2xl font-bold text-gray-900">{user?.name}</Text>
-          <Text className="text-md text-gray-500">@{user?.user}</Text>
+          <Text className="text-2xl font-bold text-gray-900 dark:text-white">
+            {user?.name}
+          </Text>
+          <Text className="text-md text-gray-500 dark:text-gray-300 ">
+            @{user?.user}
+          </Text>
 
           <View className="flex-row space-x-4 mt-2">
-            <Text className="text-sm text-gray-600">
+            <Text className="text-sm text-gray-600 dark:text-gray-500">
               <Text className="font-semibold">{user?.followeds.length}</Text>{" "}
               Following
             </Text>
-            <Text className="text-sm text-gray-600">
+            <Text className="text-sm text-gray-600 dark:text-gray-500">
               <Text className="font-semibold">{user?.followers.length}</Text>{" "}
               Followers
             </Text>

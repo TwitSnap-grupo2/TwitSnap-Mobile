@@ -11,6 +11,7 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { UserProvider } from "@/context/context";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -32,18 +33,22 @@ export default function RootLayout() {
   }
 
   return (
-    <UserProvider>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(access)" options={{ headerShown: false }} />
-          <Stack.Screen name="(login)" options={{ headerShown: false }} />
-          <Stack.Screen name="(feed)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-          <Stack.Screen name="(profile)" options={{ headerShown: false }} />
-          <Stack.Screen name="(twit)" options={{ headerShown: false }} />
-          <Stack.Screen name="(config)" options={{ headerShown: false }} />
-        </Stack>
-      </ThemeProvider>
-    </UserProvider>
+    <GestureHandlerRootView>
+      <UserProvider>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <Stack>
+            <Stack.Screen name="(access)" options={{ headerShown: false }} />
+            <Stack.Screen name="(login)" options={{ headerShown: false }} />
+            <Stack.Screen name="(feed)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+            <Stack.Screen name="(profile)" options={{ headerShown: false }} />
+            <Stack.Screen name="(twit)" options={{ headerShown: false }} />
+            <Stack.Screen name="(config)" options={{ headerShown: false }} />
+          </Stack>
+        </ThemeProvider>
+      </UserProvider>
+    </GestureHandlerRootView>
   );
 }

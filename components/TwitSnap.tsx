@@ -6,6 +6,7 @@ import { useRouter } from "expo-router";
 import { fetch_to } from "@/utils/fetch";
 import { useContext, useState } from "react";
 import { UserContext } from "@/context/context";
+import { useColorScheme } from "@/hooks/useColorScheme";
 
 export default function TweetComponent({
   initialTweet,
@@ -102,7 +103,10 @@ export default function TweetComponent({
   }
 
   return (
-    <View style={styles.container}>
+    <View
+      style={styles.container}
+      className=" bg-white dark:bg-black dark:border-slate-300"
+    >
       <Avatar.Image
         size={50}
         source={{
@@ -131,11 +135,15 @@ export default function TweetComponent({
           </View>
         )}
         <View style={styles.tweetHeader}>
-          <Text style={styles.name}>{tweet.name}</Text>
+          <Text className="dark:text-gray-200" style={styles.name}>
+            {tweet.name}
+          </Text>
 
           <Text style={styles.username}>@{tweet.username}</Text>
         </View>
-        <Text style={styles.tweetText}>{tweet.message}</Text>
+        <Text className="dark:text-gray-200" style={styles.tweetText}>
+          {tweet.message}
+        </Text>
         <View style={styles.tweetActions}>
           <TouchableOpacity style={styles.actionButton}>
             <Icon name="share" size={16} color="#657786" />
@@ -167,9 +175,9 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E1E8ED",
-    backgroundColor: "white",
+    borderBottomWidth: 0.5,
+    // borderBottomColor: "#E1E8ED",
+    // backgroundColor: "white",
   },
   avatar: {
     width: 50,

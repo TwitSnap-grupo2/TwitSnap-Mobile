@@ -4,21 +4,20 @@ import { Button } from "react-native-paper";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useContext, useState } from "react";
 import { UserContext } from "@/context/context";
-import { auth } from "@/services/config";
-import {
-  sendPasswordResetEmail,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { fetch_to } from "@/utils/fetch";
 import Loading from "@/components/Loading";
 import SnackBarComponent from "@/components/Snackbar";
 import { LoginWithEmailAndPassword } from "@/utils/login";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import Input from "@/components/Input";
+
+interface loginValues {
+  email: string;
+  password: string;
+}
 
 export default function SignInScreen() {
-  const colorScheme = useColorScheme();
   const userContext = useContext(UserContext);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,15 +29,31 @@ export default function SignInScreen() {
   const { saveUser } = userContext;
   const router = useRouter();
 
-  const handleLogin = async () => {
+  const loginSchema = Yup.object().shape({
+    email: Yup.string()
+      .email("Por favor, ingrese un email valido")
+      .required("El email es obligatorio"),
+    password: Yup.string()
+      .min(6, "La contraseña debe tener al menos seis caracteres")
+      .required("La contraseña es obligatoria"),
+  });
+
+  const handleLogin = async (
+    { email, password }: loginValues,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) => {
+    setSubmitting(true);
     const currentUser = await LoginWithEmailAndPassword(email, password);
     if (currentUser) {
       saveUser(currentUser);
       setMessage("Bienvenid@ a TwitSnap " + currentUser.name);
       setVisible(true);
+      setSubmitting(false);
       router.replace("/(feed)");
     } else {
-      setMessage("Error al obtener el usuario ");
+      setVisible(true);
+      setSubmitting(false);
+      setMessage("Credenciales incorrectas");
     }
   };
 
@@ -64,44 +79,62 @@ export default function SignInScreen() {
 
       <View className="px-8">
         {loading && <Loading />}
-        <TextInput
-          placeholder="Email"
-          placeholderTextColor={colorScheme === "dark" ? "#fff" : "#000"}
-          id="email"
-          onChangeText={setEmail}
-          className="bg-gray-100 dark:bg-gray-700 text-dark dark:text-white p-4 mb-4 rounded-full"
-        />
-        <TextInput
-          placeholder="Contraseña"
-          placeholderTextColor={colorScheme === "dark" ? "#fff" : "#000"}
-          secureTextEntry={true}
-          id="password"
-          onChangeText={setPassword}
-          className="bg-gray-100 dark:bg-gray-700 text-dark dark:text-white p-4 mb-4 rounded-full"
-        />
+        <Formik
+          initialValues={{ email: "", password: "" }}
+          validationSchema={loginSchema}
+          onSubmit={() => console.log()}
+        >
+          {({
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            values,
+            isSubmitting,
+            setSubmitting,
+          }) => (
+            <View className="flex">
+              <Input
+                name="email"
+                placeholder="Email"
+                onChangeText={handleChange("email")}
+                value={values.email}
+                onBlur={handleBlur("email")}
+                errorMessage={errors.email}
+                isTouched={touched.email}
+              />
+              <Input
+                name="password"
+                placeholder="Password"
+                onChangeText={handleChange("password")}
+                value={values.password}
+                onBlur={handleBlur("password")}
+                errorMessage={errors.password}
+                isTouched={touched.password}
+              />
+              <Button
+                mode="contained"
+                onPress={() => {
+                  handleLogin(values, setSubmitting);
+                }}
+                style={{ backgroundColor: "#1DA1F2" }}
+                className="mb-4 mt-1 p-1 rounded-full"
+              >
+                {isSubmitting ? "Logging in..." : "Iniciar sesión"}
+              </Button>
+              <Button
+                mode="contained"
+                onPress={() => router.push("./resetPassword")}
+                className="bg-slate-600 mb-4 p-1 rounded-full"
+              >
+                Restablecer contraseña
+              </Button>
+            </View>
+          )}
+        </Formik>
       </View>
 
-      <View className="px-8">
-        <Button
-          mode="contained"
-          onPress={handleLogin}
-          style={{ backgroundColor: "#1DA1F2" }}
-          className="mb-4"
-        >
-          Iniciar sesión
-        </Button>
-      </View>
-      <View className="flex-1 ">
-        <Button
-          mode="text"
-          onPress={() => router.push("./resetPassword")}
-          className="mb-4"
-        >
-          Restablecer contraseña
-        </Button>
-      </View>
-
-      <View className="flex-1 ">
+      <View className="flex-1">
         <SnackBarComponent
           visible={visible}
           action={() => setVisible(false)}
