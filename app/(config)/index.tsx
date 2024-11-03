@@ -18,7 +18,7 @@ export default function Configuracion() {
   }
 
   return (
-    <View className="flex-1 bg-white justify-center items-center">
+    <View className="flex-1 bg-white justify-center items-center dark:bg-black">
       <Button
         mode="contained"
         onPress={handleSignOut}

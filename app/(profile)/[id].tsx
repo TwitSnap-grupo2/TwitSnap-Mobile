@@ -28,8 +28,14 @@ export default function ProfileHomeScreen() {
   const router = useRouter();
   const { id, initialFollowed } = useLocalSearchParams();
   const userContext = useContext(UserContext);
-  const currentUser = userContext ? userContext.user : null;
-
+  if (!userContext) {
+    throw new Error("UserContext is null");
+  }
+  const { saveUser } = userContext;
+  const currentUser = userContext.user;
+  if (!currentUser) {
+    throw new Error("UserContext.user is null");
+  }
   const isCurrentUserProfile = currentUser?.id === id;
   const [followed, setFollowed] = useState(
     initialFollowed == "1" ? true : false
@@ -47,6 +53,8 @@ export default function ProfileHomeScreen() {
 
   async function handleFollow() {
     if (followed) {
+      setFollowed(false);
+
       const response = await fetch_to(
         `https://api-gateway-ccbe.onrender.com/users/follow/${currentUser?.id}?followed_id=${id}`,
         "DELETE",
@@ -55,23 +63,36 @@ export default function ProfileHomeScreen() {
 
       if (response.status === 200) {
         setFollowed(false);
-        setMessage("Usuario dejado de seguir correctamente");
-        setVisible(true);
+        const new_followeds = currentUser?.followeds;
+        if (!new_followeds) {
+          return;
+        }
+        const index = new_followeds.indexOf(id as string);
+        if (index > -1) {
+          new_followeds.splice(index, 1);
+        }
+        console.log(new_followeds);
+        saveUser({ ...currentUser, followeds: new_followeds });
       } else {
         setMessage("Error al dejar de seguir al usuario " + response.status);
         setVisible(true);
       }
       return;
     } else {
+      setFollowed(true);
       const response = await fetch_to(
-        `https://api-gateway-ccbe.onrender.com/users/${currentUser?.id}/follow`,
-        "POST",
-        id
+        `https://api-gateway-ccbe.onrender.com/users/follow/${currentUser?.id}?followed_id=${id}`,
+        "POST"
       );
 
       if (response.status === 201) {
-        setMessage("Usuario seguido correctamente");
-        setVisible(true);
+        const new_followeds = currentUser?.followeds;
+        if (!new_followeds) {
+          return;
+        }
+        new_followeds.push(id as string);
+        console.log(new_followeds);
+        saveUser({ ...currentUser, followeds: new_followeds });
       } else {
         setMessage("Error al seguir al usuario " + response.status);
         setVisible(true);
@@ -115,6 +136,7 @@ export default function ProfileHomeScreen() {
     );
     if (response.status === 200) {
       const data = await response.json();
+      console.log(data);
       const uniqueUserIds = Array.from(
         new Set(data.map((tweet: Tweet) => tweet.createdBy))
       );
@@ -186,13 +208,14 @@ export default function ProfileHomeScreen() {
       setTweets([]);
       const data_tweets = data.map((tweet: Tweet) => {
         const sharedBy = userMap[tweet.sharedBy] || {};
+        const createdBy = userMap[tweet.createdBy] || {};
         const likedByMe = userLikes[tweet.id] || false;
         const sharedByMe = sharedTwit[tweet.id] || false;
         return {
           id: tweet.id,
-          avatar: user?.avatar,
-          name: user?.name,
-          username: user?.user,
+          avatar: createdBy?.avatar,
+          name: createdBy?.name,
+          username: createdBy?.user,
           message: tweet.message,
           likes_count: tweet.likes_count,
           shares_count: tweet.shares_count,

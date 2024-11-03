@@ -56,6 +56,7 @@ const CreateTweetScreen = () => {
 
   async function handleTypingStop(input: string) {
     setSearching(true);
+    setListOfUsers([]);
     const response = await fetch_to(
       `https://api-gateway-ccbe.onrender.com/users/search/?user=${input}&limit=10`,
       "GET"
