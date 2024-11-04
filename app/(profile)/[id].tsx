@@ -30,9 +30,16 @@ export default function ProfileHomeScreen() {
   const userContext = useContext(UserContext);
   const currentUser = userContext ? userContext.user : null;
 
+  console.log("currentUser?.followeds", currentUser?.followeds);
+  console.log(
+    "currentUser?.followeds",
+    currentUser?.followeds.includes(id as string)
+  );
+  // console.log("id", id);
   const isCurrentUserProfile = currentUser?.id === id;
   const [followed, setFollowed] = useState(
-    initialFollowed == "1" ? true : false
+    currentUser?.followeds.includes(id as string)
+    // initialFollowed == "1" ? true : false
   );
   const [refreshing, setRefreshing] = useState(false);
 
@@ -64,12 +71,13 @@ export default function ProfileHomeScreen() {
       return;
     } else {
       const response = await fetch_to(
-        `https://api-gateway-ccbe.onrender.com/users/${currentUser?.id}/follow`,
-        "POST",
-        id
+        `https://api-gateway-ccbe.onrender.com/users/follow/${currentUser?.id}?followed_id=${id}`,
+        "POST"
+        // id
       );
 
       if (response.status === 201) {
+        setFollowed(true);
         setMessage("Usuario seguido correctamente");
         setVisible(true);
       } else {

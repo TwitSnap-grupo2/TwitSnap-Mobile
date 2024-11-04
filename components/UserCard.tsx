@@ -11,6 +11,7 @@ export default function UserCard({
   customHandle?: (user: User) => void;
 }) {
   const router = useRouter();
+
   function handleUser() {
     if (customHandle) {
       customHandle(user);

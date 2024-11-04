@@ -1,102 +1,111 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet, Image, Platform } from 'react-native';
-
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { UserContext } from "@/context/context";
+import { router, useRouter } from "expo-router";
+import { useContext, useEffect, useRef, useState } from "react";
+import { RefreshControl, ScrollView, Text, View } from "react-native";
+import { Avatar, Searchbar } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { User } from "@/types/User";
+import { fetch_to } from "@/utils/fetch";
+import UserCard from "@/components/UserCard";
+import { useColorScheme } from "@/hooks/useColorScheme";
 
 export default function TabTwoScreen() {
-    return (
-        <ParallaxScrollView
-            headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-            headerImage={<Ionicons size={310} name="mail" style={styles.headerImage} />}>
-            <ThemedView style={styles.titleContainer}>
-                <ThemedText type="title">Mensajes</ThemedText>
-            </ThemedView>
-            <ThemedText>This app includes example code to help you get started.</ThemedText>
-            <Collapsible title="File-based routing">
-                <ThemedText>
-                    This app has two screens:{' '}
-                    <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-                    <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-                </ThemedText>
-                <ThemedText>
-                    The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-                    sets up the tab navigator.
-                </ThemedText>
-                <ExternalLink href="https://docs.expo.dev/router/introduction">
-                    <ThemedText type="link">Learn more</ThemedText>
-                </ExternalLink>
-            </Collapsible>
-            <Collapsible title="Android, iOS, and web support">
-                <ThemedText>
-                    You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-                    <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-                </ThemedText>
-            </Collapsible>
-            <Collapsible title="Images">
-                <ThemedText>
-                    For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-                    <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-                    different screen densities
-                </ThemedText>
-                <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-                <ExternalLink href="https://reactnative.dev/docs/images">
-                    <ThemedText type="link">Learn more</ThemedText>
-                </ExternalLink>
-            </Collapsible>
-            <Collapsible title="Custom fonts">
-                <ThemedText>
-                    Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-                    <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-                        custom fonts such as this one.
-                    </ThemedText>
-                </ThemedText>
-                <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-                    <ThemedText type="link">Learn more</ThemedText>
-                </ExternalLink>
-            </Collapsible>
-            <Collapsible title="Light and dark mode components">
-                <ThemedText>
-                    This template has light and dark mode support. The{' '}
-                    <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-                    what the user's current color scheme is, and so you can adjust UI colors accordingly.
-                </ThemedText>
-                <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-                    <ThemedText type="link">Learn more</ThemedText>
-                </ExternalLink>
-            </Collapsible>
-            <Collapsible title="Animations">
-                <ThemedText>
-                    This template includes an example of an animated component. The{' '}
-                    <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-                    the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText> library
-                    to create a waving hand animation.
-                </ThemedText>
-                {Platform.select({
-                    ios: (
-                        <ThemedText>
-                            The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-                            component provides a parallax effect for the header image.
-                        </ThemedText>
-                    ),
-                })}
-            </Collapsible>
-        </ParallaxScrollView>
-    );
-}
+  const userContext = useContext(UserContext);
+  if (!userContext) {
+    throw new Error("UserContext is null");
+  }
+  if (!userContext.user) {
+    throw new Error("UserContext.user is null");
+  }
+  const colorScheme = useColorScheme();
+  const user = userContext.user;
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+  const typingTimeout = useRef<NodeJS.Timeout | null>(null);
+  const [listOfUsers, setListOfUsers] = useState<Array<User>>([]);
+  const [chatsList, setChatsList] = useState([]);
 
-const styles = StyleSheet.create({
-    headerImage: {
-        color: '#808080',
-        bottom: -90,
-        left: -35,
-        position: 'absolute',
-    },
-    titleContainer: {
-        flexDirection: 'row',
-        gap: 8,
-    },
-});
+  async function handleTypingStop(input: string) {
+    const response = await fetch_to(
+      `https://api-gateway-ccbe.onrender.com/users/search/?user=${input}&limit=10`,
+      "GET"
+    );
+    if (response.status === 200) {
+      const data = await response.json();
+      setListOfUsers(data);
+    } else {
+      console.error(
+        "Error al obtener los usuarios",
+        response.status,
+        response.text
+      );
+    }
+  }
+
+  const handleTextChange = (input: string) => {
+    setSearchQuery(input);
+    if (typingTimeout.current) {
+      clearTimeout(typingTimeout.current);
+    }
+
+    typingTimeout.current = setTimeout(() => {
+      handleTypingStop(input);
+    }, 500);
+  };
+
+  return (
+    <SafeAreaView className="flex-1 bg-white dark:bg-black">
+      <ScrollView
+        className="px-4 py-2"
+        // refreshControl={
+        // <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        // }
+      >
+        <View className="flex flex-1 flex-row justify-between my-4">
+          <Avatar.Image
+            size={50}
+            source={{ uri: user?.avatar }}
+            onTouchEnd={() => {
+              router.push({
+                pathname: "/(profile)/[id]",
+                // @ts-ignore
+                params: {
+                  id: user.id,
+                },
+              });
+            }}
+          />
+          <View className="w-4/6">
+            <Searchbar
+              className="-mt-1 dark:bg-gray-800 "
+              placeholderTextColor={colorScheme === "dark" ? "#aaa" : "black"}
+              iconColor={colorScheme === "dark" ? "#aaa" : "black"}
+              inputStyle={{ color: "#cfcccc" }}
+              placeholder="Search"
+              onChangeText={handleTextChange}
+              value={searchQuery}
+            />
+            {listOfUsers.map((user) => (
+              <View className="p-1" key={user.id}>
+                <UserCard user={user} />
+              </View>
+            ))}
+          </View>
+          <Avatar.Icon
+            size={50}
+            icon="dots-vertical"
+            className="bg-black -mr-2 -ml-3"
+            onTouchEnd={() => {
+              router.push("../(config)");
+            }}
+          />
+        </View>
+        {chatsList.length === 0 && (
+          <Text className="text-center text-gray-500 text-lg mt-10">
+            No hay chats para mostrar
+          </Text>
+        )}
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
