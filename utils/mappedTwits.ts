@@ -23,7 +23,7 @@ export async function mappedTwits(data: [], curretUserId: string) {
     const uniqueTwitIds = Array.from(
     new Set(
         data
-        .filter((tweet: Tweet) => tweet.likes_count != "0")
+        .filter((tweet: Tweet) => tweet.likesCount != "0")
         .map((tweet: Tweet) => tweet.id)
     )
     );
@@ -66,25 +66,26 @@ export async function mappedTwits(data: [], curretUserId: string) {
     });
 
     const mappedTweets = data.map((tweet: Tweet) => {
-        const mappedUser = userMap[tweet.createdBy] || {};
-        const sharedBy = userMap[tweet.sharedBy] || {};
-        const likedByMe = userLikes[tweet.id] || false;
-        const sharedByMe = sharedTwit[tweet.id] || false;
-        return {
-          id: tweet.id,
-          avatar: `https://robohash.org/${mappedUser.id}.png`,
-          name: mappedUser?.name || "Desconocido",
-          username: mappedUser?.user || "unknown",
-          message: tweet.message,
-          likes_count: tweet.likes_count,
-          shares_count: tweet.shares_count,
-          sharedBy: sharedBy?.user || null,
-          comments: 0,
-          createdBy: mappedUser.id,
-          likedByMe: likedByMe,
-          sharedByMe: sharedByMe,
-        };
-      });
+    const mappedUser = userMap[tweet.createdBy] || {};
+    const sharedBy = userMap[tweet.sharedBy] || {};
+    const likedByMe = userLikes[tweet.id] || false;
+    const sharedByMe = sharedTwit[tweet.id] || false;
+    return {
+        id: tweet.id,
+        avatar: `https://robohash.org/${mappedUser.id}.png`,
+        name: mappedUser?.name || "Desconocido",
+        username: mappedUser?.user || "unknown",
+        message: tweet.message,
+        likesCount: tweet.likesCount,
+        sharesCount: tweet.sharesCount,
+        sharedBy: sharedBy?.user || null,
+        repliesCount: tweet.repliesCount,
+        createdBy: mappedUser.id,
+        likedByMe: likedByMe,
+        sharedByMe: sharedByMe,
+        parentId: tweet.parentId,
+    };
+    });
 
     return mappedTweets as Tweet[];
 } 

@@ -5,10 +5,11 @@ export interface Tweet {
   username: string;
   message: string;
   createdBy: string;
-  likes_count: string;
-  shares_count: string;
+  likesCount: string;
+  sharesCount: string;
   sharedBy: string;
-  comments: number;
+  repliesCount: number;
   likedByMe: boolean;
   sharedByMe: boolean;
+  parentId: string;
 }

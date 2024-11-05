@@ -34,9 +34,9 @@ export default function TweetComponent({
     const updatedTweet = {
       ...tweet,
       sharedByMe: !actual_shared,
-      shares_count: actual_shared
-        ? (parseInt(tweet.shares_count) + -1).toString()
-        : (parseInt(tweet.shares_count) + 1).toString(),
+      sharesCount: actual_shared
+        ? (parseInt(tweet.sharesCount) + -1).toString()
+        : (parseInt(tweet.sharesCount) + 1).toString(),
     };
     setTweet(updatedTweet);
     shareTweet();
@@ -71,9 +71,9 @@ export default function TweetComponent({
     const updatedTweet = {
       ...tweet,
       likedByMe: !actual_liked,
-      likes_count: actual_liked
-        ? (parseInt(tweet.likes_count) + -1).toString()
-        : (parseInt(tweet.likes_count) + 1).toString(),
+      likesCount: actual_liked
+        ? (parseInt(tweet.likesCount) + -1).toString()
+        : (parseInt(tweet.likesCount) + 1).toString(),
     };
     setTweet(updatedTweet);
 
@@ -173,7 +173,7 @@ export default function TweetComponent({
           <View style={styles.tweetActions}>
             <TouchableWithoutFeedback style={styles.actionButton}>
               <Icon name="share" size={16} color="#657786" />
-              <Text style={styles.actionText}>{tweet.comments}</Text>
+              <Text style={styles.actionText}>{tweet.repliesCount}</Text>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback
               style={styles.actionButton}
@@ -184,7 +184,7 @@ export default function TweetComponent({
                 size={16}
                 color={tweet.sharedByMe ? "#1DA1F2" : "#657786"}
               />
-              <Text style={styles.actionText}>{tweet.shares_count}</Text>
+              <Text style={styles.actionText}>{tweet.sharesCount}</Text>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback
               style={styles.actionButton}
@@ -195,7 +195,7 @@ export default function TweetComponent({
                 size={16}
                 color={tweet.likedByMe ? "#EE0000" : "#657786"}
               />
-              <Text style={styles.actionText}>{tweet.likes_count}</Text>
+              <Text style={styles.actionText}>{tweet.likesCount}</Text>
             </TouchableWithoutFeedback>
           </View>
         </View>

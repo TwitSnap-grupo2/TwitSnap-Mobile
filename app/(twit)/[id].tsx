@@ -36,7 +36,7 @@ export default function Twit() {
 
   async function fetchResponses() {
     const response = await fetch_to(
-      `https://api-gateway-ccbe.onrender.com/twits/${id}/responses`,
+      `https://api-gateway-ccbe.onrender.com/twits/${id}/replies`,
       "GET"
     );
     if (response.status != 200) {
@@ -54,7 +54,7 @@ export default function Twit() {
 
   async function handleResponse() {
     const response = await fetch_to(
-      `https://api-gateway-ccbe.onrender.com/twits/${id}/response`,
+      `https://api-gateway-ccbe.onrender.com/twits/${id}/reply`,
       "POST",
       {
         message: messageResponse,
