@@ -194,12 +194,7 @@ const CreateTweetScreen = () => {
   }
 
   function handleBack() {
-    setTweet("");
-    // espero 1 segundo y vuelvo a la pantalla anterior
-    setTimeout(() => {
-      setMessage("");
-      router.replace("/(feed)");
-    }, 1000);
+    router.back();
   }
 
   if (loading) {
@@ -219,27 +214,6 @@ const CreateTweetScreen = () => {
           contentContainerStyle={{ flexGrow: 1 }}
           keyboardShouldPersistTaps="handled"
         >
-          <View
-            className="flex flex-row p-2 justify-between"
-            // style={{ flexDirection: "row", padding: 10, alignItems: "center" }}
-          >
-            <TouchableOpacity onPress={handleBack}>
-              <IconButton
-                iconColor={colorScheme == "dark" ? "white" : "black"}
-                icon="close"
-                size={24}
-              />
-            </TouchableOpacity>
-            <Button
-              mode="contained"
-              onPress={handleSubmit}
-              style={{ backgroundColor: "#1DA1F2" }}
-              className="mb-4 mt-1"
-            >
-              Publicar
-            </Button>
-          </View>
-
           <View
             style={{
               flexDirection: "row",
@@ -309,6 +283,14 @@ const CreateTweetScreen = () => {
                 onPress={() => {}}
               />
             </View>
+            <Button
+              mode="contained"
+              onPress={handleSubmit}
+              style={{ backgroundColor: "#1DA1F2" }}
+              className="mb-4 mt-1"
+            >
+              Publicar
+            </Button>
           </View>
 
           <View className="flex-1 ">

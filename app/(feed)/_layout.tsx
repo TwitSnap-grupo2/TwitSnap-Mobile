@@ -4,7 +4,7 @@ import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
-export default function TabLayout() {
+export default function FeedLayout() {
   const colorScheme = useColorScheme();
   const router = useRouter();
   return (
