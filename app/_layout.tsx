@@ -46,6 +46,7 @@ export default function RootLayout() {
             <Stack.Screen name="(profile)" options={{ headerShown: false }} />
             <Stack.Screen name="(twit)" options={{ headerShown: false }} />
             <Stack.Screen name="(config)" options={{ headerShown: false }} />
+            <Stack.Screen name="(messages)" options={{ headerShown: false }} />
           </Stack>
         </ThemeProvider>
       </UserProvider>

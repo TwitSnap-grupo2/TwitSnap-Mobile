@@ -9,7 +9,6 @@ import {
 import { Avatar, FAB, Snackbar } from "react-native-paper";
 import { useRouter } from "expo-router";
 import TweetComponent from "@/components/TwitSnap";
-import { User } from "@/types/User";
 import { UserContext } from "@/context/context";
 import { fetch_to } from "@/utils/fetch";
 import Loading from "@/components/Loading";

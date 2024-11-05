@@ -14,6 +14,7 @@ export default function UserCard({
   const userContext = useContext(UserContext);
   const currentUser = userContext ? userContext.user : null;
   const router = useRouter();
+
   function handleUser() {
     if (customHandle) {
       customHandle(user);

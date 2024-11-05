@@ -39,7 +39,8 @@ export default function ProfileHomeScreen() {
   }
   const isCurrentUserProfile = currentUser?.id === id;
   const [followed, setFollowed] = useState(
-    initialFollowed == "1" ? true : false
+    currentUser?.followeds.includes(id as string)
+    // initialFollowed == "1" ? true : false
   );
   const [refreshing, setRefreshing] = useState(false);
 
@@ -94,6 +95,7 @@ export default function ProfileHomeScreen() {
         new_followeds.push(id as string);
         console.log(new_followeds);
         saveUser({ ...currentUser, followeds: new_followeds });
+        setFollowed(true);
       } else {
         setMessage("Error al seguir al usuario " + response.status);
         setVisible(true);
