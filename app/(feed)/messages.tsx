@@ -8,6 +8,8 @@ import { User } from "@/types/User";
 import { fetch_to } from "@/utils/fetch";
 import UserCard from "@/components/UserCard";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { collection, query, where } from "firebase/firestore";
+import { database } from "@/services/config";
 
 export default function TabTwoScreen() {
   const userContext = useContext(UserContext);
@@ -24,6 +26,11 @@ export default function TabTwoScreen() {
   const typingTimeout = useRef<NodeJS.Timeout | null>(null);
   const [listOfUsers, setListOfUsers] = useState<Array<User>>([]);
   const [chatsList, setChatsList] = useState([]);
+
+  // useEffect(() => {
+  //   const roomsRef = collection(database, "rooms")
+  //   const chats = query(roomsRef, where())
+  // })
 
   async function handleTypingStop(input: string) {
     const response = await fetch_to(
