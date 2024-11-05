@@ -87,7 +87,20 @@ export default function TabTwoScreen() {
             />
             {listOfUsers.map((user) => (
               <View className="p-1" key={user.id}>
-                <UserCard user={user} />
+                <UserCard
+                  user={user}
+                  customHandle={(user) => {
+                    router.navigate({
+                      pathname: "/(messages)/chatRoom",
+                      // @ts-ignore
+                      params: {
+                        id: user.id,
+                        name: user.name,
+                        // avatar: user.avatar,
+                      },
+                    });
+                  }}
+                />
               </View>
             ))}
           </View>

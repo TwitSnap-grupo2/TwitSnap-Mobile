@@ -6,6 +6,7 @@ import { FirebaseError } from "firebase/app";
 async function _login(email: string, pass: string) {
   try {
     const userCredentials = await signInWithEmailAndPassword(auth, email, pass);
+    console.log("🚀 ~ _login ~ userCredentials:", userCredentials);
     const user = userCredentials.user;
     return user;
   } catch (error) {
