@@ -50,42 +50,24 @@ export default function TabTwoScreen() {
     );
 
     let unsub = onSnapshot(chats, (snapshot) => {
-      let allMessages = snapshot.docs.map((doc) => {
+      let allMessages = snapshot.docs.map(async (doc) => {
         const { participants, roomId } = doc.data();
 
         const otherParticipant = participants.find(
           (participant: string) => participant != user.id
         );
-        fetchUser(otherParticipant).then((data: User) => {
-          const newChatlist = chatsList.concat({
-            username: data.name,
-            userId: data.id,
-            avatarUri: `https://robohash.org/${data.id}.png`,
-            roomId: roomId,
-          });
-          setChatsList(newChatlist);
-        });
+        const fetchedUser = await fetchUser(otherParticipant);
+        const data = {
+          username: fetchedUser.name,
+          userId: fetchedUser.id,
+          avatarUri: `https://robohash.org/${fetchedUser.id}.png`,
+          roomId: roomId,
+        };
+        return data;
       });
+      Promise.all(allMessages).then((data) => setChatsList(data));
+
       return unsub;
-    });
-
-    getDocs(chats).then((docs) => {
-      docs.forEach((doc) => {
-        const { participants, roomId } = doc.data();
-
-        const otherParticipant = participants.find(
-          (participant: string) => participant != user.id
-        );
-        fetchUser(otherParticipant).then((data: User) => {
-          const newChatlist = chatsList.concat({
-            username: data.name,
-            userId: data.id,
-            avatarUri: `https://robohash.org/${data.id}.png`,
-            roomId: roomId,
-          });
-          setChatsList(newChatlist);
-        });
-      });
     });
   }, []);
 
@@ -195,7 +177,7 @@ export default function TabTwoScreen() {
           chatsList.map((chat) => {
             return (
               <ChatItem
-                // key={chat.roomId}
+                key={chat.roomId}
                 userId={chat.userId}
                 username={chat.username}
                 avatarUri={chat.avatarUri}
