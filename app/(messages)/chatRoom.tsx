@@ -8,6 +8,7 @@ import {
   setDoc,
   Timestamp,
   doc,
+  DocumentData,
 } from "firebase/firestore";
 import { auth, database } from "@/services/config";
 import { getRoomId } from "@/utils/chats";
@@ -32,7 +33,7 @@ const Chat = () => {
   const { id, name } = useLocalSearchParams();
   const textRef = useRef("");
   const router = useRouter();
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<Array<DocumentData>>([]);
   const inputRef = useRef(null);
 
   //@ts-ignore

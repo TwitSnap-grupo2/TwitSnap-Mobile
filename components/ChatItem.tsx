@@ -1,4 +1,5 @@
 import { database } from "@/services/config";
+import { formatDate } from "@/utils/time";
 import { useRouter } from "expo-router";
 import {
   collection,
@@ -64,14 +65,14 @@ const ChatItem = ({
           </Text>
 
           <Text className="dark:text-neutral-300 font-medium text-base">
-            Time
+            {lastMessage == undefined
+              ? "Cargando..."
+              : formatDate(new Date(lastMessage.createdAt.seconds * 1000))}
           </Text>
         </View>
-        {lastMessage && (
-          <Text className="dark:text-neutral-300 font-medium text-base ">
-            {lastMessage.text}
-          </Text>
-        )}
+        <Text className="dark:text-neutral-300 font-medium text-base ">
+          {lastMessage == undefined ? "Cargando..." : lastMessage.text}
+        </Text>
       </View>
     </TouchableOpacity>
   );

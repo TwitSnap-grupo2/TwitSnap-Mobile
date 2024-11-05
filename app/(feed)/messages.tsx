@@ -18,6 +18,7 @@ import {
 } from "firebase/firestore";
 import { database } from "@/services/config";
 import ChatItem from "@/components/ChatItem";
+import Loading from "@/components/Loading";
 
 interface ChatItem {
   username: string;
@@ -41,6 +42,7 @@ export default function TabTwoScreen() {
   const typingTimeout = useRef<NodeJS.Timeout | null>(null);
   const [listOfUsers, setListOfUsers] = useState<Array<User>>([]);
   const [chatsList, setChatsList] = useState<Array<ChatItem>>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const roomsRef = collection(database, "rooms");
@@ -65,7 +67,10 @@ export default function TabTwoScreen() {
         };
         return data;
       });
-      Promise.all(allMessages).then((data) => setChatsList(data));
+      Promise.all(allMessages).then((data) => {
+        setIsLoading(false);
+        return setChatsList(data);
+      });
 
       return unsub;
     });
@@ -136,7 +141,7 @@ export default function TabTwoScreen() {
               placeholderTextColor={colorScheme === "dark" ? "#aaa" : "black"}
               iconColor={colorScheme === "dark" ? "#aaa" : "black"}
               inputStyle={{ color: "#cfcccc" }}
-              placeholder="Search"
+              placeholder="Buscar"
               onChangeText={handleTextChange}
               value={searchQuery}
             />
@@ -168,7 +173,13 @@ export default function TabTwoScreen() {
             }}
           />
         </View>
-        {chatsList.length === 0 && (
+
+        {isLoading && (
+          <View className="mt-7">
+            <Loading />
+          </View>
+        )}
+        {chatsList.length === 0 && !isLoading && (
           <Text className="text-center text-gray-500 text-lg mt-10">
             No hay chats para mostrar
           </Text>
