@@ -56,6 +56,7 @@ const Chat = () => {
   const createChatRoom = async () => {
     await setDoc(doc(database, "rooms", roomId), {
       roomId,
+      participants: [user.id, id].sort(),
       createdAt: Timestamp.fromDate(new Date()),
     });
   };
@@ -72,7 +73,7 @@ const Chat = () => {
       //@ts-ignore
       if (inputRef) inputRef?.current?.clear();
 
-      const newDoc = await addDoc(messagesRef, {
+      await addDoc(messagesRef, {
         userId: user.id,
         text: message,
         senderName: user.name,

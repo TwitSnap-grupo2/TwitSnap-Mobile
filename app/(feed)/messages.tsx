@@ -8,8 +8,23 @@ import { User } from "@/types/User";
 import { fetch_to } from "@/utils/fetch";
 import UserCard from "@/components/UserCard";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { collection, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 import { database } from "@/services/config";
+import ChatItem from "@/components/ChatItem";
+
+interface ChatItem {
+  username: string;
+  userId: string;
+  avatarUri: string;
+  roomId: string;
+}
 
 export default function TabTwoScreen() {
   const userContext = useContext(UserContext);
@@ -25,12 +40,63 @@ export default function TabTwoScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const typingTimeout = useRef<NodeJS.Timeout | null>(null);
   const [listOfUsers, setListOfUsers] = useState<Array<User>>([]);
-  const [chatsList, setChatsList] = useState([]);
+  const [chatsList, setChatsList] = useState<Array<ChatItem>>([]);
 
-  // useEffect(() => {
-  //   const roomsRef = collection(database, "rooms")
-  //   const chats = query(roomsRef, where())
-  // })
+  useEffect(() => {
+    const roomsRef = collection(database, "rooms");
+    const chats = query(
+      roomsRef,
+      where("participants", "array-contains", user.id)
+    );
+
+    let unsub = onSnapshot(chats, (snapshot) => {
+      let allMessages = snapshot.docs.map((doc) => {
+        const { participants, roomId } = doc.data();
+
+        const otherParticipant = participants.find(
+          (participant: string) => participant != user.id
+        );
+        fetchUser(otherParticipant).then((data: User) => {
+          const newChatlist = chatsList.concat({
+            username: data.name,
+            userId: data.id,
+            avatarUri: `https://robohash.org/${data.id}.png`,
+            roomId: roomId,
+          });
+          setChatsList(newChatlist);
+        });
+      });
+      return unsub;
+    });
+
+    getDocs(chats).then((docs) => {
+      docs.forEach((doc) => {
+        const { participants, roomId } = doc.data();
+
+        const otherParticipant = participants.find(
+          (participant: string) => participant != user.id
+        );
+        fetchUser(otherParticipant).then((data: User) => {
+          const newChatlist = chatsList.concat({
+            username: data.name,
+            userId: data.id,
+            avatarUri: `https://robohash.org/${data.id}.png`,
+            roomId: roomId,
+          });
+          setChatsList(newChatlist);
+        });
+      });
+    });
+  }, []);
+
+  const fetchUser = async (id: string) => {
+    const response = await fetch_to(
+      `https://api-gateway-ccbe.onrender.com/users/${id}`,
+      "GET"
+    );
+    const data = await response.json();
+    return data;
+  };
 
   async function handleTypingStop(input: string) {
     const response = await fetch_to(
@@ -125,6 +191,18 @@ export default function TabTwoScreen() {
             No hay chats para mostrar
           </Text>
         )}
+        {chatsList.length > 0 &&
+          chatsList.map((chat) => {
+            return (
+              <ChatItem
+                // key={chat.roomId}
+                userId={chat.userId}
+                username={chat.username}
+                avatarUri={chat.avatarUri}
+                roomId={chat.roomId}
+              />
+            );
+          })}
       </ScrollView>
     </SafeAreaView>
   );
