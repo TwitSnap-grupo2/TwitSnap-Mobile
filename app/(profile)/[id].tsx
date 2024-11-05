@@ -17,10 +17,11 @@ import Loading from "@/components/Loading";
 import SnackBarComponent from "@/components/Snackbar";
 import { ScrollView, RefreshControl } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { mappedTwits } from "@/utils/mappedTwits";
 
 export default function ProfileHomeScreen() {
   const colorScheme = useColorScheme();
-  const [tweets, setTweets] = useState([]);
+  const [tweets, setTweets] = useState(Array<Tweet>);
   const [user, setUser] = useState<User | null>(null);
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
@@ -138,96 +139,8 @@ export default function ProfileHomeScreen() {
     );
     if (response.status === 200) {
       const data = await response.json();
-      console.log(data);
-      const uniqueUserIds = Array.from(
-        new Set(data.map((tweet: Tweet) => tweet.createdBy))
-      );
-
-      const sharedTwit: { [key: string]: any } = {};
-      data.forEach((tweet: Tweet) => {
-        if (tweet.sharedBy == null) {
-          return;
-        }
-        const resnapeado = tweet.sharedBy == currentUser?.id;
-        if (resnapeado) {
-          sharedTwit[tweet.id] = resnapeado;
-        }
-        if (!uniqueUserIds.includes(tweet.sharedBy)) {
-          uniqueUserIds.push(tweet.sharedBy);
-        }
-      });
-
-      const uniqueTwitIds = Array.from(
-        new Set(
-          data
-            .filter((tweet: Tweet) => tweet.likes_count != "0")
-            .map((tweet: Tweet) => tweet.id)
-        )
-      );
-
-      const userResponses = await Promise.all(
-        uniqueUserIds.map((userId) =>
-          fetch_to(
-            `https://api-gateway-ccbe.onrender.com/users/${userId}`,
-            "GET"
-          )
-        )
-      );
-
-      const likesResponses = await Promise.all(
-        uniqueTwitIds.map((twitId) =>
-          fetch_to(
-            `https://api-gateway-ccbe.onrender.com/twits/${twitId}/like`,
-            "GET"
-          )
-        )
-      );
-
-      const users = await Promise.all(
-        userResponses
-          .filter((res) => res.status === 200)
-          .map((res) => res.json())
-      );
-      const likes = await Promise.all(
-        likesResponses
-          .filter((res) => res.status === 200)
-          .map((res) => res.json())
-      );
-
-      const userMap: { [key: string]: any } = {};
-      users.forEach((user) => {
-        userMap[user.id] = user;
-      });
-
-      const userLikes: { [key: string]: any } = {};
-      likes.flat().forEach((like) => {
-        const megusteado = like.likedBy == currentUser?.id;
-        if (megusteado) {
-          userLikes[like.twitsnapId] = megusteado;
-        }
-      });
-
       setTweets([]);
-      const data_tweets = data.map((tweet: Tweet) => {
-        const sharedBy = userMap[tweet.sharedBy] || {};
-        const createdBy = userMap[tweet.createdBy] || {};
-        const likedByMe = userLikes[tweet.id] || false;
-        const sharedByMe = sharedTwit[tweet.id] || false;
-        return {
-          id: tweet.id,
-          avatar: createdBy?.avatar,
-          name: createdBy?.name,
-          username: createdBy?.user,
-          message: tweet.message,
-          likes_count: tweet.likes_count,
-          shares_count: tweet.shares_count,
-          sharedBy: sharedBy?.user || null,
-          comments: 0,
-          createdBy: tweet.createdBy,
-          likedByMe: likedByMe,
-          sharedByMe: sharedByMe,
-        };
-      });
+      const data_tweets = await mappedTwits(data, user.id);
       setTweets(data_tweets);
       setLoading(false);
     } else {
@@ -309,7 +222,7 @@ export default function ProfileHomeScreen() {
         </View>
       </View>
       <ScrollView
-        className="px-4 py-2"
+        className="px-4 py-2 h-full bg-white dark:bg-black"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }

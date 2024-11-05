@@ -7,13 +7,16 @@ import { fetch_to } from "@/utils/fetch";
 import { useContext, useState } from "react";
 import { UserContext } from "@/context/context";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 export default function TweetComponent({
   initialTweet,
   shareTweet,
+  isResponse,
 }: {
   initialTweet: Tweet;
   shareTweet: () => void;
+  isResponse?: boolean;
 }) {
   const router = useRouter();
   const userContext = useContext(UserContext);
@@ -102,80 +105,110 @@ export default function TweetComponent({
     }
   }
 
+  function handleViewTwit() {
+    router.push({
+      pathname: "/(twit)/[id]",
+      params: {
+        id: tweet.id,
+        twit: JSON.stringify(tweet),
+      },
+    });
+  }
+
+  function handleAvatarPress() {
+    router.push({
+      pathname: "/(profile)/[id]",
+      params: {
+        id: tweet?.createdBy,
+        initialFollowed: user.followeds.includes(tweet.createdBy) ? "1" : "0",
+      },
+    });
+  }
+
   return (
-    <View
-      style={styles.container}
-      className=" bg-white dark:bg-black dark:border-slate-300"
-    >
-      <Avatar.Image
-        size={50}
-        source={{
-          uri: tweet.avatar || `https://robohash.org/${tweet.createdBy}.png`,
-        }}
-        onTouchEnd={() => {
-          router.push({
-            pathname: "/(profile)/[id]",
-            params: {
-              id: tweet?.createdBy,
-              initialFollowed: user.followeds.includes(tweet.createdBy)
-                ? "1"
-                : "0",
-            },
-          });
-        }}
-      />
-
-      {/* <Image source={{ uri: tweet.avatar }} style={styles.avatar} /> */}
-      <View style={styles.tweetContent}>
-        {tweet.sharedBy != null && (
-          <View style={styles.tweetHeader}>
-            <Text style={styles.username}>
-              re-snapeado por {tweet.sharedBy}
-            </Text>
-          </View>
+    <TouchableWithoutFeedback onPress={handleViewTwit}>
+      <View className="flex-row pb-4 mb-2 bg-white dark:bg-black border-slate-400 border-b-2">
+        {isResponse && (
+          <View
+            style={{
+              position: "absolute",
+              top: 50,
+              left: 25,
+              width: 3,
+              height: "55%",
+              backgroundColor: "#ddd",
+            }}
+          />
         )}
-        <View style={styles.tweetHeader}>
-          <Text className="dark:text-gray-200" style={styles.name}>
-            {tweet.name}
-          </Text>
 
-          <Text style={styles.username}>@{tweet.username}</Text>
-        </View>
-        <Text className="dark:text-gray-200" style={styles.tweetText}>
-          {tweet.message}
-        </Text>
-        <View style={styles.tweetActions}>
-          <TouchableOpacity style={styles.actionButton}>
-            <Icon name="share" size={16} color="#657786" />
-            <Text style={styles.actionText}>{tweet.comments}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton} onPress={handleShare}>
-            <Icon
-              name="repeat"
-              size={16}
-              color={tweet.sharedByMe ? "#1DA1F2" : "#657786"}
-            />
-            <Text style={styles.actionText}>{tweet.shares_count}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton} onPress={handleLike}>
-            <Icon
-              name="heart"
-              size={16}
-              color={tweet.likedByMe ? "#EE0000" : "#657786"}
-            />
-            <Text style={styles.actionText}>{tweet.likes_count}</Text>
-          </TouchableOpacity>
+        <TouchableWithoutFeedback onPress={handleAvatarPress}>
+          <Avatar.Image
+            size={50}
+            source={{
+              uri:
+                tweet.avatar || `https://robohash.org/${tweet.createdBy}.png`,
+            }}
+          />
+        </TouchableWithoutFeedback>
+
+        {/* <Image source={{ uri: tweet.avatar }} style={styles.avatar} /> */}
+        <View style={styles.tweetContent}>
+          {tweet.sharedBy != null && (
+            <View style={styles.tweetHeader}>
+              <Text style={styles.username}>
+                re-snapeado por {tweet.sharedBy}
+              </Text>
+            </View>
+          )}
+          <View style={styles.tweetHeader}>
+            <Text className="dark:text-gray-200" style={styles.name}>
+              {tweet.name}
+            </Text>
+
+            <Text style={styles.username}>@{tweet.username}</Text>
+          </View>
+          <Text className="dark:text-gray-200" style={styles.tweetText}>
+            {tweet.message}
+          </Text>
+          <View style={styles.tweetActions}>
+            <TouchableWithoutFeedback style={styles.actionButton}>
+              <Icon name="share" size={16} color="#657786" />
+              <Text style={styles.actionText}>{tweet.comments}</Text>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback
+              style={styles.actionButton}
+              onPress={handleShare}
+            >
+              <Icon
+                name="repeat"
+                size={16}
+                color={tweet.sharedByMe ? "#1DA1F2" : "#657786"}
+              />
+              <Text style={styles.actionText}>{tweet.shares_count}</Text>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback
+              style={styles.actionButton}
+              onPress={handleLike}
+            >
+              <Icon
+                name="heart"
+                size={16}
+                color={tweet.likedByMe ? "#EE0000" : "#657786"}
+              />
+              <Text style={styles.actionText}>{tweet.likes_count}</Text>
+            </TouchableWithoutFeedback>
+          </View>
         </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    padding: 8,
-    borderBottomWidth: 0.5,
+    // flexDirection: "row",
+    // padding: 12,
+    // borderBottomWidth: 0.5,
     // borderBottomColor: "#E1E8ED",
     // backgroundColor: "white",
   },

@@ -3,7 +3,7 @@ import React from "react";
 
 // import { useColorScheme } from '@/hooks/useColorScheme';
 
-export default function TabLayout() {
+export default function LogLayout() {
   // const colorScheme = useColorScheme();
 
   return (

@@ -1,13 +1,11 @@
 import { Stack } from "expo-router";
 import React from "react";
 
-export default function TabLayout() {
+export default function TwitLayout() {
   return (
     <Stack>
-      <Stack.Screen
-        name="createTwit"
-        options={{ title: "", headerShown: false }}
-      />
+      <Stack.Screen name="[id]" options={{ title: "" }} />
+      <Stack.Screen name="createTwit" options={{ title: "" }} />
     </Stack>
   );
 }
