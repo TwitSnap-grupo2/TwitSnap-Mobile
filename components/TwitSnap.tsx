@@ -174,7 +174,7 @@ export default function TweetComponent({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    padding: 12,
+    padding: 8,
     borderBottomWidth: 0.5,
     // borderBottomColor: "#E1E8ED",
     // backgroundColor: "white",
