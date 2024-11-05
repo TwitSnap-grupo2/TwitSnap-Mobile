@@ -44,10 +44,9 @@ const Chat = () => {
     createChatRoom();
     const docRef = doc(database, "rooms", roomId);
     const messagesRef = collection(docRef, "messages");
-    const q = query(messagesRef, orderBy("createdAt", "desc"));
+    const q = query(messagesRef, orderBy("createdAt", "asc"));
 
     let unsub = onSnapshot(q, (snapshot) => {
-      console.log("Fetched: ", snapshot.docs);
       let allMessages = snapshot.docs.map((doc) => doc.data());
       setMessages([...allMessages]);
       return unsub;
