@@ -77,7 +77,6 @@ const FeedScreen = () => {
 
       if (response.status === 200) {
         const data = await response.json();
-        setTweets([]);
         const mappedTweets = await mappedTwits(data, user?.id);
         setTweets(mappedTweets);
         setLoading(false);
@@ -152,7 +151,7 @@ const FeedScreen = () => {
         {tweets.length > 0 &&
           tweets.map((tweet, index) => (
             <TweetComponent
-              key={index}
+              key={tweet.sharedBy + tweet.id}
               initialTweet={tweet}
               shareTweet={onRefresh}
             />
