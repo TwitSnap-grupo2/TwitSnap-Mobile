@@ -1,5 +1,6 @@
 import { Tweet } from "@/types/tweets";
 import { fetch_to } from "./fetch";
+import { createdAt } from "expo-updates";
 
 export async function mappedTwits(data: [], curretUserId: string) {
     const uniqueUserIds = Array.from(
@@ -84,6 +85,7 @@ export async function mappedTwits(data: [], curretUserId: string) {
         likedByMe: likedByMe,
         sharedByMe: sharedByMe,
         parentId: tweet.parentId,
+        createdAt: tweet.createdAt,
     };
     });
 
