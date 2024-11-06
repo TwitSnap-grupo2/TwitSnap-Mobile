@@ -21,6 +21,7 @@ const FeedScreen = () => {
   const [tweets, setTweets] = useState<Tweet[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const userContext = useContext(UserContext);
   if (!userContext) {
     throw new Error("UserContext is null");
@@ -63,7 +64,7 @@ const FeedScreen = () => {
     }, 2000);
   }, []);
 
-  const fetchTweets = async (timestamp?: Date) => {
+  const fetchTweets = async (timestamp?: string) => {
     try {
       const today = new Date();
       const tomorrow = new Date(today);
@@ -71,16 +72,18 @@ const FeedScreen = () => {
       const response = await fetch_to(
         `https://api-gateway-ccbe.onrender.com/twits/${
           user?.id
-        }/feed?timestamp_start=${tomorrow.toISOString()}&limit=10`,
+        }/feed?timestamp_start=${
+          timestamp ? timestamp : tomorrow.toISOString()
+        }&limit=10`,
         "POST"
       );
 
       if (response.status === 200) {
         const data = await response.json();
-        setTweets([]);
         const mappedTweets = await mappedTwits(data, user?.id);
-        setTweets(mappedTweets);
-        setLoading(false);
+        setTweets((prevTweets) =>
+          timestamp ? [...prevTweets, ...mappedTweets] : mappedTweets
+        );
       } else {
         console.log("ERROR: ", response);
         setMessage("Error al obtener los twits " + response.status);
@@ -88,7 +91,20 @@ const FeedScreen = () => {
     } catch (error) {
       setMessage("Error de red o servidor: ");
       console.error(error);
+    } finally {
+      setRefreshing(false);
+      setLoading(false);
+      setLoadingMore(false);
     }
+  };
+
+  const loadMoreTweets = async () => {
+    if (loadingMore || tweets.length === 0) return;
+    setLoadingMore(true);
+    const lastTweetTimestamp = tweets[tweets.length - 1].createdAt;
+    const lastTweetDate = new Date(lastTweetTimestamp).toISOString();
+    setRefreshing(true);
+    await fetchTweets(lastTweetDate);
   };
 
   useEffect(() => {
@@ -112,6 +128,16 @@ const FeedScreen = () => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        onScroll={({ nativeEvent }) => {
+          const nearBottom =
+            nativeEvent.layoutMeasurement.height +
+              nativeEvent.contentOffset.y >=
+            nativeEvent.contentSize.height - 50;
+          if (nearBottom) {
+            loadMoreTweets();
+          }
+        }}
+        scrollEventThrottle={400}
       >
         {/* Sección del encabezado con los Avatares */}
         <View className="flex flex-row justify-between my-4 shadow-lg  pb-1 ">
@@ -152,7 +178,7 @@ const FeedScreen = () => {
         {tweets.length > 0 &&
           tweets.map((tweet, index) => (
             <TweetComponent
-              key={index}
+              key={tweet.sharedBy + tweet.id}
               initialTweet={tweet}
               shareTweet={onRefresh}
             />

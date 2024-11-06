@@ -162,32 +162,33 @@ const CreateTweetScreen = () => {
       if (response.status === 201) {
         const data = await response.json();
         tweetId = data.id;
-        setVisible(true);
-        setMessage("Twit snapeado correctamente");
-        setLoading(true);
-      } else {
-        setMessage("Error al crear el usuario " + response.status);
-      }
 
-      // Por cada usuario mencionado, se crea un nuevo twit
-      mentionedUsers.forEach(async (user) => {
-        const response = await fetch_to(
-          `https://api-gateway-ccbe.onrender.com/twits/${tweetId}/mention`,
-          "POST",
-          {
-            mentionedUser: user.id,
+        // Por cada usuario mencionado, se crea un nuevo twit
+        mentionedUsers.forEach(async (user) => {
+          const responseMention = await fetch_to(
+            `https://api-gateway-ccbe.onrender.com/twits/${tweetId}/mention`,
+            "POST",
+            {
+              mentionedUser: user.id,
+            }
+          );
+
+          if (responseMention.status != 201) {
+            setVisible(true);
+            setMessage("Error al crear el usuario " + responseMention.status);
+            return;
           }
-        );
-
-        if (response.status === 201) {
-          setVisible(true);
-          setMessage("Twit snapeado correctamente");
-          // handleBack();
-        } else {
-          setMessage("Error al crear el usuario " + response.status);
-        }
-      });
-      handleBack();
+        });
+      } else {
+        setVisible(true);
+        setMessage("Error al crear el usuario " + response.status);
+        return;
+      }
+      setVisible(true);
+      setMessage("Twit snapeado correctamente");
+      setTimeout(() => {
+        handleBack();
+      }, 700);
     } catch (error) {
       console.error("failed to sign up:", error);
     }
@@ -292,16 +293,15 @@ const CreateTweetScreen = () => {
               Publicar
             </Button>
           </View>
-
-          <View className="flex-1 ">
-            <SnackBarComponent
-              visible={visible}
-              action={() => setVisible(false)}
-              message={message}
-            />
-          </View>
         </ScrollView>
       </SafeAreaView>
+      <View className="flex-1 ">
+        <SnackBarComponent
+          visible={visible}
+          action={() => setVisible(false)}
+          message={message}
+        />
+      </View>
     </KeyboardAvoidingView>
   );
 };

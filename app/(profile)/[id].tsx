@@ -222,7 +222,8 @@ export default function ProfileHomeScreen() {
         </View>
       </View>
       <ScrollView
-        className="px-4 py-2 h-full bg-white dark:bg-black"
+        className="px-4 py-2 bg-white dark:bg-black mb-64"
+        contentContainerStyle={{ marginBottom: 100, minHeight: "100%" }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -230,19 +231,19 @@ export default function ProfileHomeScreen() {
         {tweets.map((tweet, index) => (
           // @ts-ignore
           <TweetComponent
-            key={index}
+            key={tweet.sharedBy + tweet.id}
             initialTweet={tweet}
             shareTweet={onRefresh}
           />
         ))}
-        <View className="flex-1">
-          <SnackBarComponent
-            visible={visible}
-            action={() => setVisible(false)}
-            message={message}
-          />
-        </View>
       </ScrollView>
+      <View className="flex-1">
+        <SnackBarComponent
+          visible={visible}
+          action={() => setVisible(false)}
+          message={message}
+        />
+      </View>
     </SafeAreaView>
   );
 }
