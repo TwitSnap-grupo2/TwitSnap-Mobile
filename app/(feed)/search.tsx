@@ -16,6 +16,7 @@ export default function SearchScreen() {
   const [listOfUsers, setListOfUsers] = useState<Array<User>>([]);
   const [tweets, setTweets] = useState<Array<Tweet>>([]);
   const [searchingHashtag, setSearchingHashtag] = useState("");
+  const [isSearchingHashtag, setIsSearchingHashtag] = useState(false);
   const [searching, setSearching] = useState(false);
   const userContext = useContext(UserContext);
   if (!userContext) {
@@ -54,9 +55,9 @@ export default function SearchScreen() {
     );
     if (response.status === 200) {
       const data = await response.json();
-      console.log(currentUser.id);
       const mapped_twits = await mappedTwits(data, currentUser.id);
       setSearching(false);
+      setIsSearchingHashtag(true);
       setTweets(mapped_twits);
     } else {
       console.error(
@@ -75,6 +76,7 @@ export default function SearchScreen() {
       setSearchingHashtag(input);
       setSearching(false);
     } else {
+      setSearchingHashtag("");
       await searchUsers(input);
     }
   }
@@ -119,6 +121,11 @@ export default function SearchScreen() {
             {searchingHashtag}
           </Button>
         </View>
+      )}
+      {tweets.length === 0 && isSearchingHashtag && (
+        <Text className="text-center text-gray-500 text-lg mt-10">
+          No hay twits para mostrar
+        </Text>
       )}
       {tweets.length > 0 &&
         tweets.map((tweet, index) => (
