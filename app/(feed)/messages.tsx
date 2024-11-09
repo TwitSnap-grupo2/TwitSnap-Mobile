@@ -15,7 +15,7 @@ import {
   orderBy,
   query,
   where,
-} from "firebase/firestore";
+} from "@react-native-firebase/firestore";
 import { database } from "@/services/config";
 import ChatItem from "@/components/ChatItem";
 import Loading from "@/components/Loading";

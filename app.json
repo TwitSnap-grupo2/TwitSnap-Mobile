@@ -16,7 +16,8 @@
       "supportsTablet": true,
       "runtimeVersion": {
         "policy": "appVersion"
-      }
+      },
+      "bundleIdentifier": "com.twitsnap.app"
     },
     "android": {
       "package": "com.twitsnap.app",
@@ -34,6 +35,9 @@
     },
     "plugins": [
       "expo-router",
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      "@react-native-firebase/messaging",
       [
         "@react-native-google-signin/google-signin",
         {

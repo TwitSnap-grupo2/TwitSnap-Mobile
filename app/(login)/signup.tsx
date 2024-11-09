@@ -45,7 +45,7 @@ export default function SignUpScreen() {
 
   async function emailVerification() {
     try {
-      const user = auth?.currentUser;
+      const user = auth()?.currentUser;
       if (!user) {
         throw new Error("User is null");
       }
@@ -72,8 +72,7 @@ export default function SignUpScreen() {
 
   async function signup(email: string, pass: string) {
     try {
-      const userCredentials = await createUserWithEmailAndPassword(
-        auth,
+      const userCredentials = await auth().createUserWithEmailAndPassword(
         email,
         pass
       );
