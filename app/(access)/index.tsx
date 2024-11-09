@@ -35,7 +35,7 @@ GoogleSignin.configure({
 export default function HomeScreen() {
   const [isInProgress, setIsInProgress] = useState(false);
   const router = useRouter();
-  const user_auth = auth.currentUser;
+  const user_auth = auth().currentUser;
   const [loading, setLoading] = useState(false);
   const userContext = useContext(UserContext);
 
@@ -47,7 +47,7 @@ export default function HomeScreen() {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      let user = auth.currentUser;
+      let user = auth().currentUser;
       if (user) {
         if (!user.emailVerified) {
           alert("Por favor, verifica tu correo electrónico");
@@ -71,7 +71,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (user_auth) {
-      handleLogin();
+      // handleLogin();
     } else {
       setLoading(false);
     }
@@ -86,22 +86,22 @@ export default function HomeScreen() {
         const credential = GoogleAuthProvider.credential(
           response.data?.idToken
         );
-        const result = await signInWithCredential(auth, credential);
-        if (result.user) {
+        const result = auth();
+        if (result) {
           setLoading(true);
-          const currentUser = await FindUserByEmail(result.user.email);
+          // const currentUser = await FindUserByEmail(result.user.email);
           setIsInProgress(false);
-          if (currentUser) {
-            saveUser(currentUser);
-            router.replace("/(feed)");
-          } else {
-            router.push({
-              pathname: "./info",
-              params: {
-                email: result.user.email,
-              },
-            });
-          }
+          // if (currentUser) {
+          //   saveUser(currentUser);
+          //   router.replace("/(feed)");
+          // } else {
+          //   router.push({
+          //     pathname: "./info",
+          //     params: {
+          //       email: result.user.email,
+          //     },
+          //   });
+          // }
         }
       } else {
         // sign in was cancelled by user
