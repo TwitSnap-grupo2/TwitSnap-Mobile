@@ -71,7 +71,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (user_auth) {
-      // handleLogin();
+      handleLogin();
     } else {
       setLoading(false);
     }
@@ -82,26 +82,39 @@ export default function HomeScreen() {
       setIsInProgress(true);
       await GoogleSignin.hasPlayServices();
       const response = await GoogleSignin.signIn();
-      if (isSuccessResponse(response)) {
-        const credential = GoogleAuthProvider.credential(
-          response.data?.idToken
+      if (response.data) {
+        if (!response.data.idToken) {
+          console.log("No idToken found in response");
+          return;
+        }
+        const googleCredential = auth.GoogleAuthProvider.credential(
+          response.data.idToken
         );
-        const result = auth();
+        if (!googleCredential) {
+          console.log("No googleCredential found");
+          return;
+        }
+        const res = await auth().signInWithCredential(googleCredential);
+        if (!res.user) {
+          console.log("No user found in response");
+          return;
+        }
+        const result = auth().currentUser;
         if (result) {
           setLoading(true);
-          // const currentUser = await FindUserByEmail(result.user.email);
+          const currentUser = await FindUserByEmail(result.email);
           setIsInProgress(false);
-          // if (currentUser) {
-          //   saveUser(currentUser);
-          //   router.replace("/(feed)");
-          // } else {
-          //   router.push({
-          //     pathname: "./info",
-          //     params: {
-          //       email: result.user.email,
-          //     },
-          //   });
-          // }
+          if (currentUser) {
+            saveUser(currentUser);
+            router.replace("/(feed)");
+          } else {
+            router.push({
+              pathname: "./info",
+              params: {
+                email: result.email,
+              },
+            });
+          }
         }
       } else {
         // sign in was cancelled by user

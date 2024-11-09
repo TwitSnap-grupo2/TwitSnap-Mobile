@@ -1,21 +1,25 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "@react-native-firebase/app";
+import { initializeApp, getApps, getApp } from "@react-native-firebase/app";
 import auth from "@react-native-firebase/auth";
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 import { getFirestore } from "@react-native-firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAs-upM23kIZ0IwMYKIlNI6YyByQhplxYE",
-  authDomain: "twitsnap-43ee3.firebaseapp.com",
-  projectId: "twitsnap-43ee3",
-  storageBucket: "twitsnap-43ee3.appspot.com",
-  messagingSenderId: "51208642510",
-  appId: "1:51208642510:web:ff705fad1b8992c009559f",
-  measurementId: "G-G1SLT1D2GF",
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || "",
+  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN || "",
+  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID || "",
+  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET || "",
+  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "",
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID || "",
+  measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID || "",
 };
 
+if (!firebaseConfig.apiKey) {
+  throw new Error("Missing FIREBASE_API_KEY");
+}
+
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 // const analytics = getAnalytics(app);
 
 const database = getFirestore();

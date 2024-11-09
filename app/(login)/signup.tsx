@@ -45,11 +45,11 @@ export default function SignUpScreen() {
 
   async function emailVerification() {
     try {
-      const user = auth()?.currentUser;
+      const user = auth().currentUser;
       if (!user) {
         throw new Error("User is null");
       }
-      await sendEmailVerification(user);
+      await user.sendEmailVerification();
     } catch (error) {
       console.error("failed to send email verification:", error);
     }
@@ -92,6 +92,7 @@ export default function SignUpScreen() {
   }: SignUpValues) {
     try {
       const user = await signup(email, password);
+      console.log("user", user);
       if (user) {
         //guardo el user
         const response = await fetch_to(
@@ -112,8 +113,10 @@ export default function SignUpScreen() {
             user: username,
             email: email,
             avatar: `https://robohash.org/${data.id}.png`,
-            followers: 0,
-            following: 0,
+            followers: data.followers,
+            followeds: data.followeds,
+            location: data.location,
+            interests: data.interests,
           });
           setMessage("Bienvenid@ a TwitSnap " + name);
           setVisible(true);
