@@ -1,11 +1,10 @@
 import { auth } from "@/services/config";
 import { fetch_to } from "./fetch";
-import { signInWithEmailAndPassword } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
 
 async function _login(email: string, pass: string) {
   try {
-    const userCredentials = await signInWithEmailAndPassword(auth, email, pass);
+    const userCredentials = await auth().signInWithEmailAndPassword(email, pass);
     const user = userCredentials.user;
     return user;
   } catch (error) {
@@ -19,7 +18,6 @@ export const LoginWithEmailAndPassword = async (
 ) => {
   try {
     let user = await _login(email, password);
-
     if (user) {
       if (!user.emailVerified) {
         alert("Por favor, verifica tu correo electrónico");

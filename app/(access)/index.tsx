@@ -35,7 +35,7 @@ GoogleSignin.configure({
 export default function HomeScreen() {
   const [isInProgress, setIsInProgress] = useState(false);
   const router = useRouter();
-  const user_auth = auth.currentUser;
+  const user_auth = auth().currentUser;
   const [loading, setLoading] = useState(false);
   const userContext = useContext(UserContext);
 
@@ -47,7 +47,7 @@ export default function HomeScreen() {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      let user = auth.currentUser;
+      let user = auth().currentUser;
       if (user) {
         if (!user.emailVerified) {
           alert("Por favor, verifica tu correo electrónico");
@@ -82,14 +82,27 @@ export default function HomeScreen() {
       setIsInProgress(true);
       await GoogleSignin.hasPlayServices();
       const response = await GoogleSignin.signIn();
-      if (isSuccessResponse(response)) {
-        const credential = GoogleAuthProvider.credential(
-          response.data?.idToken
+      if (response.data) {
+        if (!response.data.idToken) {
+          console.log("No idToken found in response");
+          return;
+        }
+        const googleCredential = auth.GoogleAuthProvider.credential(
+          response.data.idToken
         );
-        const result = await signInWithCredential(auth, credential);
-        if (result.user) {
+        if (!googleCredential) {
+          console.log("No googleCredential found");
+          return;
+        }
+        const res = await auth().signInWithCredential(googleCredential);
+        if (!res.user) {
+          console.log("No user found in response");
+          return;
+        }
+        const result = auth().currentUser;
+        if (result) {
           setLoading(true);
-          const currentUser = await FindUserByEmail(result.user.email);
+          const currentUser = await FindUserByEmail(result.email);
           setIsInProgress(false);
           if (currentUser) {
             saveUser(currentUser);
@@ -98,7 +111,7 @@ export default function HomeScreen() {
             router.push({
               pathname: "./info",
               params: {
-                email: result.user.email,
+                email: result.email,
               },
             });
           }
