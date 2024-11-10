@@ -16,7 +16,8 @@
       "supportsTablet": true,
       "runtimeVersion": {
         "policy": "appVersion"
-      }
+      },
+      "bundleIdentifier": "com.twitsnap.app"
     },
     "android": {
       "package": "com.twitsnap.app",
