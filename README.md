@@ -32,11 +32,11 @@ npm install -g eas-cli
    ```bash
    npm install
    ```
-2. [Descargar la apk](https://expo.dev/accounts/lghosn/projects/TwitSnap/builds/11c2e4b0-41f4-4ebd-9af5-b8725265e8ea)
+2. [Descargar la apk](https://expo.dev/accounts/lghosn/projects/TwitSnap/builds/bfcbd56d-1444-4df3-948e-aad41b1478ed)
 
 3. Start the app
    ```bash
-   npx expo start --tunnel --reset-cache
+   npx expo start --clear
    ```
 
 In the output, you'll find options to open the app in a

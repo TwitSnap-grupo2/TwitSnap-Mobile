@@ -8,15 +8,15 @@ import {
   setDoc,
   Timestamp,
   doc,
-  DocumentData,
-} from "firebase/firestore";
-import { auth, database } from "@/services/config";
+  FirebaseFirestoreTypes,
+} from "@react-native-firebase/firestore";
+import { database } from "@/services/config";
 import { getRoomId } from "@/utils/chats";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { UserContext } from "@/context/context";
-import { ScrollView } from "react-native-gesture-handler";
+// import { ScrollView } from "react-native-gesture-handler";
 import { Alert, TextInput, TouchableOpacity, View } from "react-native";
-import { StatusBar } from "expo-status-bar";
+// import { StatusBar } from "expo-status-bar";
 import ChatRoomHeader from "@/components/ChatRoomHeader";
 import { Feather } from "@expo/vector-icons";
 import MessageList from "@/components/MessageList";
@@ -33,7 +33,9 @@ const Chat = () => {
   const { id, name } = useLocalSearchParams();
   const textRef = useRef("");
   const router = useRouter();
-  const [messages, setMessages] = useState<Array<DocumentData>>([]);
+  const [messages, setMessages] = useState<
+    Array<FirebaseFirestoreTypes.DocumentData>
+  >([]);
   const inputRef = useRef(null);
 
   //@ts-ignore

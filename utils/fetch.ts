@@ -2,7 +2,7 @@ import { auth } from "@/services/config";
 
 
 export async function fetch_to(endpoint: string, method: string, body: any = null) {
-    const token = await auth.currentUser?.getIdToken();
+    const token = await auth().currentUser?.getIdToken();
     const response = await fetch(endpoint, {
         method: method,
         headers: {

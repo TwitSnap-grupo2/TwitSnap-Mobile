@@ -4,11 +4,11 @@ import { useRouter } from "expo-router";
 import {
   collection,
   doc,
-  DocumentData,
   onSnapshot,
   orderBy,
   query,
-} from "firebase/firestore";
+  FirebaseFirestoreTypes,
+} from "@react-native-firebase/firestore";
 import { useEffect, useState } from "react";
 import { View, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -27,7 +27,7 @@ const ChatItem = ({
 }) => {
   const router = useRouter();
   const [lastMessage, setLastMessage] = useState<
-    DocumentData | undefined | null
+    FirebaseFirestoreTypes.DocumentData | undefined | null
   >(undefined);
 
   useEffect(() => {

@@ -7,7 +7,7 @@ export default function Configuracion() {
   const router = useRouter();
 
   async function handleSignOut() {
-    auth
+    auth()
       .signOut()
       .then(() => {
         router.replace("../(access)");
