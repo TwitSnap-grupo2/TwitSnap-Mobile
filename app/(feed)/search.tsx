@@ -17,6 +17,8 @@ export default function SearchScreen() {
   const [tweets, setTweets] = useState<Array<Tweet>>([]);
   const [searchingHashtag, setSearchingHashtag] = useState("");
   const [isSearchingHashtag, setIsSearchingHashtag] = useState(false);
+  const [searchTwit, setSearchTwit] = useState("");
+  const [isSearchingTwit, setIsSearchingTwit] = useState(false);
   const [searching, setSearching] = useState(false);
   const userContext = useContext(UserContext);
   if (!userContext) {
@@ -45,9 +47,33 @@ export default function SearchScreen() {
     }
   }
 
+  async function searchTwits(query: string) {
+    setSearching(true);
+    setSearchingHashtag("");
+    setListOfUsers([]);
+    const response = await fetch_to(
+      `https://api-gateway-ccbe.onrender.com/twits/search?text=${query}`,
+      "GET"
+    );
+    if (response.status === 200) {
+      const data = await response.json();
+      const mapped_twits = await mappedTwits(data, currentUser.id);
+      setSearching(false);
+      setIsSearchingTwit(true);
+      setTweets(mapped_twits);
+    } else {
+      console.error(
+        "Error al obtener los twits",
+        response.status,
+        response.text
+      );
+    }
+  }
+
   async function searchHashtags(query: string) {
     setSearching(true);
     setSearchingHashtag("");
+    setTweets([]);
     query = query.substring(1);
     const response = await fetch_to(
       `https://api-gateway-ccbe.onrender.com/twits/hashtag/search?name=${query}`,
@@ -72,11 +98,14 @@ export default function SearchScreen() {
     setListOfUsers([]);
     setTweets([]);
     setSearching(true);
+    setIsSearchingHashtag(false);
+    setIsSearchingTwit(false);
     if (input.startsWith("#")) {
       setSearchingHashtag(input);
       setSearching(false);
     } else {
       setSearchingHashtag("");
+      setSearchTwit(input);
       await searchUsers(input);
     }
   }
@@ -110,6 +139,19 @@ export default function SearchScreen() {
           <UserCard user={user} />
         </View>
       ))}
+      {/* creo un boton para buscar el twit que esta escribiendo */}
+      {searchTwit && (
+        <View className="m-2">
+          <Button
+            mode="contained"
+            onPress={async () => searchTwits(searchTwit)}
+            className="bg-slate-500 mb-4 p-1 rounded-full"
+          >
+            Buscar Twits
+          </Button>
+        </View>
+      )}
+
       {/* creo un boton para buscar el hashtag que esta escribiendo */}
       {searchingHashtag && (
         <View className="m-2">
@@ -122,7 +164,7 @@ export default function SearchScreen() {
           </Button>
         </View>
       )}
-      {tweets.length === 0 && isSearchingHashtag && (
+      {tweets.length === 0 && (isSearchingHashtag || isSearchingTwit) && (
         <Text className="text-center text-gray-500 text-lg mt-10">
           No hay twits para mostrar
         </Text>

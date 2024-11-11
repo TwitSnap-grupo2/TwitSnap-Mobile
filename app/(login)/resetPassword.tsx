@@ -17,7 +17,8 @@ export default function SignInScreen() {
   const [loading, setLoading] = useState(false);
 
   function resetPassword() {
-    sendPasswordResetEmail(auth, email)
+    auth()
+      .sendPasswordResetEmail(email)
       .then(() => {
         alert(
           "Se ha enviado un correo electrónico para restablecer la contraseña"
