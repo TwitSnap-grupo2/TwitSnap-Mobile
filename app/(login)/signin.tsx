@@ -7,13 +7,29 @@ import { UserContext } from "@/context/context";
 import Loading from "@/components/Loading";
 import SnackBarComponent from "@/components/Snackbar";
 import { LoginWithEmailAndPassword } from "@/utils/login";
-import { Formik } from "formik";
+import { Formik, FormikErrors } from "formik";
 import * as Yup from "yup";
 import Input from "@/components/Input";
+import firestore, {
+  addDoc,
+  arrayUnion,
+  collection,
+  doc,
+  orderBy,
+  query,
+  updateDoc,
+} from "@react-native-firebase/firestore";
+import messaging from "@react-native-firebase/messaging";
+import { database } from "@/services/config";
+import { PermissionsAndroid } from "react-native";
 
 interface loginValues {
   email: string;
   password: string;
+}
+
+interface Token {
+  token: string;
 }
 
 export default function SignInScreen() {
@@ -40,15 +56,46 @@ export default function SignInScreen() {
 
   const handleLogin = async (
     { email, password }: loginValues,
-    setSubmitting: (isSubmitting: boolean) => void
+    setSubmitting: (isSubmitting: boolean) => void,
+    validateForm: (values: loginValues) => Promise<FormikErrors<loginValues>>,
+    setErrors: (errors: FormikErrors<loginValues>) => void
   ) => {
     setSubmitting(true);
+
+    const errors = await validateForm({ email, password });
+
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors);
+      setSubmitting(false);
+      return;
+    }
+
     const currentUser = await LoginWithEmailAndPassword(email, password);
     if (currentUser) {
       saveUser(currentUser);
       setMessage("Bienvenid@ a TwitSnap " + currentUser.name);
       setVisible(true);
       setSubmitting(false);
+      const userDeviceRef = firestore()
+        .collection("userDevices")
+        .doc(currentUser.id);
+
+      const devices = (await userDeviceRef.get()).data();
+      await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+      );
+
+      if (!messaging().isDeviceRegisteredForRemoteMessages) {
+        await messaging().registerDeviceForRemoteMessages();
+      }
+      const token = await messaging().getToken();
+
+      if (!devices || !devices["devices"].includes(token)) {
+        await userDeviceRef.set(
+          { devices: firestore.FieldValue.arrayUnion(token) },
+          { merge: true } // merge with existing data
+        );
+      }
       router.replace("/(feed)");
     } else {
       setVisible(true);
@@ -83,6 +130,8 @@ export default function SignInScreen() {
           initialValues={{ email: "", password: "" }}
           validationSchema={loginSchema}
           onSubmit={() => console.log()}
+          validateOnBlur={true}
+          validateOnChange={true}
         >
           {({
             errors,
@@ -92,6 +141,8 @@ export default function SignInScreen() {
             values,
             isSubmitting,
             setSubmitting,
+            validateForm,
+            setErrors,
           }) => (
             <View className="flex">
               <Input
@@ -115,7 +166,7 @@ export default function SignInScreen() {
               <Button
                 mode="contained"
                 onPress={() => {
-                  handleLogin(values, setSubmitting);
+                  handleLogin(values, setSubmitting, validateForm, setErrors);
                 }}
                 style={{ backgroundColor: "#1DA1F2" }}
                 className="mb-4 mt-1 p-1 rounded-full"

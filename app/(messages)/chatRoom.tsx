@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import {
+import firestore, {
   collection,
   query,
   orderBy,
@@ -10,6 +10,7 @@ import {
   doc,
   FirebaseFirestoreTypes,
 } from "@react-native-firebase/firestore";
+import messaging from "@react-native-firebase/messaging";
 import { database } from "@/services/config";
 import { getRoomId } from "@/utils/chats";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -20,6 +21,7 @@ import { Alert, TextInput, TouchableOpacity, View } from "react-native";
 import ChatRoomHeader from "@/components/ChatRoomHeader";
 import { Feather } from "@expo/vector-icons";
 import MessageList from "@/components/MessageList";
+import { fetch_to } from "@/utils/fetch";
 
 const Chat = () => {
   const userContext = useContext(UserContext);
@@ -82,6 +84,39 @@ const Chat = () => {
         senderName: user.name,
         createdAt: Timestamp.fromDate(new Date()),
       });
+
+      console.log("id: ", id);
+      const userDeviceRef = firestore()
+        .collection("userDevices")
+        .doc(id as string);
+
+      const devices = (await userDeviceRef.get()).data();
+
+      if (!devices) {
+        return;
+      }
+
+      console.log("🚀 ~ handleSendMessage ~ devices:", devices["devices"][0]);
+
+      // https://fcm.googleapis.com/v1/projects/twitsnap-43ee3/messages:send
+      // const res = await fetch_to(
+      //   "https://fcm.googleapis.com/v1/projects/twitsnap-43ee3/messages:send",
+      //   "POST",
+      //   {
+      //     message: {
+      //       token: devices["devices"][0],
+      //       data: {
+      //         url: `/(messages)/chatRoom?id=${id}&name=${name}`,
+      //       },
+      //       notification: {
+      //         body: message,
+      //         title: "New message",
+      //       },
+      //     },
+      //   },
+      //   "BLa9plSNClc2rZM4S_hFW9UDx5wrH-FfBoyNtMMbemL9zp0jqdGP8y94WVw8I2sSJqGc-bS3nVU_ANURsIM-zmM"
+      // );
+      // console.log("🚀 ~ handleSendMessage ~ res:", res);
     } catch (err) {
       if (err instanceof Error) Alert.alert("Error: ", err.message);
     }

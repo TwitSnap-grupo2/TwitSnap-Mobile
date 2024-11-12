@@ -4,7 +4,10 @@ import { FirebaseError } from "firebase/app";
 
 async function _login(email: string, pass: string) {
   try {
-    const userCredentials = await auth().signInWithEmailAndPassword(email, pass);
+    const userCredentials = await auth().signInWithEmailAndPassword(
+      email,
+      pass
+    );
     const user = userCredentials.user;
     return user;
   } catch (error) {
@@ -23,7 +26,7 @@ export const LoginWithEmailAndPassword = async (
         alert("Por favor, verifica tu correo electrónico");
         return;
       }
-      const findedUser = FindUserByEmail(email);
+      const findedUser = await FindUserByEmail(email);
       return findedUser;
     }
   } catch (error) {
@@ -42,6 +45,7 @@ export async function FindUserByEmail(email: string | null) {
     `https://api-gateway-ccbe.onrender.com/users/email/${email}`,
     "GET"
   );
+
   if (response.status === 200) {
     const data = await response.json();
     if (!data.id) {
