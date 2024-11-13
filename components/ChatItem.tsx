@@ -1,4 +1,4 @@
-import { database } from "@/services/config";
+import { database } from "@/utils/config";
 import { formatDate } from "@/utils/time";
 import { useRouter } from "expo-router";
 import {

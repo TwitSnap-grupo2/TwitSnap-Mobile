@@ -4,6 +4,7 @@ import auth from "@react-native-firebase/auth";
 import { getFirestore } from "@react-native-firebase/firestore";
 import {PermissionsAndroid} from 'react-native';
 import messaging from "@react-native-firebase/messaging";
+import { fetch_to } from "@/utils/fetch";
 
 async function checkPermission() {
   PermissionsAndroid.request(

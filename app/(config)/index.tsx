@@ -1,4 +1,4 @@
-import { auth } from "@/services/config";
+import { auth } from "@/utils/config";
 import { useRouter } from "expo-router";
 import { View } from "react-native";
 import { Button } from "react-native-paper";

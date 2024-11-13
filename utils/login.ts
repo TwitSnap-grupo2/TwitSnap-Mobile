@@ -1,4 +1,4 @@
-import { auth } from "@/services/config";
+import { auth } from "@/utils/config";
 import { fetch_to } from "./fetch";
 import { FirebaseError } from "firebase/app";
 

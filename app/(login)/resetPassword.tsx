@@ -2,7 +2,7 @@ import { View, Text, Image, SafeAreaView, TextInput } from "react-native";
 import { Button } from "react-native-paper";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useState } from "react";
-import { auth } from "@/services/config";
+import { auth } from "@/utils/config";
 import { sendPasswordResetEmail } from "firebase/auth";
 import Loading from "@/components/Loading";
 import SnackBarComponent from "@/components/Snackbar";

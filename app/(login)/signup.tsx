@@ -14,7 +14,7 @@ import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
 } from "firebase/auth";
-import { auth } from "@/services/config";
+import { auth } from "@/utils/config";
 import { fetch_to } from "@/utils/fetch";
 import { Snackbar } from "react-native-paper";
 import * as Yup from "yup";
