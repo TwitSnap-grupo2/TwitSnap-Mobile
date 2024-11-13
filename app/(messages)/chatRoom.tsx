@@ -89,7 +89,7 @@ const Chat = () => {
     }
     try {
       const res = await fetch_to(
-        `https://api-gateway-ccbe.onrender.com/notifications/${auth().currentUser?.getIdToken()}/devices`,
+        `https://api-gateway-ccbe.onrender.com/notifications/${auth().currentUser?.getIdToken()}`,
         "POST",
         {
           url: "string", // ???
