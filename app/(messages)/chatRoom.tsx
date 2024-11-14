@@ -88,11 +88,13 @@ const Chat = () => {
       if (err instanceof Error) Alert.alert("Error: ", err.message);
     }
     try {
+      console.log("user.id", user.id, "id", id);
+
       const res = await fetch_to(
-        `https://api-gateway-ccbe.onrender.com/notifications/${auth().currentUser?.getIdToken()}`,
+        `https://api-gateway-ccbe.onrender.com/notifications/${id}`,
         "POST",
         {
-          url: "string", // ???
+          url: `/(messages)/chatRoom?id=${id}&name=${name}`,
           body: `${user.name}: ${message}`,
           title: `${user.name} te ha enviado un mensaje`,
         }

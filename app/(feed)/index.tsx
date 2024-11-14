@@ -39,16 +39,14 @@ const FeedScreen = () => {
 
   async function addDevice() {
     const token = await messaging().getToken();
-    console.log("token", token);
     try {
       const res = await fetch_to(
-        `https://api-gateway-ccbe.onrender.com/notifications/${auth().currentUser?.getIdToken()}/devices`,
+        `https://api-gateway-ccbe.onrender.com/notifications/${user.id}/devices`,
         "POST",
         {
-          fcm_token: token,
+          device: token,
         }
       );
-      console.log("res", res.status, res.statusText);
     } catch (error) {
       console.error("Error al registrar el token FCM", error);
     }
