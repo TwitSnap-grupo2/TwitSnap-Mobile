@@ -16,7 +16,7 @@ import {
   query,
   where,
 } from "@react-native-firebase/firestore";
-import { database } from "@/services/config";
+import { database } from "@/utils/config";
 import ChatItem from "@/components/ChatItem";
 import Loading from "@/components/Loading";
 

@@ -10,8 +10,7 @@ import firestore, {
   doc,
   FirebaseFirestoreTypes,
 } from "@react-native-firebase/firestore";
-import messaging from "@react-native-firebase/messaging";
-import { database } from "@/services/config";
+import { database } from "@/utils/config";
 import { getRoomId } from "@/utils/chats";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { UserContext } from "@/context/context";
@@ -22,6 +21,7 @@ import ChatRoomHeader from "@/components/ChatRoomHeader";
 import { Feather } from "@expo/vector-icons";
 import MessageList from "@/components/MessageList";
 import { fetch_to } from "@/utils/fetch";
+import auth from "@react-native-firebase/auth";
 
 const Chat = () => {
   const userContext = useContext(UserContext);
@@ -119,6 +119,22 @@ const Chat = () => {
       // console.log("🚀 ~ handleSendMessage ~ res:", res);
     } catch (err) {
       if (err instanceof Error) Alert.alert("Error: ", err.message);
+    }
+    try {
+      console.log("user.id", user.id, "id", id);
+
+      const res = await fetch_to(
+        `https://api-gateway-ccbe.onrender.com/notifications/${id}`,
+        "POST",
+        {
+          url: `/(messages)/chatRoom?id=${id}&name=${name}`,
+          body: `${user.name}: ${message}`,
+          title: `${user.name} te ha enviado un mensaje`,
+        }
+      );
+      console.log("res", res.status, res.statusText);
+    } catch (error) {
+      console.error("Error al registrar el token FCM", error);
     }
   };
 

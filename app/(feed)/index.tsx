@@ -16,6 +16,8 @@ import { Tweet } from "@/types/tweets";
 import { useIsFocused } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { mappedTwits } from "@/utils/mappedTwits";
+import messaging from "@react-native-firebase/messaging";
+import auth from "@react-native-firebase/auth";
 
 const FeedScreen = () => {
   const [tweets, setTweets] = useState<Tweet[]>([]);
@@ -34,6 +36,25 @@ const FeedScreen = () => {
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
   const isFocused = useIsFocused();
+
+  async function addDevice() {
+    const token = await messaging().getToken();
+    try {
+      const res = await fetch_to(
+        `https://api-gateway-ccbe.onrender.com/notifications/${user.id}/devices`,
+        "POST",
+        {
+          device: token,
+        }
+      );
+    } catch (error) {
+      console.error("Error al registrar el token FCM", error);
+    }
+  }
+
+  useEffect(() => {
+    addDevice();
+  }, []);
 
   useEffect(() => {
     const backAction = () => {
@@ -55,6 +76,7 @@ const FeedScreen = () => {
 
     return () => backHandler.remove();
   }, [user, router]);
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchTweets();

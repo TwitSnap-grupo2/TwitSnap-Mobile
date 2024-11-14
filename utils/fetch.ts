@@ -1,4 +1,4 @@
-import { auth } from "@/services/config";
+import auth from "@react-native-firebase/auth";
 
 export async function fetch_to(
   endpoint: string,

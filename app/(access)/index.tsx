@@ -19,7 +19,7 @@ import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
 
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "@/context/context";
-import { auth } from "@/services/config";
+import { auth } from "@/utils/config";
 import { fetch_to } from "@/utils/fetch";
 import { FindUserByEmail } from "@/utils/login";
 import Loading from "@/components/Loading";
