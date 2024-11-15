@@ -54,6 +54,14 @@ const FeedScreen = () => {
 
   useEffect(() => {
     addDevice();
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      const url = remoteMessage.data?.url;
+      if (url) {
+        console.log("Opening URL from notification click", url);
+        // @ts-ignore
+        router.push(url);
+      }
+    });
   }, []);
 
   useEffect(() => {
