@@ -23,6 +23,10 @@ import { auth } from "@/utils/config";
 import { fetch_to } from "@/utils/fetch";
 import { FindUserByEmail } from "@/utils/login";
 import Loading from "@/components/Loading";
+import {
+  NotificationContext,
+  UnseenNotificationsProvider,
+} from "@/context/NotificationContext";
 
 GoogleSignin.configure({
   webClientId:
@@ -38,11 +42,17 @@ export default function HomeScreen() {
   const user_auth = auth().currentUser;
   const [loading, setLoading] = useState(false);
   const userContext = useContext(UserContext);
+  const notificationContext = useContext(NotificationContext);
 
   if (!userContext) {
     throw new Error("UserContext is null");
   }
   const { saveUser } = userContext;
+
+  if (!notificationContext) {
+    throw new Error("NotificationContexr is null");
+  }
+  const { saveUnseenNotifications } = notificationContext;
 
   const handleLogin = async () => {
     setLoading(true);
@@ -57,9 +67,19 @@ export default function HomeScreen() {
         const currentUser = await FindUserByEmail(user.email);
         if (currentUser) {
           saveUser(currentUser);
+          fetch_to(
+            `https://api-gateway-ccbe.onrender.com/notifications/${currentUser.id}/unseen`,
+            "GET"
+          ).then((res) =>
+            res.json().then((r) => {
+              console.log("🚀 ~ res.json ~ r:", r);
+              saveUnseenNotifications(r["unseen"]);
+            })
+          );
           router.replace("/(feed)");
         } else {
-          alert("Error al obtener el usuario " + user.email);
+          router.replace("/(login)");
+          // alert("Error al obtener el usuario " + user.email);
         }
       } else {
         setLoading(false);
@@ -106,6 +126,12 @@ export default function HomeScreen() {
           setIsInProgress(false);
           if (currentUser) {
             saveUser(currentUser);
+            fetch_to(
+              `https://api-gateway-ccbe.onrender.com/notifications/${currentUser.id}/unseen`,
+              "GET"
+            ).then((res) =>
+              res.json().then((r) => saveUnseenNotifications(r["unseen"]))
+            );
             router.replace("/(feed)");
           } else {
             router.push({

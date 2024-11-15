@@ -21,6 +21,8 @@ import firestore, {
 } from "@react-native-firebase/firestore";
 import messaging from "@react-native-firebase/messaging";
 import { PermissionsAndroid } from "react-native";
+import { NotificationContext } from "@/context/NotificationContext";
+import { fetch_to } from "@/utils/fetch";
 
 interface loginValues {
   email: string;
@@ -33,9 +35,15 @@ interface Token {
 
 export default function SignInScreen() {
   const userContext = useContext(UserContext);
+  const notificationContext = useContext(NotificationContext);
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  if (!notificationContext) {
+    return;
+  }
+  
+  const { saveUnseenNotifications } = notificationContext;
 
   if (!userContext) {
     throw new Error("UserContext is null");
@@ -72,6 +80,13 @@ export default function SignInScreen() {
     const currentUser = await LoginWithEmailAndPassword(email, password);
     if (currentUser) {
       saveUser(currentUser);
+      fetch_to(
+        `https://api-gateway-ccbe.onrender.com/notifications/${currentUser.id}/unseen`,
+        "GET"
+      ).then((res) =>
+        res.json().then((r) => saveUnseenNotifications(r["unseen"]))
+      );
+
       setMessage("Bienvenid@ a TwitSnap " + currentUser.name);
       setVisible(true);
       setSubmitting(false);

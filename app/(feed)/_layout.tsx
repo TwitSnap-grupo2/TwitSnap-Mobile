@@ -1,12 +1,19 @@
 import { Tabs, useRouter } from "expo-router";
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { NotificationContext } from "@/context/NotificationContext";
 
 export default function FeedLayout() {
   const colorScheme = useColorScheme();
   const router = useRouter();
+  const notificationContext = useContext(NotificationContext);
+  if (!notificationContext) {
+    throw new Error("NotificationContext is null");
+  }
+  const unseenNotifications = notificationContext.unseenNotifications;
+
   return (
     <Tabs
       screenOptions={{
@@ -48,6 +55,8 @@ export default function FeedLayout() {
               color={color}
             />
           ),
+          tabBarBadge:
+            unseenNotifications == 0 ? undefined : unseenNotifications,
         }}
       />
       <Tabs.Screen
