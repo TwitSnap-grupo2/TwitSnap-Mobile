@@ -15,7 +15,13 @@ import { getRoomId } from "@/utils/chats";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { UserContext } from "@/context/context";
 // import { ScrollView } from "react-native-gesture-handler";
-import { Alert, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Keyboard,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 // import { StatusBar } from "expo-status-bar";
 import ChatRoomHeader from "@/components/ChatRoomHeader";
 import { Feather } from "@expo/vector-icons";
@@ -39,7 +45,7 @@ const Chat = () => {
     Array<FirebaseFirestoreTypes.DocumentData>
   >([]);
   const inputRef = useRef(null);
-
+  const scrollViewRef = useRef(null);
   //@ts-ignore
   const roomId = getRoomId(user.id, id);
 
@@ -54,9 +60,28 @@ const Chat = () => {
     let unsub = onSnapshot(q, (snapshot) => {
       let allMessages = snapshot.docs.map((doc) => doc.data());
       setMessages([...allMessages]);
-      return unsub;
     });
+
+    const keyboardListener = Keyboard.addListener(
+      "keyboardDidShow",
+      updateScrollView
+    );
+
+    return () => {
+      keyboardListener.remove();
+      unsub;
+    };
   }, []);
+
+  useEffect(() => {
+    updateScrollView();
+  });
+
+  const updateScrollView = () => {
+    setTimeout(() => {
+      scrollViewRef?.current?.scrollToEnd({ animated: true });
+    }, 100);
+  };
 
   const createChatRoom = async () => {
     await setDoc(doc(database, "rooms", roomId), {
@@ -112,7 +137,11 @@ const Chat = () => {
       ></ChatRoomHeader>
       <View className="h-3 border-b border-neutral-300 dark:border-neutral-600"></View>
       <View className="flex-1">
-        <MessageList messages={messages} currentUser={user}></MessageList>
+        <MessageList
+          scrollViewRef={scrollViewRef}
+          messages={messages}
+          currentUser={user}
+        ></MessageList>
       </View>
       <View className="mb-3 pt-2 px-3">
         <View className="flex-row justify-between bg-white border p-2 border-neutral-500 rounded-full pl-5">
