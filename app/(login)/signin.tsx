@@ -20,7 +20,6 @@ import firestore, {
   updateDoc,
 } from "@react-native-firebase/firestore";
 import messaging from "@react-native-firebase/messaging";
-import { database } from "@/services/config";
 import { PermissionsAndroid } from "react-native";
 
 interface loginValues {

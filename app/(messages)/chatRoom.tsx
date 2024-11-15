@@ -84,39 +84,6 @@ const Chat = () => {
         senderName: user.name,
         createdAt: Timestamp.fromDate(new Date()),
       });
-
-      console.log("id: ", id);
-      const userDeviceRef = firestore()
-        .collection("userDevices")
-        .doc(id as string);
-
-      const devices = (await userDeviceRef.get()).data();
-
-      if (!devices) {
-        return;
-      }
-
-      console.log("🚀 ~ handleSendMessage ~ devices:", devices["devices"][0]);
-
-      // https://fcm.googleapis.com/v1/projects/twitsnap-43ee3/messages:send
-      // const res = await fetch_to(
-      //   "https://fcm.googleapis.com/v1/projects/twitsnap-43ee3/messages:send",
-      //   "POST",
-      //   {
-      //     message: {
-      //       token: devices["devices"][0],
-      //       data: {
-      //         url: `/(messages)/chatRoom?id=${id}&name=${name}`,
-      //       },
-      //       notification: {
-      //         body: message,
-      //         title: "New message",
-      //       },
-      //     },
-      //   },
-      //   "BLa9plSNClc2rZM4S_hFW9UDx5wrH-FfBoyNtMMbemL9zp0jqdGP8y94WVw8I2sSJqGc-bS3nVU_ANURsIM-zmM"
-      // );
-      // console.log("🚀 ~ handleSendMessage ~ res:", res);
     } catch (err) {
       if (err instanceof Error) Alert.alert("Error: ", err.message);
     }

@@ -240,7 +240,7 @@ const CreateTweetScreen = () => {
               style={{
                 flex: 1,
                 marginLeft: 12,
-                color: "#000",
+                color: colorScheme === "dark" ? "#fff" : "#000",
                 fontSize: 18,
                 backgroundColor: "transparent",
                 marginBottom: 80,

@@ -18,6 +18,7 @@ import SnackBarComponent from "@/components/Snackbar";
 import { ScrollView, RefreshControl } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { mappedTwits } from "@/utils/mappedTwits";
+import { List } from "react-native-paper";
 
 export default function ProfileHomeScreen() {
   const colorScheme = useColorScheme();
@@ -199,13 +200,21 @@ export default function ProfileHomeScreen() {
 
         <View className="ml-4">
           {isCurrentUserProfile ? (
-            <TouchableOpacity
-              onPress={() => router.push("/(profile)/editprofile")}
-            >
-              <Text className="bg-blue-500 text-white text-sm font-bold py-2 px-4 rounded-full shadow-md">
-                Editar Perfil
-              </Text>
-            </TouchableOpacity>
+            <View className="flex flex-row gap-2">
+              <TouchableOpacity onPress={() => router.push("/(profile)/stats")}>
+                <Text className="text-center bg-blue-500 text-white text-xs font-bold py-2 px-4 rounded-full shadow-md">
+                  Estadisticas
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => router.push("/(profile)/editprofile")}
+              >
+                <Text className="text-center bg-blue-500 text-white text-xs font-bold py-2 px-4 rounded-full shadow-md">
+                  Editar Perfil
+                </Text>
+              </TouchableOpacity>
+            </View>
           ) : (
             <TouchableOpacity onPress={handleFollow}>
               <Text
