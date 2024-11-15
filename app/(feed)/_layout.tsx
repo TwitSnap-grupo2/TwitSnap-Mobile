@@ -4,6 +4,7 @@ import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { NotificationContext } from "@/context/NotificationContext";
+import messaging from "@react-native-firebase/messaging";
 
 export default function FeedLayout() {
   const colorScheme = useColorScheme();

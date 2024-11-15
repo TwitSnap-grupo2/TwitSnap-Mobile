@@ -79,6 +79,7 @@ const Chat = () => {
 
   const updateScrollView = () => {
     setTimeout(() => {
+      //@ts-ignore
       scrollViewRef?.current?.scrollToEnd({ animated: true });
     }, 100);
   };

@@ -49,20 +49,20 @@ export default function RootLayout() {
       });
 
     // Foreground message handler (show alert or any UI change as needed)
-    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-      if (remoteMessage.notification) {
-        Alert.alert(
-          remoteMessage.notification.title,
-          remoteMessage.notification.body
-        );
-      }
-    });
+    // const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+    //   if (remoteMessage.notification) {
+    //     Alert.alert(
+    //       remoteMessage.notification.title,
+    //       remoteMessage.notification.body
+    //     );
+    //   }
+    // });
 
     if (loaded) {
       SplashScreen.hideAsync();
     }
 
-    return unsubscribe;
+    // return unsubscribe;
   }, [loaded]);
 
   if (!loaded) {

@@ -18,6 +18,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { mappedTwits } from "@/utils/mappedTwits";
 import messaging from "@react-native-firebase/messaging";
 import auth from "@react-native-firebase/auth";
+import { NotificationContext } from "@/context/NotificationContext";
 
 const FeedScreen = () => {
   const [tweets, setTweets] = useState<Tweet[]>([]);
@@ -25,12 +26,14 @@ const FeedScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const userContext = useContext(UserContext);
-  if (!userContext) {
+  const notificationContext = useContext(NotificationContext);
+  if (!userContext || !notificationContext) {
     throw new Error("UserContext is null");
   }
   if (!userContext.user) {
     throw new Error("UserContext.user is null");
   }
+
   const user = userContext.user;
   const router = useRouter();
   const [visible, setVisible] = useState(false);
@@ -62,6 +65,23 @@ const FeedScreen = () => {
         router.push(url);
       }
     });
+
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      console.log("🚀 ~ unsubscribe ~ remoteMessage:", remoteMessage);
+      if (remoteMessage.notification) {
+        if (remoteMessage.data && remoteMessage.data.createdBy != user.id) {
+          console.log("🚀 ~ unsubscribe ~ user.id:", user.id);
+          console.log(
+            "🚀 ~ unsubscribe ~ remoteMessage.data.createdBy:",
+            remoteMessage.data.createdBy
+          );
+          notificationContext.saveUnseenNotifications(
+            notificationContext.unseenNotifications + 1
+          );
+        }
+      }
+    });
+    return unsubscribe;
   }, []);
 
   useEffect(() => {
