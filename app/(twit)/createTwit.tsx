@@ -150,6 +150,11 @@ const CreateTweetScreen = () => {
   }, [tweet, cursorPosition]);
 
   async function handleSubmit() {
+    if (message == "") {
+      setVisible(true);
+      setMessage("No se puede crear un twitsnap sin contenido");
+      return;
+    }
     try {
       let tweetId = "";
       if (!initialMessage) {
@@ -215,7 +220,7 @@ const CreateTweetScreen = () => {
         }
       }
     } catch (error) {
-      console.error("failed to sign up:", error);
+      console.error("Failed to post twitsnap:", error);
     }
   }
 
