@@ -1,5 +1,5 @@
 import { Tweet } from "@/types/tweets";
-import { Avatar } from "react-native-paper";
+import { Avatar, IconButton, Menu } from "react-native-paper";
 import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useRouter } from "expo-router";
@@ -12,13 +12,18 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 export default function TweetComponent({
   initialTweet,
   shareTweet,
+  deleteTweet,
+  editTweet,
   isResponse,
 }: {
   initialTweet: Tweet;
+  deleteTweet?: (tweetId: string) => void;
+  editTweet?: (message: string, tweetId: string) => void;
   shareTweet: () => void;
   isResponse?: boolean;
 }) {
   const router = useRouter();
+  const [menuVisible, setMenuVisible] = useState(false);
   const userContext = useContext(UserContext);
   if (!userContext) {
     throw new Error("UserContext is null");
@@ -125,6 +130,22 @@ export default function TweetComponent({
     });
   }
 
+  const handleEdit = () => {
+    setMenuVisible(false);
+    if (!editTweet) {
+      return;
+    }
+    editTweet(tweet.message, tweet.id);
+  };
+
+  const handleDelete = async () => {
+    setMenuVisible(false);
+    if (!deleteTweet) {
+      return;
+    }
+    deleteTweet(tweet.id);
+  };
+
   return (
     <TouchableWithoutFeedback onPress={handleViewTwit}>
       <View className="flex-row pb-4 mb-2 bg-white dark:bg-black border-slate-400 border-b-2">
@@ -151,7 +172,6 @@ export default function TweetComponent({
           />
         </TouchableWithoutFeedback>
 
-        {/* <Image source={{ uri: tweet.avatar }} style={styles.avatar} /> */}
         <View style={styles.tweetContent}>
           {tweet.sharedBy != null && (
             <View style={styles.tweetHeader}>
@@ -160,13 +180,37 @@ export default function TweetComponent({
               </Text>
             </View>
           )}
-          <View style={styles.tweetHeader}>
-            <Text className="dark:text-gray-200" style={styles.name}>
-              {tweet.name}
-            </Text>
+          <View className="space-x-50" style={styles.tweetHeader}>
+            <View>
+              <Text className="dark:text-gray-200" style={styles.name}>
+                {tweet.name}
+              </Text>
 
-            <Text style={styles.username}>@{tweet.username}</Text>
+              <Text style={styles.username}>@{tweet.username}</Text>
+            </View>
+
+            {tweet.createdBy === user.id && (
+              <Menu
+                visible={menuVisible}
+                onDismiss={() => setMenuVisible(false)}
+                anchor={
+                  <TouchableWithoutFeedback>
+                    <IconButton
+                      icon="dots-vertical" // Ícono de tres puntos
+                      size={24}
+                      onPress={() => setMenuVisible(true)}
+                    />
+                  </TouchableWithoutFeedback>
+                }
+              >
+                <View>
+                  <Menu.Item onPress={handleEdit} title="Editar" />
+                  <Menu.Item onPress={handleDelete} title="Eliminar" />
+                </View>
+              </Menu>
+            )}
           </View>
+
           <Text className="dark:text-gray-200" style={styles.tweetText}>
             {tweet.message}
           </Text>

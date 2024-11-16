@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useContext, useEffect, useRef, useState } from "react";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { UserContext } from "@/context/context";
 import { fetch_to } from "@/utils/fetch";
 import { styled } from "nativewind";
@@ -24,7 +24,6 @@ const StyledView = styled(View);
 
 const CreateTweetScreen = () => {
   const colorScheme = useColorScheme();
-  const [tweet, setTweet] = useState("");
   const router = useRouter();
   const userContext = useContext(UserContext);
   const user = userContext ? userContext.user : null;
@@ -37,6 +36,10 @@ const CreateTweetScreen = () => {
   const [currentWord, setCurrentWord] = useState("");
   const typingTimeout = useRef<NodeJS.Timeout | null>(null);
   const [listOfUsers, setListOfUsers] = useState<Array<User>>([]);
+  const { initialMessage, id } = useLocalSearchParams();
+  const [tweet, setTweet] = useState(
+    initialMessage ? initialMessage.toString() : ""
+  );
 
   // const navigation = useNavigation();
 
@@ -149,46 +152,68 @@ const CreateTweetScreen = () => {
   async function handleSubmit() {
     try {
       let tweetId = "";
-      const response = await fetch_to(
-        "https://api-gateway-ccbe.onrender.com/twits/",
-        "POST",
-        {
-          message: tweet,
-          // @ts-ignore
-          createdBy: user.id,
-        }
-      );
-
-      if (response.status === 201) {
-        const data = await response.json();
-        tweetId = data.id;
-
-        // Por cada usuario mencionado, se crea un nuevo twit
-        mentionedUsers.forEach(async (user) => {
-          const responseMention = await fetch_to(
-            `https://api-gateway-ccbe.onrender.com/twits/${tweetId}/mention`,
-            "POST",
-            {
-              mentionedUser: user.id,
-            }
-          );
-
-          if (responseMention.status != 201) {
-            setVisible(true);
-            setMessage("Error al crear el usuario " + responseMention.status);
-            return;
+      if (!initialMessage) {
+        const response = await fetch_to(
+          "https://api-gateway-ccbe.onrender.com/twits/",
+          "POST",
+          {
+            message: tweet,
+            // @ts-ignore
+            createdBy: user.id,
           }
-        });
-      } else {
+        );
+
+        if (response.status === 201) {
+          const data = await response.json();
+          tweetId = data.id;
+
+          // Por cada usuario mencionado, se crea un nuevo twit
+          mentionedUsers.forEach(async (user) => {
+            const responseMention = await fetch_to(
+              `https://api-gateway-ccbe.onrender.com/twits/${tweetId}/mention`,
+              "POST",
+              {
+                mentionedUser: user.id,
+              }
+            );
+
+            if (responseMention.status != 201) {
+              setVisible(true);
+              setMessage("Error al crear el usuario " + responseMention.status);
+              return;
+            }
+          });
+        } else {
+          setVisible(true);
+          setMessage("Error al crear el usuario " + response.status);
+          return;
+        }
         setVisible(true);
-        setMessage("Error al crear el usuario " + response.status);
-        return;
+        setMessage("Twit snapeado correctamente");
+        setTimeout(() => {
+          handleBack();
+        }, 700);
+      } else {
+        const response = await fetch_to(
+          `https://api-gateway-ccbe.onrender.com/twits/${id}`,
+          "PATCH",
+          {
+            message: tweet,
+            isPriavate: false,
+          }
+        );
+
+        if (response.status === 200) {
+          setVisible(true);
+          setMessage("Twit editado correctamente");
+          setTimeout(() => {
+            handleBack();
+          }, 700);
+        } else {
+          setVisible(true);
+          setMessage("Error al editar el twit " + response.status);
+        }
       }
-      setVisible(true);
-      setMessage("Twit snapeado correctamente");
-      setTimeout(() => {
-        handleBack();
-      }, 700);
     } catch (error) {
       console.error("failed to sign up:", error);
     }

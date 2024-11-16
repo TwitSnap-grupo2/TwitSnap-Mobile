@@ -11,6 +11,7 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { UserProvider } from "@/context/context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Provider as PaperProvider, Provider } from "react-native-paper";
 import messaging, {
   onNotificationOpenedApp,
 } from "@react-native-firebase/messaging";
@@ -71,27 +72,38 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView>
-      <UserProvider>
-        <UnseenNotificationsProvider>
-          <ThemeProvider
-            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-          >
-            <Stack>
-              <Stack.Screen name="(access)" options={{ headerShown: false }} />
-              <Stack.Screen name="(login)" options={{ headerShown: false }} />
-              <Stack.Screen name="(feed)" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-              <Stack.Screen name="(profile)" options={{ headerShown: false }} />
-              <Stack.Screen name="(twit)" options={{ headerShown: false }} />
-              <Stack.Screen name="(config)" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="(messages)"
-                options={{ headerShown: false }}
-              />
-            </Stack>
-          </ThemeProvider>
-        </UnseenNotificationsProvider>
-      </UserProvider>
+      <Provider>
+        <UserProvider>
+          <UnseenNotificationsProvider>
+            <ThemeProvider
+              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+            >
+              <Stack>
+                <Stack.Screen
+                  name="(access)"
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen name="(login)" options={{ headerShown: false }} />
+                <Stack.Screen name="(feed)" options={{ headerShown: false }} />
+                <Stack.Screen name="+not-found" />
+                <Stack.Screen
+                  name="(profile)"
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen name="(twit)" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="(config)"
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="(messages)"
+                  options={{ headerShown: false }}
+                />
+              </Stack>
+            </ThemeProvider>
+          </UnseenNotificationsProvider>
+        </UserProvider>
+      </Provider>
     </GestureHandlerRootView>
   );
 }

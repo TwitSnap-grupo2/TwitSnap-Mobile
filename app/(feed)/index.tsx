@@ -55,6 +55,39 @@ const FeedScreen = () => {
     }
   }
 
+  async function deleteTweet(tweetId: string) {
+    try {
+      const response = await fetch_to(
+        `https://api-gateway-ccbe.onrender.com/twits/${tweetId}`,
+        "DELETE"
+      );
+      if (response.status === 204) {
+        setTweets((prevTweets) =>
+          prevTweets.filter((tweet) => tweet.id !== tweetId)
+        );
+        setMessage("Tweet eliminado correctamente");
+        setVisible(true);
+      } else {
+        console.error("Error al eliminar el tweet:", response.status);
+        alert("Error No se pudo eliminar el tweet.");
+      }
+    } catch (error) {
+      console.error("Error al eliminar el tweet:", error);
+      alert("Error Ocurrió un problema al eliminar el tweet.");
+    }
+  }
+
+  async function editTweet(message: string, id: string) {
+    router.push({
+      pathname: "/(twit)/createTwit",
+      // @ts-ignore
+      params: {
+        initialMessage: message,
+        id: id,
+      },
+    });
+  }
+
   useEffect(() => {
     addDevice();
     messaging().onNotificationOpenedApp((remoteMessage) => {
@@ -223,9 +256,11 @@ const FeedScreen = () => {
         {tweets.length > 0 &&
           tweets.map((tweet, index) => (
             <TweetComponent
-              key={tweet.sharedBy + tweet.id}
+              key={tweet.sharedBy + tweet.id + tweet.message}
               initialTweet={tweet}
               shareTweet={onRefresh}
+              deleteTweet={() => deleteTweet(tweet.id)}
+              editTweet={() => editTweet(tweet.message, tweet.id)}
             />
           ))}
       </ScrollView>
