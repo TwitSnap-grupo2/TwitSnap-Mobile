@@ -1,12 +1,15 @@
 import { View, Text, Image, SafeAreaView, TextInput } from "react-native";
 import { Button } from "react-native-paper";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { auth } from "@/utils/config";
 import { sendPasswordResetEmail } from "firebase/auth";
 import Loading from "@/components/Loading";
 import SnackBarComponent from "@/components/Snackbar";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { fetch_to } from "@/utils/fetch";
+import { UserContext } from "@/context/context";
+import { createdAt } from "expo-updates";
 
 export default function SignInScreen() {
   const colorScheme = useColorScheme();
@@ -15,22 +18,46 @@ export default function SignInScreen() {
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const { startedAt } = useLocalSearchParams();
 
-  function resetPassword() {
+  async function sendMetric(success: boolean) {
+    const startedAtDate = new Date(Number(startedAt));
+    const res = await fetch_to(
+      `https://api-gateway-ccbe.onrender.com/metrics/recoverPassword`,
+      "POST",
+      {
+        success: success,
+        recoveryTime: (Date.now() - startedAtDate.getTime()) / 1000,
+      }
+    );
+    if (!res.ok) {
+      const data = await res.json();
+      console.log(data);
+      setMessage(data.message);
+      setVisible(true);
+      return;
+    }
+  }
+
+  async function resetPassword() {
     auth()
       .sendPasswordResetEmail(email)
       .then(() => {
-        alert(
-          "Se ha enviado un correo electrónico para restablecer la contraseña"
-        );
-        router.replace("../(login)/signin");
+        setMessage("Email enviado");
+        setVisible(true);
+        sendMetric(true);
       })
       .catch((error) => {
+        sendMetric(false);
         const errorCode = error.code;
         const errorMessage = error.message;
         setMessage(errorCode + " " + errorMessage);
         setVisible(true);
       });
+
+    setTimeout(() => {
+      router.replace("../(login)/signin");
+    }, 3000);
   }
 
   if (loading) {
