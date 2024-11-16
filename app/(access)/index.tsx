@@ -42,6 +42,7 @@ export default function HomeScreen() {
   const user_auth = auth().currentUser;
   const [loading, setLoading] = useState(false);
   const userContext = useContext(UserContext);
+  console.log("🚀 ~ HomeScreen ~ userContext:", userContext);
   const notificationContext = useContext(NotificationContext);
 
   if (!userContext) {
@@ -58,6 +59,7 @@ export default function HomeScreen() {
     setLoading(true);
     try {
       let user = auth().currentUser;
+      console.log("🚀 ~ handleLogin ~ user:", user);
       if (user) {
         if (!user.emailVerified) {
           alert("Por favor, verifica tu correo electrónico");
@@ -152,6 +154,7 @@ export default function HomeScreen() {
               pathname: "./info",
               params: {
                 email: result.email,
+                startDate: startDate,
               },
             });
           }

@@ -18,7 +18,7 @@ import { Button } from "react-native-paper";
 
 export default function InfoScreen() {
   const router = useRouter();
-  const { email } = useLocalSearchParams();
+  const { email, startDate } = useLocalSearchParams();
   const [username, setUsername] = useState("");
   const [name, setName] = useState("");
   const userContext = useContext(UserContext);
@@ -44,7 +44,20 @@ export default function InfoScreen() {
           name: name,
         }
       );
+      const final = Math.floor(new Date().getTime() - Number(startDate));
+
       if (response.status === 201) {
+        // fetch_to(
+        //   `https://api-gateway-ccbe.onrender.com/metrics/register`,
+        //   "POST",
+        //   {
+        //     success: true,
+        //     method: "google",
+        //     registrationTime: final,
+        //     location: userContext.user?.location,
+        //   }
+        // ).then((r) => console.log());
+
         const data = await response.json();
         saveUser({
           id: data.id,

@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   TextInput,
+  ScrollView,
 } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useContext, useState } from "react";
@@ -16,26 +17,35 @@ import {
 } from "firebase/auth";
 import { auth } from "@/utils/config";
 import { fetch_to } from "@/utils/fetch";
-import { Snackbar } from "react-native-paper";
+import { List, Snackbar } from "react-native-paper";
 import * as Yup from "yup";
 import { Formik } from "formik";
 import Input from "@/components/Input";
+import { countriesList, getCountryNameByCode } from "@/utils/countries";
 
 interface SignUpValues {
   email: string;
   password: string;
   name: string;
   username: string;
+  country: string;
 }
 
 export default function SignUpScreen() {
   const colorScheme = useColorScheme();
-  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
   const userContext = useContext(UserContext);
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [expandedId, setExpandedId] = useState<string | number | undefined>(
+    undefined
+  );
+  const [initialCountry, setInitialCountry] = useState("");
+  const [selectedCountryCode, setSelectedCountryCode] =
+    useState(initialCountry);
+  const [selectedCountry, setSelectedCountry] = useState(
+    initialCountry ? getCountryNameByCode(initialCountry) : "Nacionalidad"
+  );
 
   if (!userContext) {
     throw new Error("UserContext is null");
@@ -63,20 +73,24 @@ export default function SignUpScreen() {
       .min(6, "La contraseña debe tener al menos seis caracteres")
       .required("La contraseña es obligatoria"),
     name: Yup.string()
-      .min(3, "El nombre debe tener al menos seis caracteres")
+      .min(3, "El nombre debe tener al menos tres caracteres")
       .required("El nombre es obligatorio"),
     username: Yup.string()
-      .min(3, "El nombre de usuario debe tener al menos seis caracteres")
+      .min(3, "El nombre de usuario debe tener al menos tres caracteres")
       .required("El nombre de usuario es obligatorio"),
+    country: Yup.string().required("Por favor, seleccione un país"), // Add validation for country
   });
 
+  const startedAt = new Date().getTime();
   async function signup(email: string, pass: string) {
     try {
       const userCredentials = await auth().createUserWithEmailAndPassword(
         email,
         pass
       );
+
       await emailVerification();
+
       const user = userCredentials.user;
       return user;
     } catch (error) {
@@ -103,8 +117,10 @@ export default function SignUpScreen() {
             password: password,
             user: username,
             name: name,
+            location: selectedCountryCode,
           }
         );
+        const final = Math.floor(new Date().getTime() - startedAt);
         if (response.status === 201) {
           const data = await response.json();
           saveUser({
@@ -118,10 +134,32 @@ export default function SignUpScreen() {
             location: data.location,
             interests: data.interests,
           });
+          fetch_to(
+            `https://api-gateway-ccbe.onrender.com/metrics/register`,
+            "POST",
+            {
+              success: true,
+              method: "email",
+              loginTime: final,
+              location: data.location,
+            }
+          ).then((r) => console.log());
+
           setMessage("Bienvenid@ a TwitSnap " + name);
           setVisible(true);
           router.replace("/(feed)");
         } else {
+          fetch_to(
+            `https://api-gateway-ccbe.onrender.com/metrics/register`,
+            "POST",
+            {
+              success: false,
+              method: "email",
+              loginTime: final,
+              location: selectedCountryCode,
+            }
+          ).then((r) => console.log(r.json().then((a) => console.log(a))));
+
           setMessage("Error al crear el usuario " + response.status);
         }
       }
@@ -130,8 +168,15 @@ export default function SignUpScreen() {
     }
   }
 
+  const handleCountry = (country: string) => {
+    setSelectedCountryCode(country);
+    setSelectedCountry(getCountryNameByCode(country));
+    setExpandedId(undefined); // close the accordion after selection
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-gray-800 justify-center">
+      {/* <ScrollView className="mt-10"> */}
       <View className="items-center">
         <Image
           source={require("@/assets/images/twitsnap-logo.webp")}
@@ -143,11 +188,24 @@ export default function SignUpScreen() {
       </View>
 
       <Formik
-        initialValues={{ email: "", password: "", username: "", name: "" }}
+        initialValues={{
+          email: "",
+          password: "",
+          username: "",
+          name: "",
+          country: "",
+        }}
         validationSchema={signUpSchema}
         onSubmit={() => console.log()}
       >
-        {({ errors, touched, handleChange, handleBlur, values }) => (
+        {({
+          errors,
+          touched,
+          handleChange,
+          handleBlur,
+          values,
+          setFieldValue,
+        }) => (
           <View className="px-8">
             <Input
               name="email"
@@ -188,10 +246,64 @@ export default function SignUpScreen() {
               errorMessage={errors.username}
               isTouched={touched.username}
             />
+            <View
+              className={`${
+                expandedId
+                  ? "rounded-none rounded-t-3xl rounded-b-3xl"
+                  : "rounded-full"
+              } overflow-hidden`}
+            >
+              <List.AccordionGroup
+                expandedId={expandedId}
+                onAccordionPress={(newExpandedId) => {
+                  setExpandedId(
+                    newExpandedId === expandedId ? undefined : newExpandedId
+                  );
+                }}
+              >
+                <List.Accordion
+                  style={{
+                    backgroundColor:
+                      colorScheme === "dark" ? "#374151" : "#f3f4f6",
+                    paddingLeft: 12,
+                    height: 50,
+                  }}
+                  title={values.country || "Select your country"}
+                  titleStyle={{
+                    color: colorScheme === "dark" ? "#ccc" : "#888",
+                    fontSize: 15,
+                  }}
+                  id="1"
+                >
+                  <ScrollView className="h-40">
+                    {countriesList.map((country) => (
+                      <List.Item
+                        style={{ paddingLeft: 10 }}
+                        className="bg-gray-700"
+                        key={country.code}
+                        title={country.name}
+                        titleStyle={{
+                          color: colorScheme === "dark" ? "#ccc" : "#888",
+                        }}
+                        onPress={() => {
+                          setFieldValue("country", country.name); // Update Formik's state
+                          handleCountry(country.code); // Update local state
+                        }}
+                      />
+                    ))}
+                  </ScrollView>
+                </List.Accordion>
+              </List.AccordionGroup>
+            </View>
+
+            {/* Display Country Validation Errors */}
+            {touched.country && errors.country && (
+              <Text className="text-red-500 mt-1">{errors.country}</Text>
+            )}
 
             <View className="mt-5">
               <TouchableOpacity
-                className="mb-4"
+                className="mb-4 mt-5"
                 onPress={() => handleSignUp(values)}
               >
                 <Text className="bg-blue-500 text-white text-center font-bold p-4 rounded-full">
@@ -217,6 +329,7 @@ export default function SignUpScreen() {
           {message}
         </Snackbar>
       </View>
+      {/* </ScrollView> */}
     </SafeAreaView>
   );
 }

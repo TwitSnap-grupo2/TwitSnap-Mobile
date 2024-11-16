@@ -95,7 +95,7 @@ export default function SignInScreen() {
         method: "email",
         loginTime: final,
         location: currentUser.location,
-      }).then((res) => res.json().then((r) => console.log("R: ", r)));
+      }).then((res) => res.json().then((r) => console.log(r)));
 
       setMessage("Bienvenid@ a TwitSnap " + currentUser.name);
       setVisible(true);
