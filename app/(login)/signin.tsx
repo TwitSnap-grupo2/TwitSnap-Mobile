@@ -42,7 +42,7 @@ export default function SignInScreen() {
   if (!notificationContext) {
     return;
   }
-  
+
   const { saveUnseenNotifications } = notificationContext;
 
   if (!userContext) {
@@ -61,6 +61,8 @@ export default function SignInScreen() {
       .required("La contraseña es obligatoria"),
   });
 
+  const startDate = new Date().getTime();
+
   const handleLogin = async (
     { email, password }: loginValues,
     setSubmitting: (isSubmitting: boolean) => void,
@@ -78,6 +80,7 @@ export default function SignInScreen() {
     }
 
     const currentUser = await LoginWithEmailAndPassword(email, password);
+    const final = Math.floor((new Date().getTime() - startDate) / 1000); // its in ms, so we divide by 1000 to get seconds
     if (currentUser) {
       saveUser(currentUser);
       fetch_to(
@@ -86,6 +89,13 @@ export default function SignInScreen() {
       ).then((res) =>
         res.json().then((r) => saveUnseenNotifications(r["unseen"]))
       );
+
+      fetch_to(`https://api-gateway-ccbe.onrender.com/metrics/login`, "POST", {
+        success: true,
+        method: "email",
+        loginTime: final,
+        location: currentUser.location,
+      }).then((res) => res.json().then((r) => console.log("R: ", r)));
 
       setMessage("Bienvenid@ a TwitSnap " + currentUser.name);
       setVisible(true);
@@ -112,6 +122,13 @@ export default function SignInScreen() {
       }
       router.replace("/(feed)");
     } else {
+      fetch_to(`https://api-gateway-ccbe.onrender.com/metrics/login`, "POST", {
+        success: false,
+        method: "email",
+        loginTime: final,
+        location: userContext.user?.location,
+      }).then((r) => console.log());
+
       setVisible(true);
       setSubmitting(false);
       setMessage("Credenciales incorrectas");

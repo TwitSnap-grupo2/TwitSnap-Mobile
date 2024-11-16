@@ -97,11 +97,15 @@ export default function HomeScreen() {
     }
   }, []);
 
+  const startDate = new Date().getTime();
+
   const signInWithGoogle = async () => {
     try {
       setIsInProgress(true);
       await GoogleSignin.hasPlayServices();
       const response = await GoogleSignin.signIn();
+      const final = Math.floor((new Date().getTime() - startDate) / 1000);
+
       if (response.data) {
         if (!response.data.idToken) {
           console.log("No idToken found in response");
@@ -132,6 +136,16 @@ export default function HomeScreen() {
             ).then((res) =>
               res.json().then((r) => saveUnseenNotifications(r["unseen"]))
             );
+            fetch_to(
+              `https://api-gateway-ccbe.onrender.com/metrics/login`,
+              "POST",
+              {
+                success: true,
+                method: "google",
+                loginTime: final,
+                location: userContext.user?.location,
+              }
+            ).then((r) => console.log());
             router.replace("/(feed)");
           } else {
             router.push({
@@ -143,6 +157,17 @@ export default function HomeScreen() {
           }
         }
       } else {
+        fetch_to(
+          `https://api-gateway-ccbe.onrender.com/metrics/login`,
+          "POST",
+          {
+            success: false,
+            method: "google",
+            loginTime: final,
+            location: userContext.user?.location,
+          }
+        ).then((r) => console.log());
+
         // sign in was cancelled by user
       }
     } catch (error) {

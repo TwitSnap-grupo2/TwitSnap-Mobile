@@ -67,14 +67,9 @@ const FeedScreen = () => {
     });
 
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-      console.log("🚀 ~ unsubscribe ~ remoteMessage:", remoteMessage);
+      console.log("Received new notification:", remoteMessage);
       if (remoteMessage.notification) {
         if (remoteMessage.data && remoteMessage.data.createdBy != user.id) {
-          console.log("🚀 ~ unsubscribe ~ user.id:", user.id);
-          console.log(
-            "🚀 ~ unsubscribe ~ remoteMessage.data.createdBy:",
-            remoteMessage.data.createdBy
-          );
           notificationContext.saveUnseenNotifications(
             notificationContext.unseenNotifications + 1
           );
