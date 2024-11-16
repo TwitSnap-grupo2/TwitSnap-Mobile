@@ -135,6 +135,10 @@ export default function SignInScreen() {
     }
   };
 
+  function handleResetPassword() {
+    router.push({pathname:"./resetPassword", params: { startedAt: Date.now() }});
+  } 
+
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center h-full w-full">
@@ -206,7 +210,7 @@ export default function SignInScreen() {
               </Button>
               <Button
                 mode="contained"
-                onPress={() => router.push("./resetPassword")}
+                onPress={handleResetPassword}
                 className="bg-slate-600 mb-4 p-1 rounded-full"
               >
                 Restablecer contraseña
