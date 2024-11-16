@@ -23,6 +23,7 @@ import messaging from "@react-native-firebase/messaging";
 import { PermissionsAndroid } from "react-native";
 import { NotificationContext } from "@/context/NotificationContext";
 import { fetch_to } from "@/utils/fetch";
+import { ColorSchemeStore } from "nativewind/dist/style-sheet/color-scheme";
 
 interface loginValues {
   email: string;
@@ -34,6 +35,7 @@ interface Token {
 }
 
 export default function SignInScreen() {
+  const colorScheme = useColorScheme();
   const userContext = useContext(UserContext);
   const notificationContext = useContext(NotificationContext);
   const [visible, setVisible] = useState(false);
@@ -138,8 +140,11 @@ export default function SignInScreen() {
   };
 
   function handleResetPassword() {
-    router.push({pathname:"./resetPassword", params: { startedAt: Date.now() }});
-  } 
+    router.push({
+      pathname: "./resetPassword",
+      params: { startedAt: Date.now() },
+    });
+  }
 
   if (loading) {
     return (
@@ -203,6 +208,7 @@ export default function SignInScreen() {
               />
               <Button
                 mode="contained"
+                textColor={colorScheme === "dark" ? "white" : "black"}
                 onPress={() => {
                   handleLogin(
                     values,
@@ -218,6 +224,7 @@ export default function SignInScreen() {
                 {isSubmitting ? "Logging in..." : "Iniciar sesión"}
               </Button>
               <Button
+                textColor={colorScheme === "dark" ? "white" : "black"}
                 mode="contained"
                 onPress={handleResetPassword}
                 className="bg-slate-600 mb-4 p-1 rounded-full"
