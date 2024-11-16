@@ -41,7 +41,7 @@ export default function Notification({
       className="flex gap-2 p-5"
     >
       <Text className="text-white text-lg font-bold">{notification.title}</Text>
-      <Text className="text-white text-base">{notification.body}</Text>
+      <Text className="text-gray-300 text-base">{notification.body}</Text>
     </TouchableOpacity>
   );
 }

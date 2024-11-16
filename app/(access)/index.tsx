@@ -23,10 +23,7 @@ import { auth } from "@/utils/config";
 import { fetch_to } from "@/utils/fetch";
 import { FindUserByEmail } from "@/utils/login";
 import Loading from "@/components/Loading";
-import {
-  NotificationContext,
-  UnseenNotificationsProvider,
-} from "@/context/NotificationContext";
+import { NotificationContext } from "@/context/NotificationContext";
 
 GoogleSignin.configure({
   webClientId:
@@ -42,7 +39,6 @@ export default function HomeScreen() {
   const user_auth = auth().currentUser;
   const [loading, setLoading] = useState(false);
   const userContext = useContext(UserContext);
-  console.log("🚀 ~ HomeScreen ~ userContext:", userContext);
   const notificationContext = useContext(NotificationContext);
 
   if (!userContext) {
@@ -59,7 +55,6 @@ export default function HomeScreen() {
     setLoading(true);
     try {
       let user = auth().currentUser;
-      console.log("🚀 ~ handleLogin ~ user:", user);
       if (user) {
         if (!user.emailVerified) {
           alert("Por favor, verifica tu correo electrónico");
@@ -74,7 +69,6 @@ export default function HomeScreen() {
             "GET"
           ).then((res) =>
             res.json().then((r) => {
-              console.log("🚀 ~ res.json ~ r:", r);
               saveUnseenNotifications(r["unseen"]);
             })
           );

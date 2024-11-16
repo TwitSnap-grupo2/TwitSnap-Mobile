@@ -220,8 +220,15 @@ export default function EditProfileScreen() {
             }}
           >
             <List.Accordion
-              style={{ paddingLeft: 10, height: 60 }}
+              style={{
+                paddingLeft: 10,
+                height: 60,
+                backgroundColor: colorScheme === "dark" ? "#374151" : "#f3f4f6",
+              }}
               title={selectedCountry}
+              titleStyle={{
+                color: colorScheme === "dark" ? "white" : "black",
+              }}
               id="1"
             >
               <ScrollView className="h-40">
@@ -229,7 +236,7 @@ export default function EditProfileScreen() {
                   // @ts-ignore
                   <List.Item
                     style={{ paddingLeft: 10 }}
-                    className={`dark:bg-white`}
+                    className={`dark:bg-gray-700`}
                     // @ts-ignore
                     key={country.code}
                     // @ts-ignore
@@ -247,6 +254,7 @@ export default function EditProfileScreen() {
         <Button
           mode="contained"
           onPress={handleEditProfile}
+          textColor={colorScheme === "dark" ? "white" : "black"}
           style={{ backgroundColor: "#1DA1F2" }}
           className="mb-4 p-2 rounded-full"
         >

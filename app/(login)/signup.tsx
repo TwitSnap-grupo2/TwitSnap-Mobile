@@ -194,182 +194,182 @@ export default function SignUpScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-gray-800 justify-center">
-      {/* <ScrollView className="mt-10"> */}
-      <View className="items-center">
-        <Image
-          source={require("@/assets/images/twitsnap-logo.webp")}
-          className="h-64 w-64 rounded-full mb-12"
-        />
-        <Text className="text-4xl text-black dark:text-white font-bold mb-6">
-          Registrarse
-        </Text>
-      </View>
+      <ScrollView className="mt-10">
+        <View className="items-center">
+          <Image
+            source={require("@/assets/images/twitsnap-logo.webp")}
+            className="h-64 w-64 rounded-full mb-12"
+          />
+          <Text className="text-4xl text-black dark:text-white font-bold mb-6">
+            Registrarse
+          </Text>
+        </View>
 
-      <Formik
-        initialValues={{
-          email: "",
-          password: "",
-          username: "",
-          name: "",
-          country: "",
-        }}
-        validationSchema={signUpSchema}
-        onSubmit={() => console.log()}
-      >
-        {({
-          errors,
-          touched,
-          handleChange,
-          handleBlur,
-          values,
-          setFieldValue,
-          setErrors,
-          setTouched,
-          setSubmitting,
-          validateForm,
-        }) => (
-          <View className="px-8">
-            <Input
-              name="email"
-              placeholder="Email"
-              onChangeText={handleChange("email")}
-              value={values.email}
-              onBlur={handleBlur("email")}
-              errorMessage={errors.email}
-              isTouched={touched.email}
-            />
-
-            <Input
-              name="password"
-              placeholder="Password"
-              onChangeText={handleChange("password")}
-              value={values.password}
-              onBlur={handleBlur("password")}
-              errorMessage={errors.password}
-              isTouched={touched.password}
-            />
-
-            <Input
-              name="name"
-              placeholder="Nombre"
-              onChangeText={handleChange("name")}
-              value={values.name}
-              onBlur={handleBlur("name")}
-              errorMessage={errors.name}
-              isTouched={touched.name}
-            />
-
-            <Input
-              name="username"
-              placeholder="Nombre de usuario"
-              onChangeText={handleChange("username")}
-              value={values.username}
-              onBlur={handleBlur("username")}
-              errorMessage={errors.username}
-              isTouched={touched.username}
-            />
-
-            <View
-              className={`${
-                expandedId
-                  ? "rounded-none rounded-t-3xl rounded-b-3xl"
-                  : "rounded-full"
-              } overflow-hidden`}
-            >
-              <List.AccordionGroup
-                expandedId={expandedId}
-                onAccordionPress={(newExpandedId) => {
-                  setExpandedId(
-                    newExpandedId === expandedId ? undefined : newExpandedId
-                  );
-                }}
-              >
-                <List.Accordion
-                  style={{
-                    backgroundColor:
-                      touched.country && errors.country
-                        ? "#fef2f2"
-                        : colorScheme === "dark"
-                        ? "#374151"
-                        : "#f3f4f6",
-                    paddingLeft: 12,
-                    height: 50,
-                  }}
-                  title={values.country || "Select your country"}
-                  titleStyle={{
-                    color:
-                      touched.country && errors.country
-                        ? "red"
-                        : colorScheme === "dark"
-                        ? "#ccc"
-                        : "#888",
-                    fontSize: 15,
-                  }}
-                  id="1"
-                >
-                  <ScrollView className="h-40">
-                    {countriesList.map((country) => (
-                      <List.Item
-                        style={{ paddingLeft: 10 }}
-                        className="bg-gray-700"
-                        key={country.code}
-                        title={country.name}
-                        titleStyle={{
-                          color: colorScheme === "dark" ? "#ccc" : "#888",
-                        }}
-                        onPress={() => {
-                          setFieldValue("country", country.name); // Update Formik's state
-                          handleCountry(country.code); // Update local state
-                        }}
-                      />
-                    ))}
-                  </ScrollView>
-                </List.Accordion>
-              </List.AccordionGroup>
-            </View>
-
-            {/* Display Country Validation Errors */}
-            {touched.country && errors.country && (
-              <Text className="text-red-500 mt-1 ml-4">{errors.country}</Text>
-            )}
-
-            <View className="mt-5">
-              <TouchableOpacity
-                className="mb-4 mt-5"
-                onPress={() =>
-                  handleSignUp(
-                    values,
-                    setSubmitting,
-                    validateForm,
-                    setErrors,
-                    setTouched
-                  )
-                }
-              >
-                <Text className="bg-blue-500 text-white text-center font-bold p-4 rounded-full">
-                  Registrarse
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-      </Formik>
-
-      <View className="px-8">
-        <Snackbar
-          visible={visible}
-          onDismiss={() => {}}
-          action={{
-            label: "Cerrar",
-            onPress: () => {
-              setVisible(false);
-            },
+        <Formik
+          initialValues={{
+            email: "",
+            password: "",
+            username: "",
+            name: "",
+            country: "",
           }}
+          validationSchema={signUpSchema}
+          onSubmit={() => console.log()}
         >
-          {message}
-        </Snackbar>
-      </View>
-      {/* </ScrollView> */}
+          {({
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            values,
+            setFieldValue,
+            setErrors,
+            setTouched,
+            setSubmitting,
+            validateForm,
+          }) => (
+            <View className="px-8">
+              <Input
+                name="email"
+                placeholder="Email"
+                onChangeText={handleChange("email")}
+                value={values.email}
+                onBlur={handleBlur("email")}
+                errorMessage={errors.email}
+                isTouched={touched.email}
+              />
+
+              <Input
+                name="password"
+                placeholder="Password"
+                onChangeText={handleChange("password")}
+                value={values.password}
+                onBlur={handleBlur("password")}
+                errorMessage={errors.password}
+                isTouched={touched.password}
+              />
+
+              <Input
+                name="name"
+                placeholder="Nombre"
+                onChangeText={handleChange("name")}
+                value={values.name}
+                onBlur={handleBlur("name")}
+                errorMessage={errors.name}
+                isTouched={touched.name}
+              />
+
+              <Input
+                name="username"
+                placeholder="Nombre de usuario"
+                onChangeText={handleChange("username")}
+                value={values.username}
+                onBlur={handleBlur("username")}
+                errorMessage={errors.username}
+                isTouched={touched.username}
+              />
+
+              <View
+                className={`${
+                  expandedId
+                    ? "rounded-none rounded-t-3xl rounded-b-3xl"
+                    : "rounded-full"
+                } overflow-hidden`}
+              >
+                <List.AccordionGroup
+                  expandedId={expandedId}
+                  onAccordionPress={(newExpandedId) => {
+                    setExpandedId(
+                      newExpandedId === expandedId ? undefined : newExpandedId
+                    );
+                  }}
+                >
+                  <List.Accordion
+                    style={{
+                      backgroundColor:
+                        touched.country && errors.country
+                          ? "#fef2f2"
+                          : colorScheme === "dark"
+                          ? "#374151"
+                          : "#f3f4f6",
+                      paddingLeft: 12,
+                      height: 50,
+                    }}
+                    title={values.country || "Select your country"}
+                    titleStyle={{
+                      color:
+                        touched.country && errors.country
+                          ? "red"
+                          : colorScheme === "dark"
+                          ? "#ccc"
+                          : "#888",
+                      fontSize: 15,
+                    }}
+                    id="1"
+                  >
+                    <ScrollView className="h-40">
+                      {countriesList.map((country) => (
+                        <List.Item
+                          style={{ paddingLeft: 10 }}
+                          className="dark:bg-gray-700"
+                          key={country.code}
+                          title={country.name}
+                          titleStyle={{
+                            color: colorScheme === "dark" ? "#ccc" : "#888",
+                          }}
+                          onPress={() => {
+                            setFieldValue("country", country.name); // Update Formik's state
+                            handleCountry(country.code); // Update local state
+                          }}
+                        />
+                      ))}
+                    </ScrollView>
+                  </List.Accordion>
+                </List.AccordionGroup>
+              </View>
+
+              {/* Display Country Validation Errors */}
+              {touched.country && errors.country && (
+                <Text className="text-red-500 mt-1 ml-4">{errors.country}</Text>
+              )}
+
+              <View className="mt-5">
+                <TouchableOpacity
+                  className="mb-4 mt-5"
+                  onPress={() =>
+                    handleSignUp(
+                      values,
+                      setSubmitting,
+                      validateForm,
+                      setErrors,
+                      setTouched
+                    )
+                  }
+                >
+                  <Text className="bg-blue-500 text-white text-center font-bold p-4 rounded-full">
+                    Registrarse
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+        </Formik>
+
+        <View className="px-8">
+          <Snackbar
+            visible={visible}
+            onDismiss={() => {}}
+            action={{
+              label: "Cerrar",
+              onPress: () => {
+                setVisible(false);
+              },
+            }}
+          >
+            {message}
+          </Snackbar>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

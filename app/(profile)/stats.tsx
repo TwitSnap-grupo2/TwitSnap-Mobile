@@ -5,6 +5,7 @@
 
 import Loading from "@/components/Loading";
 import { UserContext } from "@/context/context";
+import { useColorScheme } from "@/hooks/useColorScheme";
 import { fetch_to } from "@/utils/fetch";
 import { useContext, useEffect, useState } from "react";
 import { View, Text, ScrollView, Image, Alert } from "react-native";
@@ -54,6 +55,7 @@ export default function StatsScreen() {
   const [expandedId, setExpandedId] = useState<string | number | undefined>(
     undefined
   );
+  const colorScheme = useColorScheme();
 
   useEffect(() => {
     try {
@@ -139,8 +141,17 @@ export default function StatsScreen() {
               }}
             >
               <List.Accordion
-                style={{ paddingLeft: 10, height: 60 }}
+                style={{
+                  paddingLeft: 10,
+                  height: 60,
+                  backgroundColor:
+                    colorScheme === "dark" ? "#374151" : "#f3f4f6",
+                }}
                 title={"Seleccionar un filtro temporal"}
+                titleStyle={{
+                  color: colorScheme === "dark" ? "white" : "black",
+                  fontSize: 15,
+                }}
                 id="1"
               >
                 <ScrollView className="">
@@ -148,8 +159,12 @@ export default function StatsScreen() {
                     // @ts-ignore
                     <>
                       <List.Item
-                        style={{ paddingLeft: 10 }}
-                        className={`dark:bg-white`}
+                        style={{
+                          paddingLeft: 10,
+                          backgroundColor:
+                            colorScheme === "dark" ? "#374151" : "#f3f4f6",
+                        }}
+                        className={`dark:bg-gray-800`}
                         // @ts-ignore
                         key={"lastWeek"}
                         // @ts-ignore
@@ -161,8 +176,10 @@ export default function StatsScreen() {
                         }}
                       />
                       <List.Item
-                        style={{ paddingLeft: 10 }}
-                        className={`dark:bg-white`}
+                        style={{
+                          paddingLeft: 10,
+                        }}
+                        className={`dark:bg-gray-700`}
                         // @ts-ignore
                         key={"lastMonth"}
                         // @ts-ignore
@@ -174,8 +191,10 @@ export default function StatsScreen() {
                         }}
                       />
                       <List.Item
-                        style={{ paddingLeft: 10 }}
-                        className={`dark:bg-white`}
+                        style={{
+                          paddingLeft: 10,
+                        }}
+                        className={`dark:bg-gray-700`}
                         // @ts-ignore
                         key={"lastYear"}
                         // @ts-ignore
@@ -187,8 +206,10 @@ export default function StatsScreen() {
                         }}
                       />
                       <List.Item
-                        style={{ paddingLeft: 10 }}
-                        className={`dark:bg-white`}
+                        style={{
+                          paddingLeft: 10,
+                        }}
+                        className={`dark:bg-gray-700`}
                         // @ts-ignore
                         key={"all"}
                         // @ts-ignore

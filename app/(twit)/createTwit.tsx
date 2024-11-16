@@ -313,6 +313,7 @@ const CreateTweetScreen = () => {
               mode="contained"
               onPress={handleSubmit}
               style={{ backgroundColor: "#1DA1F2" }}
+              textColor={colorScheme === "dark" ? "white" : "black"}
               className="mb-4 mt-1"
             >
               Publicar

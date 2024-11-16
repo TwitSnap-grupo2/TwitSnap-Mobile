@@ -1,3 +1,4 @@
+import { useColorScheme } from "@/hooks/useColorScheme";
 import { auth } from "@/utils/config";
 import { useRouter } from "expo-router";
 import { View } from "react-native";
@@ -5,7 +6,7 @@ import { Button } from "react-native-paper";
 
 export default function Configuracion() {
   const router = useRouter();
-
+  const colorScheme = useColorScheme();
   async function handleSignOut() {
     auth()
       .signOut()
@@ -22,6 +23,7 @@ export default function Configuracion() {
       <Button
         mode="contained"
         onPress={handleSignOut}
+        textColor={colorScheme === "dark" ? "white" : "black"}
         style={{ backgroundColor: "#1DA1F2" }}
       >
         Cerrar Sesión
