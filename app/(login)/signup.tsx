@@ -4,22 +4,17 @@ import {
   Image,
   TouchableOpacity,
   SafeAreaView,
-  TextInput,
   ScrollView,
 } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useContext, useState } from "react";
 import { useRouter } from "expo-router";
 import { UserContext } from "@/context/context";
-import {
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-} from "firebase/auth";
 import { auth } from "@/utils/config";
 import { fetch_to } from "@/utils/fetch";
 import { List, Snackbar } from "react-native-paper";
 import * as Yup from "yup";
-import { Formik } from "formik";
+import { Formik, FormikErrors } from "formik";
 import Input from "@/components/Input";
 import { countriesList, getCountryNameByCode } from "@/utils/countries";
 
@@ -98,13 +93,37 @@ export default function SignUpScreen() {
     }
   }
 
-  async function handleSignUp({
-    email,
-    password,
-    username,
-    name,
-  }: SignUpValues) {
+  async function handleSignUp(
+    { email, password, username, name, country }: SignUpValues,
+    setSubmitting: (isSubmitting: boolean) => void,
+    validateForm: (values: SignUpValues) => Promise<FormikErrors<SignUpValues>>,
+    setErrors: (errors: FormikErrors<SignUpValues>) => void,
+    setTouched: (touched: Record<string, boolean>) => void
+  ) {
     try {
+      setSubmitting(true);
+
+      const errors = await validateForm({
+        email,
+        password,
+        username,
+        name,
+        country,
+      });
+
+      if (Object.keys(errors).length > 0) {
+        setErrors(errors);
+        setTouched({
+          email: true,
+          password: true,
+          username: true,
+          name: true,
+          country: true,
+        }); // Mark fields as touched
+        setSubmitting(false);
+        return;
+      }
+
       const user = await signup(email, password);
       if (user) {
         //guardo el user
@@ -204,6 +223,10 @@ export default function SignUpScreen() {
           handleBlur,
           values,
           setFieldValue,
+          setErrors,
+          setTouched,
+          setSubmitting,
+          validateForm,
         }) => (
           <View className="px-8">
             <Input
@@ -245,6 +268,7 @@ export default function SignUpScreen() {
               errorMessage={errors.username}
               isTouched={touched.username}
             />
+
             <View
               className={`${
                 expandedId
@@ -263,13 +287,22 @@ export default function SignUpScreen() {
                 <List.Accordion
                   style={{
                     backgroundColor:
-                      colorScheme === "dark" ? "#374151" : "#f3f4f6",
+                      touched.country && errors.country
+                        ? "#fef2f2"
+                        : colorScheme === "dark"
+                        ? "#374151"
+                        : "#f3f4f6",
                     paddingLeft: 12,
                     height: 50,
                   }}
                   title={values.country || "Select your country"}
                   titleStyle={{
-                    color: colorScheme === "dark" ? "#ccc" : "#888",
+                    color:
+                      touched.country && errors.country
+                        ? "red"
+                        : colorScheme === "dark"
+                        ? "#ccc"
+                        : "#888",
                     fontSize: 15,
                   }}
                   id="1"
@@ -297,13 +330,21 @@ export default function SignUpScreen() {
 
             {/* Display Country Validation Errors */}
             {touched.country && errors.country && (
-              <Text className="text-red-500 mt-1">{errors.country}</Text>
+              <Text className="text-red-500 mt-1 ml-4">{errors.country}</Text>
             )}
 
             <View className="mt-5">
               <TouchableOpacity
                 className="mb-4 mt-5"
-                onPress={() => handleSignUp(values)}
+                onPress={() =>
+                  handleSignUp(
+                    values,
+                    setSubmitting,
+                    validateForm,
+                    setErrors,
+                    setTouched
+                  )
+                }
               >
                 <Text className="bg-blue-500 text-white text-center font-bold p-4 rounded-full">
                   Registrarse

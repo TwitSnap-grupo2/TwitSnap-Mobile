@@ -67,7 +67,8 @@ export default function SignInScreen() {
     { email, password }: loginValues,
     setSubmitting: (isSubmitting: boolean) => void,
     validateForm: (values: loginValues) => Promise<FormikErrors<loginValues>>,
-    setErrors: (errors: FormikErrors<loginValues>) => void
+    setErrors: (errors: FormikErrors<loginValues>) => void,
+    setTouched: (touched: Record<string, boolean>) => void
   ) => {
     setSubmitting(true);
 
@@ -75,6 +76,7 @@ export default function SignInScreen() {
 
     if (Object.keys(errors).length > 0) {
       setErrors(errors);
+      setTouched({ email: true, password: true }); // Mark fields as touched
       setSubmitting(false);
       return;
     }
@@ -174,6 +176,7 @@ export default function SignInScreen() {
             setSubmitting,
             validateForm,
             setErrors,
+            setTouched,
           }) => (
             <View className="flex">
               <Input
@@ -197,7 +200,13 @@ export default function SignInScreen() {
               <Button
                 mode="contained"
                 onPress={() => {
-                  handleLogin(values, setSubmitting, validateForm, setErrors);
+                  handleLogin(
+                    values,
+                    setSubmitting,
+                    validateForm,
+                    setErrors,
+                    setTouched
+                  );
                 }}
                 style={{ backgroundColor: "#1DA1F2" }}
                 className="mb-4 mt-1 p-1 rounded-full"
