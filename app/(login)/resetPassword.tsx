@@ -22,12 +22,13 @@ export default function SignInScreen() {
 
   async function sendMetric(success: boolean) {
     const startedAtDate = new Date(Number(startedAt));
+    const diff = Math.floor((Date.now() - startedAtDate.getTime()) / 1000);
     const res = await fetch_to(
       `https://api-gateway-ccbe.onrender.com/metrics/recoverPassword`,
       "POST",
       {
         success: success,
-        recoveryTime: (Date.now() - startedAtDate.getTime()) / 1000,
+        recoveryTime: diff,
       }
     );
     if (!res.ok) {
@@ -56,7 +57,7 @@ export default function SignInScreen() {
       });
 
     setTimeout(() => {
-      router.replace("../(login)/signin");
+      router.back();
     }, 3000);
   }
 

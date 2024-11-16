@@ -3,9 +3,9 @@ export function getCountryNameByCode(code: string):string {
     return country ? country.name : 'Country not found';
   }
 
-export function getCountryCodeByName(code: string):string {
-const country = countriesList.find(country => country.code === code);
-return country ? country.name : 'Country not found';
+export function getCountryCodeByName(name: string):string {
+const country = countriesList.find(country => country.name === name);
+return country ? country.code : 'Country not found';
 }
 
 export const countriesList = [
