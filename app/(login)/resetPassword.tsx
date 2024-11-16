@@ -27,7 +27,7 @@ export default function SignInScreen() {
       "POST",
       {
         success: success,
-        recoveryTime: Date.now() - startedAtDate.getTime(),
+        recoveryTime: (Date.now() - startedAtDate.getTime()) / 1000,
       }
     );
     if (!res.ok) {
