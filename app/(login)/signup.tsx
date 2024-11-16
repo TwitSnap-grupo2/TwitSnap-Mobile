@@ -106,7 +106,6 @@ export default function SignUpScreen() {
   }: SignUpValues) {
     try {
       const user = await signup(email, password);
-      console.log("user", user);
       if (user) {
         //guardo el user
         const response = await fetch_to(
@@ -120,7 +119,7 @@ export default function SignUpScreen() {
             location: selectedCountryCode,
           }
         );
-        const final = Math.floor(new Date().getTime() - startedAt);
+        const final = Math.floor((new Date().getTime() - startedAt) / 1000);
         if (response.status === 201) {
           const data = await response.json();
           saveUser({
