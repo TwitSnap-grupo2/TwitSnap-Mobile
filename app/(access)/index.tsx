@@ -15,8 +15,6 @@ import {
   GoogleSigninButton,
 } from "@react-native-google-signin/google-signin";
 
-import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
-
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "@/context/context";
 import { auth } from "@/utils/config";
@@ -24,6 +22,8 @@ import { fetch_to } from "@/utils/fetch";
 import { FindUserByEmail } from "@/utils/login";
 import Loading from "@/components/Loading";
 import { NotificationContext } from "@/context/NotificationContext";
+import * as LocalAuthentication from "expo-local-authentication";
+import SnackBarComponent from "@/components/Snackbar";
 
 GoogleSignin.configure({
   webClientId:
@@ -40,6 +40,8 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(false);
   const userContext = useContext(UserContext);
   const notificationContext = useContext(NotificationContext);
+  const [visible, setVisible] = useState(false);
+  const [message, setMessage] = useState("");
 
   if (!userContext) {
     throw new Error("UserContext is null");
@@ -50,6 +52,41 @@ export default function HomeScreen() {
     throw new Error("NotificationContexr is null");
   }
   const { saveUnseenNotifications } = notificationContext;
+
+  async function biometricAuth() {
+    try {
+      const hasBiometricAuth = await LocalAuthentication.hasHardwareAsync();
+
+      if (!hasBiometricAuth) {
+        console.log("No biometric hardware found");
+        return;
+      }
+
+      const biometricRecords = await LocalAuthentication.isEnrolledAsync();
+      if (!biometricRecords) {
+        console.log("No biometric records found");
+        return;
+      }
+
+      // Intentar autenticar hasta 3 veces
+      let authenticated = false;
+      for (let i = 0; i < 3; i++) {
+        const result = await LocalAuthentication.authenticateAsync();
+        if (result.success) {
+          authenticated = true;
+          handleLogin();
+          break;
+        }
+      }
+
+      if (!authenticated) {
+        setMessage("Error al autenticar la huella");
+        setVisible(true);
+      }
+    } catch (error) {
+      console.error("Error en la autenticación biométrica:", error);
+    }
+  }
 
   const handleLogin = async () => {
     setLoading(true);
@@ -87,7 +124,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (user_auth) {
-      handleLogin();
+      biometricAuth();
     } else {
       setLoading(false);
     }
@@ -198,7 +235,7 @@ export default function HomeScreen() {
       <View className="items-center">
         <Image
           source={require("@/assets/images/twitsnap-logo.webp")}
-          className="h-64 w-64 rounded-full mb-12"
+          className="h-64 w-64 rounded-full mb-12 mt-12"
         />
         <Text className="text-4xl text-black dark:text-white font-bold mb-6">
           Hola!
@@ -233,12 +270,28 @@ export default function HomeScreen() {
 
       <Text className="text-lg text-gray-500 text-center mb-6">Unirse con</Text>
 
-      <View className="flex-row justify-center">
+      <View className="flex-row justify-center space-x-10">
         <GoogleSigninButton
           size={GoogleSigninButton.Size.Icon}
           color={GoogleSigninButton.Color.Light}
           onPress={signInWithGoogle}
           disabled={isInProgress}
+        />
+        {user_auth && (
+          <TouchableOpacity onPress={() => biometricAuth()}>
+            <Image
+              source={require("@/assets/images/fingerprint.png")}
+              className="h-10 w-10"
+            />
+          </TouchableOpacity>
+        )}
+      </View>
+
+      <View className="flex-1 ">
+        <SnackBarComponent
+          visible={visible}
+          action={() => setVisible(false)}
+          message={message}
         />
       </View>
     </SafeAreaView>
