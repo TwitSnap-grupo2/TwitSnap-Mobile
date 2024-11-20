@@ -43,7 +43,7 @@ export default function TabTwoScreen() {
   return (
     <SafeAreaView className="">
       <ScrollView className="px-4">
-        <Text className="mt-4 dark:text-white text-center text-2xl">
+        <Text className="mt-4 dark:text-white text-center text-2xl mb-2">
           Notificaciones
         </Text>
         {notifications ? (

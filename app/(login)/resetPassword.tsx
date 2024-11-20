@@ -76,7 +76,7 @@ export default function SignInScreen() {
           source={require("@/assets/images/twitsnap-logo.webp")}
           className="h-64 w-64 rounded-full mb-12 mt-16"
         />
-        <Text className="text-4xl text-black dark:text-white font-bold mb-6">
+        <Text className="text-3xl text-black dark:text-white font-bold mb-6">
           Restablecer Contraseña
         </Text>
       </View>
@@ -96,8 +96,9 @@ export default function SignInScreen() {
         <Button
           mode="contained"
           onPress={resetPassword}
+          textColor={colorScheme === "dark" ? "white" : "black"}
           style={{ backgroundColor: "#1DA1F2" }}
-          className="mb-4"
+          className="mb-4 p-2 rounded-full"
         >
           Enviar mail de recuperación
         </Button>

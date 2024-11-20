@@ -19,6 +19,12 @@ export default function Notification({
   const { unseenNotifications, saveUnseenNotifications } = notificationContext;
   return (
     <TouchableOpacity
+      style={{
+        backgroundColor: notification.seen
+          ? "rgba(0, 0, 0, 0.3)"
+          : "rgba(0, 234, 255, 0.2)",
+        borderRadius: 10,
+      }}
       onPress={() => {
         fetch_to(
           `https://api-gateway-ccbe.onrender.com/notifications/${notification._id}`,
@@ -38,10 +44,12 @@ export default function Notification({
         //@ts-ignore
         router.navigate(notification.url);
       }}
-      className="flex gap-2 p-5"
+      className="flex  p-5"
     >
-      <Text className="text-white text-lg font-bold">{notification.title}</Text>
-      <Text className="text-gray-300 text-base">{notification.body}</Text>
+      <Text className="dark:text-white text-lg font-bold">
+        {notification.title}
+      </Text>
+      <Text className="dark:text-gray-300 text-base">{notification.body}</Text>
     </TouchableOpacity>
   );
 }

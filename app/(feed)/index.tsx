@@ -232,10 +232,10 @@ const FeedScreen = () => {
               });
             }}
           />
-          {/* <Avatar.Image
+          <Avatar.Image
             size={50}
             source={require("@/assets/images/twitsnap-logo.webp")}
-          /> */}
+          />
 
           <Avatar.Icon
             size={50}
