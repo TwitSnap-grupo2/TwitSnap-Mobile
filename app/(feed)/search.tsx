@@ -17,6 +17,7 @@ export default function SearchScreen() {
   const [tweets, setTweets] = useState<Array<Tweet>>([]);
   const [searchingHashtag, setSearchingHashtag] = useState("");
   const [isSearchingHashtag, setIsSearchingHashtag] = useState(false);
+  const [isSearchingUser, setIsSearchingUser] = useState(false);
   const [searchTwit, setSearchTwit] = useState("");
   const [isSearchingTwit, setIsSearchingTwit] = useState(false);
   const [searching, setSearching] = useState(false);
@@ -38,6 +39,7 @@ export default function SearchScreen() {
       const data = await response.json();
       setSearching(false);
       setListOfUsers(data);
+      setIsSearchingUser(true);
     } else {
       console.error(
         "Error al obtener los usuarios",
@@ -61,6 +63,7 @@ export default function SearchScreen() {
       setSearching(false);
       setIsSearchingTwit(true);
       setTweets(mapped_twits);
+      setSearchTwit("");
     } else {
       console.error(
         "Error al obtener los twits",
@@ -100,6 +103,7 @@ export default function SearchScreen() {
     setSearching(true);
     setIsSearchingHashtag(false);
     setIsSearchingTwit(false);
+    setIsSearchingUser(false);
     if (input.startsWith("#")) {
       setSearchingHashtag(input);
       setSearching(false);
@@ -133,6 +137,11 @@ export default function SearchScreen() {
         <View className="m-2">
           <Loading />
         </View>
+      )}
+      {listOfUsers.length === 0 && isSearchingUser && (
+        <Text className="text-center text-gray-500 text-lg mt-5">
+          No hay usuarios para mostrar
+        </Text>
       )}
       {listOfUsers.map((user) => (
         <View className="p-1" key={user.id}>
