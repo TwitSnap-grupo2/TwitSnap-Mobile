@@ -1,14 +1,21 @@
-import { Button, Searchbar } from "react-native-paper";
-import { useContext, useRef, useState } from "react";
+import {
+  Button,
+  Searchbar,
+  SegmentedButtons,
+  ToggleButton,
+} from "react-native-paper";
+import { useContext, useEffect, useRef, useState } from "react";
 import { fetch_to } from "@/utils/fetch";
 import { View, Text } from "react-native";
-import { User } from "@/types/User";
+import { User, UserRecommendations } from "@/types/User";
 import UserCard from "@/components/UserCard";
 import Loading from "@/components/Loading";
 import TweetComponent from "@/components/TwitSnap";
 import { Tweet } from "@/types/tweets";
 import { mappedTwits } from "@/utils/mappedTwits";
 import { UserContext } from "@/context/context";
+import { SafeAreaView } from "react-native-safe-area-context";
+import TabNavigation from "@/components/TabNavigation";
 
 export default function SearchScreen() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -20,6 +27,10 @@ export default function SearchScreen() {
   const [searchTwit, setSearchTwit] = useState("");
   const [isSearchingTwit, setIsSearchingTwit] = useState(false);
   const [searching, setSearching] = useState(false);
+  const [recommendations, setRecommendations] = useState<
+    Array<UserRecommendations> | undefined
+  >(undefined);
+
   const userContext = useContext(UserContext);
   if (!userContext) {
     throw new Error("UserContext is null");
@@ -28,6 +39,17 @@ export default function SearchScreen() {
     throw new Error("UserContext.user is null");
   }
   const currentUser = userContext.user;
+  useEffect(() => {
+    fetch_to(
+      `https://api-gateway-ccbe.onrender.com/users/recommendations/${currentUser.id}`,
+      "GET"
+    ).then((res) => {
+      res.json().then((r) => {
+        console.log("Recommendations: ", r);
+        setRecommendations(r);
+      });
+    });
+  }, []);
 
   async function searchUsers(query: string) {
     const response = await fetch_to(
@@ -122,13 +144,24 @@ export default function SearchScreen() {
   };
 
   return (
-    <View>
+    <SafeAreaView>
       <Searchbar
-        className="mt-10 dark:bg-gray-400 mb-2"
+        className="mt-4 dark:bg-gray-400 mb-2 mx-4"
         placeholder="Search"
         onChangeText={handleTextChange}
         value={searchQuery}
       />
+      {recommendations && recommendations.length == 0 && (
+        <Text className="dark:text-white">No recommendations to show</Text>
+      )}
+      {recommendations &&
+        recommendations.length > 0 &&
+        recommendations.map((recommendedUser) => (
+          <View className="p-1" key={recommendedUser.id}>
+            <UserCard user={recommendedUser} />
+          </View>
+        ))}
+
       {searching && (
         <View className="m-2">
           <Loading />
@@ -145,7 +178,7 @@ export default function SearchScreen() {
           <Button
             mode="contained"
             onPress={async () => searchTwits(searchTwit)}
-            className="bg-slate-500 mb-4 p-1 rounded-full"
+            className="bg-slate-500 mb-4 p-1 rounded-full dark:text-white"
           >
             Buscar Twits
           </Button>
@@ -158,7 +191,7 @@ export default function SearchScreen() {
           <Button
             mode="contained"
             onPress={async () => searchHashtags(searchingHashtag)}
-            className="bg-slate-500 mb-4 p-1 rounded-full"
+            className="bg-slate-500 mb-4 p-1 rounded-full dark:text-white"
           >
             {searchingHashtag}
           </Button>
@@ -177,6 +210,6 @@ export default function SearchScreen() {
             shareTweet={async () => searchHashtags}
           />
         ))}
-    </View>
+    </SafeAreaView>
   );
 }

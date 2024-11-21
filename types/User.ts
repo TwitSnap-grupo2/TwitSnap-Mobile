@@ -9,3 +9,9 @@ export interface User {
   location: string;
   interests: Array<string>;
 }
+
+export interface UserRecommendations {
+  id: string;
+  name: string;
+  user: string;
+}

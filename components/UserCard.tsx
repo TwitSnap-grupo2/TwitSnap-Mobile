@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Card, Avatar } from "react-native-paper";
-import { User } from "@/types/User";
+import { User, UserRecommendations } from "@/types/User";
 import { useRouter } from "expo-router";
 import { UserContext } from "@/context/context";
 
@@ -8,8 +8,8 @@ export default function UserCard({
   user,
   customHandle,
 }: {
-  user: User;
-  customHandle?: (user: User) => void;
+  user: User | UserRecommendations;
+  customHandle?: (user: User | UserRecommendations) => void;
 }) {
   const userContext = useContext(UserContext);
   const currentUser = userContext ? userContext.user : null;
