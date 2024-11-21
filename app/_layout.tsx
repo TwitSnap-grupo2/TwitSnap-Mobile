@@ -87,6 +87,10 @@ export default function RootLayout() {
                   name="(messages)"
                   options={{ headerShown: false }}
                 />
+                <Stack.Screen
+                  name="(search)"
+                  options={{ headerShown: false }}
+                />
               </Stack>
             </ThemeProvider>
           </UnseenNotificationsProvider>
