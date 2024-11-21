@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Button,
   Searchbar,
   SegmentedButtons,
@@ -6,7 +7,7 @@ import {
 } from "react-native-paper";
 import { useContext, useEffect, useRef, useState } from "react";
 import { fetch_to } from "@/utils/fetch";
-import { View, Text } from "react-native";
+import { View, Text, useColorScheme } from "react-native";
 import { User, UserRecommendations } from "@/types/User";
 import UserCard from "@/components/UserCard";
 import Loading from "@/components/Loading";
@@ -16,8 +17,10 @@ import { mappedTwits } from "@/utils/mappedTwits";
 import { UserContext } from "@/context/context";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TabNavigation from "@/components/TabNavigation";
+import { useRouter } from "expo-router";
 
 export default function SearchScreen() {
+  const colorScheme = useColorScheme();
   const [searchQuery, setSearchQuery] = useState("");
   const typingTimeout = useRef<NodeJS.Timeout | null>(null);
   const [listOfUsers, setListOfUsers] = useState<Array<User>>([]);
@@ -31,6 +34,7 @@ export default function SearchScreen() {
   const [recommendations, setRecommendations] = useState<
     Array<UserRecommendations> | undefined
   >(undefined);
+  const router = useRouter();
 
   const userContext = useContext(UserContext);
   if (!userContext) {
@@ -148,13 +152,37 @@ export default function SearchScreen() {
   };
 
   return (
-    <SafeAreaView>
-      <Searchbar
-        className="mt-4 dark:bg-gray-400 mb-2 mx-4"
-        placeholder="Search"
-        onChangeText={handleTextChange}
-        value={searchQuery}
-      />
+    <SafeAreaView className="px-3 py-2">
+      <View className="flex flex-row justify-between my-4 shadow-lg  pb-1 ">
+        <Avatar.Image
+          size={50}
+          source={{ uri: currentUser.avatar }}
+          onTouchEnd={() => {
+            router.push({
+              pathname: "/(profile)/[id]",
+              // @ts-ignore
+              params: {
+                id: currentUser.id,
+              },
+            });
+          }}
+        />
+        <Searchbar
+          className="flex-1 dark:bg-gray-400  mx-4"
+          placeholder="Search"
+          onPress={() => router.push("/(search)/")}
+          onChangeText={handleTextChange}
+          value={searchQuery}
+        />
+        <Avatar.Icon
+          size={50}
+          icon="dots-vertical"
+          className="bg-white dark:bg-black -mr-2"
+          onTouchEnd={() => {
+            router.push("../(config)");
+          }}
+        />
+      </View>
       {recommendations && recommendations.length == 0 && (
         <Text className="dark:text-white">No recommendations to show</Text>
       )}
