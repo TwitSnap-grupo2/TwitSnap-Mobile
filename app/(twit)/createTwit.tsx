@@ -150,7 +150,7 @@ const CreateTweetScreen = () => {
   }, [tweet, cursorPosition]);
 
   async function handleSubmit() {
-    if (message == "") {
+    if (tweet == "") {
       setVisible(true);
       setMessage("No se puede crear un twitsnap sin contenido");
       return;
