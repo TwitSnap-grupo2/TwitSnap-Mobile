@@ -1,13 +1,15 @@
 import { Tweet } from "@/types/tweets";
 import { Avatar, IconButton, Menu } from "react-native-paper";
-import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import { Text, TouchableOpacity, View, StyleSheet, Share } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { fetch_to } from "@/utils/fetch";
 import { useContext, useState } from "react";
 import { UserContext } from "@/context/context";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import * as Sharing from "expo-sharing";
+import * as Linking from "expo-linking";
 
 export default function TweetComponent({
   initialTweet,
@@ -146,6 +148,24 @@ export default function TweetComponent({
     deleteTweet(tweet.id);
   };
 
+  async function shareTwit() {
+    try {
+      if (!(await Sharing.isAvailableAsync())) {
+        alert("No se puede compartir en este dispositivo");
+        return;
+      }
+      const deepLink = Linking.createURL(`(twit)/${tweet.id}`);
+
+      await Share.share({
+        message: `Mira este twit de @${tweet.name} en TwitSnap: ${deepLink}`,
+        url: deepLink,
+        title: "Compartir twit",
+      });
+    } catch (error) {
+      console.error("Error al compartir el twit", error);
+    }
+  }
+
   return (
     <TouchableWithoutFeedback onPress={handleViewTwit}>
       <View className="flex-row pb-4 mb-2 bg-white dark:bg-black border-slate-400 border-b-2">
@@ -194,7 +214,7 @@ export default function TweetComponent({
                 visible={menuVisible}
                 onDismiss={() => setMenuVisible(false)}
                 anchor={
-                  <TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback className="ml-52">
                     <IconButton
                       icon="dots-vertical" // Ícono de tres puntos
                       size={24}
@@ -206,6 +226,7 @@ export default function TweetComponent({
                 <View>
                   <Menu.Item onPress={handleEdit} title="Editar" />
                   <Menu.Item onPress={handleDelete} title="Eliminar" />
+                  <Menu.Item onPress={shareTwit} title="Compartir" />
                 </View>
               </Menu>
             )}

@@ -1,0 +1,10 @@
+[
+    {
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target": {
+        "namespace": "android_app",
+        "package_name": "com.twitsnap.app",
+        "sha256_cert_fingerprints": ["B3:F4:D3:B9:69:20:67:B5:C5:0C:A4:CC:62:A7:A2:6A:B3:03:30:07:6D:FB:95:99:43:60:8F:89:8B:4F:72:23"]
+        }   
+    }
+]

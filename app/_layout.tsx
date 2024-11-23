@@ -32,7 +32,7 @@ export default function RootLayout() {
       const url = remoteMessage?.data?.url;
       console.log("URL: ", url);
       if (url) {
-        router.push(url); // Navigates to the specified screen
+        router.push(url as any); // Navigates to the specified screen
       }
     });
 
@@ -44,7 +44,7 @@ export default function RootLayout() {
           const url = remoteMessage.data?.url;
           console.log("URL: ", url);
           if (url) {
-            router.push(url);
+            router.push(url as any);
           }
         }
       });

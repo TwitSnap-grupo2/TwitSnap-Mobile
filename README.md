@@ -32,7 +32,7 @@ npm install -g eas-cli
    ```bash
    npm install
    ```
-2. [Descargar la apk](https://expo.dev/accounts/lghosn/projects/TwitSnap/builds/2476efb1-0e39-4346-be38-7550cd894239)
+2. [Descargar la apk](https://expo.dev/accounts/lghosn/projects/TwitSnap/builds/9e7e717f-8881-4098-bc6f-f453ed19346a)
 
 3. Start the app
    ```bash

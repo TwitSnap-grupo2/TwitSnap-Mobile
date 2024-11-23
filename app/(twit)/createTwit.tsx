@@ -134,7 +134,7 @@ const CreateTweetScreen = () => {
     }
   };
 
-  function mencionUser(user: User) {
+  function mencionUser(user: User | any) {
     //reemplazo la ultima palabra por el usuario
     const nuevaMencion = tweet.replace(currentWord, `@${user.user}`);
 
