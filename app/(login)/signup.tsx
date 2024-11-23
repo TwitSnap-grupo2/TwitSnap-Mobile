@@ -194,7 +194,7 @@ export default function SignUpScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-gray-800 justify-center">
-      <ScrollView className="mt-10">
+      <ScrollView className="mt-10" nestedScrollEnabled={true}>
         <View className="items-center">
           <Image
             source={require("@/assets/images/twitsnap-logo.webp")}
@@ -307,7 +307,7 @@ export default function SignUpScreen() {
                     }}
                     id="1"
                   >
-                    <ScrollView className="h-40">
+                    <ScrollView className="h-40" nestedScrollEnabled={true  }>
                       {countriesList.map((country) => (
                         <List.Item
                           style={{ paddingLeft: 10 }}

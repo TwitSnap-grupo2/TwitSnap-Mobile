@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { View, Text, Image, SafeAreaView, TextInput } from "react-native";
-import { Button } from "react-native-paper";
+import { Button, Dialog, Portal, Text as PaperText } from "react-native-paper";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useContext, useState } from "react";
 import { UserContext } from "@/context/context";
@@ -41,6 +41,11 @@ export default function SignInScreen() {
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [dialogVisible, setDialogVisible] = useState(false);
+
+  const showDialog = () => setDialogVisible(true);
+  const hideDialog = () => setDialogVisible(false);
+
   if (!notificationContext) {
     return;
   }
@@ -72,70 +77,85 @@ export default function SignInScreen() {
     setErrors: (errors: FormikErrors<loginValues>) => void,
     setTouched: (touched: Record<string, boolean>) => void
   ) => {
-    setSubmitting(true);
+    try {
+      setSubmitting(true);
 
-    const errors = await validateForm({ email, password });
+      const errors = await validateForm({ email, password });
 
-    if (Object.keys(errors).length > 0) {
-      setErrors(errors);
-      setTouched({ email: true, password: true }); // Mark fields as touched
-      setSubmitting(false);
-      return;
-    }
-
-    const currentUser = await LoginWithEmailAndPassword(email, password);
-    const final = Math.floor((new Date().getTime() - startDate) / 1000); // its in ms, so we divide by 1000 to get seconds
-    if (currentUser) {
-      saveUser(currentUser);
-      fetch_to(
-        `https://api-gateway-ccbe.onrender.com/notifications/${currentUser.id}/unseen`,
-        "GET"
-      ).then((res) =>
-        res.json().then((r) => saveUnseenNotifications(r["unseen"]))
-      );
-
-      fetch_to(`https://api-gateway-ccbe.onrender.com/metrics/login`, "POST", {
-        success: true,
-        method: "email",
-        loginTime: final,
-        location: currentUser.location,
-      }).then((res) => res.json().then((r) => console.log(r)));
-
-      setMessage("Bienvenid@ a TwitSnap " + currentUser.name);
-      setVisible(true);
-      setSubmitting(false);
-      const userDeviceRef = firestore()
-        .collection("userDevices")
-        .doc(currentUser.id);
-
-      const devices = (await userDeviceRef.get()).data();
-      await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
-      );
-
-      if (!messaging().isDeviceRegisteredForRemoteMessages) {
-        await messaging().registerDeviceForRemoteMessages();
+      if (Object.keys(errors).length > 0) {
+        setErrors(errors);
+        setTouched({ email: true, password: true }); // Mark fields as touched
+        setSubmitting(false);
+        return;
       }
-      const token = await messaging().getToken();
 
-      if (!devices || !devices["devices"].includes(token)) {
-        await userDeviceRef.set(
-          { devices: firestore.FieldValue.arrayUnion(token) },
-          { merge: true } // merge with existing data
+      const currentUser = await LoginWithEmailAndPassword(email, password);
+      const final = Math.floor((new Date().getTime() - startDate) / 1000); // its in ms, so we divide by 1000 to get seconds
+      if (currentUser) {
+        saveUser(currentUser);
+        fetch_to(
+          `https://api-gateway-ccbe.onrender.com/notifications/${currentUser.id}/unseen`,
+          "GET"
+        ).then((res) =>
+          res.json().then((r) => saveUnseenNotifications(r["unseen"]))
         );
-      }
-      router.replace("/(feed)");
-    } else {
-      fetch_to(`https://api-gateway-ccbe.onrender.com/metrics/login`, "POST", {
-        success: false,
-        method: "email",
-        loginTime: final,
-        location: userContext.user?.location,
-      }).then((r) => console.log());
 
-      setVisible(true);
-      setSubmitting(false);
-      setMessage("Credenciales incorrectas");
+        fetch_to(
+          `https://api-gateway-ccbe.onrender.com/metrics/login`,
+          "POST",
+          {
+            success: true,
+            method: "email",
+            loginTime: final,
+            location: currentUser.location,
+          }
+        ).then((res) => res.json().then((r) => console.log(r)));
+
+        setMessage("Bienvenid@ a TwitSnap " + currentUser.name);
+        setVisible(true);
+        setSubmitting(false);
+        const userDeviceRef = firestore()
+          .collection("userDevices")
+          .doc(currentUser.id);
+
+        const devices = (await userDeviceRef.get()).data();
+        await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+        );
+
+        if (!messaging().isDeviceRegisteredForRemoteMessages) {
+          await messaging().registerDeviceForRemoteMessages();
+        }
+        const token = await messaging().getToken();
+
+        if (!devices || !devices["devices"].includes(token)) {
+          await userDeviceRef.set(
+            { devices: firestore.FieldValue.arrayUnion(token) },
+            { merge: true } // merge with existing data
+          );
+        }
+        router.replace("/(feed)");
+      } else {
+        fetch_to(
+          `https://api-gateway-ccbe.onrender.com/metrics/login`,
+          "POST",
+          {
+            success: false,
+            method: "email",
+            loginTime: final,
+            location: userContext.user?.location,
+          }
+        ).then((r) => console.log());
+        setVisible(true);
+        setSubmitting(false);
+        setMessage("Credenciales incorrectas");
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        setSubmitting(false);
+        setMessage(err.message);
+        showDialog();
+      }
     }
   };
 
@@ -235,6 +255,17 @@ export default function SignInScreen() {
           )}
         </Formik>
       </View>
+      <Portal>
+        <Dialog visible={dialogVisible} onDismiss={hideDialog}>
+          <Dialog.Title>Oops...</Dialog.Title>
+          <Dialog.Content>
+            <PaperText variant="bodyMedium">{message}</PaperText>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={hideDialog}>Close</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
 
       <View className="flex-1">
         <SnackBarComponent

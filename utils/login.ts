@@ -37,6 +37,7 @@ export const LoginWithEmailAndPassword = async (
       console.log(error.name);
     }
     console.log("failed to log in:", error);
+    throw error;
   }
 };
 
@@ -63,6 +64,9 @@ export async function FindUserByEmail(email: string | null) {
       interests: data.interests,
     };
     return user;
+  } else if (response.status === 403) {
+    console.log("The user is blocked");
+    throw new Error(`El usuario con email: ${email} está bloqueado`);
   } else {
     return null;
   }

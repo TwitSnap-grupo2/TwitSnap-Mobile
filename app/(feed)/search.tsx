@@ -42,7 +42,6 @@ export default function SearchScreen() {
       "GET"
     ).then((res) => {
       res.json().then((r) => {
-        console.log("Recommendations: ", r);
         setRecommendations(r);
       });
     });
@@ -90,8 +89,13 @@ export default function SearchScreen() {
           }}
         /> */}
       </View>
+      <Text className="dark:text-white text-center text-2xl font-bold mb-5">
+        Recommendations
+      </Text>
       {recommendations && recommendations.length == 0 && (
-        <Text className="dark:text-white">No recommendations to show</Text>
+        <Text className="dark:text-white text-center text-2xl font-bold">
+          No recommendations to show
+        </Text>
       )}
       {recommendations &&
         recommendations.length > 0 &&

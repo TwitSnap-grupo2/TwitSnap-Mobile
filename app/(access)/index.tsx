@@ -24,6 +24,7 @@ import Loading from "@/components/Loading";
 import { NotificationContext } from "@/context/NotificationContext";
 import * as LocalAuthentication from "expo-local-authentication";
 import SnackBarComponent from "@/components/Snackbar";
+import { Dialog, Portal, Text as PaperText, Button } from "react-native-paper";
 
 GoogleSignin.configure({
   webClientId:
@@ -42,6 +43,10 @@ export default function HomeScreen() {
   const notificationContext = useContext(NotificationContext);
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
+  const [dialogVisible, setDialogVisible] = useState(false);
+
+  const showDialog = () => setDialogVisible(true);
+  const hideDialog = () => setDialogVisible(false);
 
   if (!userContext) {
     throw new Error("UserContext is null");
@@ -119,6 +124,11 @@ export default function HomeScreen() {
       }
     } catch (error) {
       console.log("failed to log in:", error);
+      setLoading(false);
+      if (error instanceof Error) {
+        setMessage(error.message);
+        showDialog();
+      }
     }
   };
 
@@ -285,6 +295,17 @@ export default function HomeScreen() {
             />
           </TouchableOpacity>
         )}
+        <Portal>
+          <Dialog visible={dialogVisible} onDismiss={hideDialog}>
+            <Dialog.Title>Oops...</Dialog.Title>
+            <Dialog.Content>
+              <PaperText variant="bodyMedium">{message}</PaperText>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={hideDialog}>Close</Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
       </View>
 
       <View className="flex-1 ">

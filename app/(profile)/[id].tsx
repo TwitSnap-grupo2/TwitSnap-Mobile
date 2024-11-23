@@ -123,9 +123,12 @@ export default function ProfileHomeScreen() {
         interests: data.interests,
       };
       setUser(data_user);
+    } else if (response.status == 403) {
+      router.replace("/(login)/signin");
     } else {
       setMessage("Error al obtener los twits " + response.status);
     }
+    console.log("🚀 ~ fetchUser ~ response:", response);
   };
 
   const fetchTweets = async () => {
