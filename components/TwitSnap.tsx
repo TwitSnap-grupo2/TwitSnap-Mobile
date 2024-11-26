@@ -200,7 +200,15 @@ export default function TweetComponent({
               </Text>
             </View>
           )}
-          <View className="space-x-50" style={styles.tweetHeader}>
+          {tweet.parentId != null && (
+            <View style={styles.tweetHeader}>
+              <Text style={styles.username}>{tweet.username} respondió</Text>
+            </View>
+          )}
+          <View
+            className="flex flex-row justify-between"
+            style={styles.tweetHeader}
+          >
             <View>
               <Text className="dark:text-gray-200" style={styles.name}>
                 {tweet.name}
@@ -209,27 +217,29 @@ export default function TweetComponent({
               <Text style={styles.username}>@{tweet.username}</Text>
             </View>
 
-            {tweet.createdBy === user.id && (
-              <Menu
-                visible={menuVisible}
-                onDismiss={() => setMenuVisible(false)}
-                anchor={
-                  <TouchableWithoutFeedback className="ml-52">
-                    <IconButton
-                      icon="dots-vertical" // Ícono de tres puntos
-                      size={24}
-                      onPress={() => setMenuVisible(true)}
-                    />
-                  </TouchableWithoutFeedback>
-                }
-              >
-                <View>
-                  <Menu.Item onPress={handleEdit} title="Editar" />
-                  <Menu.Item onPress={handleDelete} title="Eliminar" />
-                  <Menu.Item onPress={shareTwit} title="Compartir" />
-                </View>
-              </Menu>
-            )}
+            <Menu
+              visible={menuVisible}
+              onDismiss={() => setMenuVisible(false)}
+              anchor={
+                <TouchableWithoutFeedback>
+                  <IconButton
+                    icon="dots-vertical"
+                    size={24}
+                    onPress={() => setMenuVisible(true)}
+                  />
+                </TouchableWithoutFeedback>
+              }
+            >
+              <View>
+                {tweet.createdBy === user.id ? (
+                  <View>
+                    <Menu.Item onPress={handleEdit} title="Editar" />
+                    <Menu.Item onPress={handleDelete} title="Eliminar" />
+                  </View>
+                ) : null}
+                <Menu.Item onPress={shareTwit} title="Compartir" />
+              </View>
+            </Menu>
           </View>
 
           <Text className="dark:text-gray-200" style={styles.tweetText}>
