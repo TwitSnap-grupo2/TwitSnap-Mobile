@@ -47,7 +47,7 @@ export default function Twit() {
 
     setResponses([]);
     // @ts-ignore
-    const mappedTweets = await mappedTwits(data, currentUser.id);
+    const mappedTweets = await mappedTwits(data, currentUser);
     setResponses(mappedTweets);
     setLoading(false);
   }

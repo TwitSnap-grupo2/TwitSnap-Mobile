@@ -52,6 +52,19 @@ export async function FindUserByEmail(email: string | null) {
     if (!data.id) {
       return null;
     }
+
+    const saves = await fetch_to(
+      `https://api-gateway-ccbe.onrender.com/twits/favourites/${data.id}`,
+      "GET"
+    );
+
+    if (saves.status != 200) {
+      console.log("Error al obtener los saves");
+      return null;
+    }
+    const savesData = await saves.json();
+    const favourites = savesData.map((save: any) => save.id);
+
     const user = {
       id: data.id,
       name: data.name,
@@ -62,6 +75,7 @@ export async function FindUserByEmail(email: string | null) {
       followeds: data.followeds,
       location: data.location,
       interests: data.interests,
+      favourites: favourites,
     };
     return user;
   } else if (response.status === 403) {

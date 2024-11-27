@@ -8,6 +8,7 @@ import { useContext, useState } from "react";
 import { UserContext } from "@/context/context";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import SnackBarComponent from "./Snackbar";
 
 export default function TweetComponent({
   initialTweet,
@@ -15,15 +16,19 @@ export default function TweetComponent({
   deleteTweet,
   editTweet,
   isResponse,
+  favTweet,
 }: {
   initialTweet: Tweet;
   deleteTweet?: (tweetId: string) => void;
   editTweet?: (message: string, tweetId: string) => void;
   shareTweet: () => void;
   isResponse?: boolean;
+  favTweet?: (fav: boolean) => void;
 }) {
   const router = useRouter();
   const [menuVisible, setMenuVisible] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [message, setMessage] = useState("");
   const userContext = useContext(UserContext);
   if (!userContext) {
     throw new Error("UserContext is null");
@@ -146,6 +151,41 @@ export default function TweetComponent({
     deleteTweet(tweet.id);
   };
 
+  async function handleFavourite() {
+    const actual_favourite = tweet.favourite;
+    const updatedTweet = {
+      ...tweet,
+      favourite: !actual_favourite,
+    };
+    setTweet(updatedTweet);
+
+    if (actual_favourite) {
+      const response = await fetch_to(
+        `https://api-gateway-ccbe.onrender.com/twits/${tweet.id}/favourite?userId=${user.id}`,
+        "DELETE"
+      );
+
+      if (response.status != 204) {
+        console.error("Error al quitar favorito al tweet", response.status);
+      }
+      favTweet ? favTweet(false) : null;
+    } else {
+      const response = await fetch_to(
+        `https://api-gateway-ccbe.onrender.com/twits/${tweet.id}/favourite`,
+        "POST",
+        {
+          userId: user.id,
+        }
+      );
+
+      if (response.status != 201) {
+        console.error("Error al dar favorito al tweet", response.status);
+      }
+
+      favTweet ? favTweet(true) : null;
+    }
+  }
+
   return (
     <TouchableWithoutFeedback onPress={handleViewTwit}>
       <View className="flex-row pb-4 mb-2 bg-white dark:bg-black border-slate-400 border-b-2">
@@ -240,6 +280,16 @@ export default function TweetComponent({
                 color={tweet.likedByMe ? "#EE0000" : "#657786"}
               />
               <Text style={styles.actionText}>{tweet.likesCount}</Text>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback
+              style={styles.actionButton}
+              onPress={handleFavourite}
+            >
+              <Icon
+                name="bookmark"
+                size={16}
+                color={tweet.favourite ? "#1DA1F2" : "#657786"}
+              />
             </TouchableWithoutFeedback>
           </View>
         </View>

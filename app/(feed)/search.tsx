@@ -1,22 +1,11 @@
-import {
-  Avatar,
-  Button,
-  Searchbar,
-  SegmentedButtons,
-  ToggleButton,
-} from "react-native-paper";
-import { useContext, useEffect, useRef, useState } from "react";
+import { Avatar } from "react-native-paper";
+import { useContext, useEffect, useState } from "react";
 import { fetch_to } from "@/utils/fetch";
 import { View, Text, useColorScheme } from "react-native";
-import { User, UserRecommendations } from "@/types/User";
+import { UserRecommendations } from "@/types/User";
 import UserCard from "@/components/UserCard";
-import Loading from "@/components/Loading";
-import TweetComponent from "@/components/TwitSnap";
-import { Tweet } from "@/types/tweets";
-import { mappedTwits } from "@/utils/mappedTwits";
 import { UserContext } from "@/context/context";
 import { SafeAreaView } from "react-native-safe-area-context";
-import TabNavigation from "@/components/TabNavigation";
 import { useRouter } from "expo-router";
 import SearchBar from "@/components/SearchBar";
 import { AntDesign } from "@expo/vector-icons";
