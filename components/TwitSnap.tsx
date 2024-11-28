@@ -159,6 +159,14 @@ export default function TweetComponent({
     };
     setTweet(updatedTweet);
 
+    const updatedUser = {
+      ...user,
+      favourites: actual_favourite
+        ? user.favourites.filter((fav) => fav !== tweet.id)
+        : user.favourites.concat(tweet.id),
+    };
+    userContext?.saveUser(updatedUser);
+
     if (actual_favourite) {
       const response = await fetch_to(
         `https://api-gateway-ccbe.onrender.com/twits/${tweet.id}/favourite?userId=${user.id}`,
