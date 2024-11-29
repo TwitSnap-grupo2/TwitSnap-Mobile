@@ -111,6 +111,19 @@ export default function ProfileHomeScreen() {
     );
     if (response.status === 200) {
       const data = await response.json();
+
+      const saves = await fetch_to(
+        `https://api-gateway-ccbe.onrender.com/twits/favourites/${data.id}`,
+        "GET"
+      );
+
+      if (saves.status != 200) {
+        console.log("Error al obtener los saves");
+        return null;
+      }
+      const savesData = await saves.json();
+      const favourites = savesData.map((save: any) => save.id);
+
       const data_user = {
         id: data.id,
         name: data.name,
@@ -121,6 +134,7 @@ export default function ProfileHomeScreen() {
         followeds: data.followeds,
         location: data.location,
         interests: data.interests,
+        favourites: favourites,
       };
       setUser(data_user);
     } else if (response.status == 403) {
@@ -144,7 +158,7 @@ export default function ProfileHomeScreen() {
     if (response.status === 200) {
       const data = await response.json();
       setTweets([]);
-      const data_tweets = await mappedTwits(data, user.id);
+      const data_tweets = await mappedTwits(data, user);
       setTweets(data_tweets);
       setLoading(false);
     } else {

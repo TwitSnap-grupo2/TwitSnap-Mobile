@@ -4,7 +4,7 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { router, Stack } from "expo-router";
+import { Href, router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
@@ -30,21 +30,18 @@ export default function RootLayout() {
     // Handle notification clicks
     messaging().onNotificationOpenedApp((remoteMessage) => {
       const url = remoteMessage?.data?.url;
-      console.log("URL: ", url);
       if (url) {
-        router.push(url as any); // Navigates to the specified screen
+        router.push(url as Href<string>);
       }
     });
 
-    // Handle background messages (if the app is launched via notification)
     messaging()
       .getInitialNotification()
       .then((remoteMessage) => {
         if (remoteMessage) {
           const url = remoteMessage.data?.url;
-          console.log("URL: ", url);
           if (url) {
-            router.push(url as any);
+            router.push(url as Href<string>);
           }
         }
       });
@@ -91,6 +88,7 @@ export default function RootLayout() {
                   name="(search)"
                   options={{ headerShown: false }}
                 />
+                <Stack.Screen name="(favs)" options={{ headerShown: false }} />
               </Stack>
             </ThemeProvider>
           </UnseenNotificationsProvider>

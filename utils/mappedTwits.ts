@@ -1,8 +1,9 @@
 import { Tweet } from "@/types/tweets";
 import { fetch_to } from "./fetch";
-import { createdAt } from "expo-updates";
+import { User } from "@/types/User";
 
-export async function mappedTwits(data: [], curretUserId: string) {
+
+export async function mappedTwits(data: [], curretUser: User) {
     const uniqueUserIds = Array.from(
         new Set(data.map((tweet: Tweet) => tweet.createdBy))
     );
@@ -12,7 +13,7 @@ export async function mappedTwits(data: [], curretUserId: string) {
     if (tweet.sharedBy == null) {
         return;
     }
-    const resnapeado = tweet.sharedBy == curretUserId;
+    const resnapeado = tweet.sharedBy == curretUser.id;
     if (resnapeado) {
         sharedTwit[tweet.id] = resnapeado;
     }
@@ -60,7 +61,7 @@ export async function mappedTwits(data: [], curretUserId: string) {
 
     const userLikes: { [key: string]: any } = {};
     likes.flat().forEach((like) => {
-    const megusteado = like.likedBy == curretUserId;
+    const megusteado = like.likedBy == curretUser.id;
     if (megusteado) {
         userLikes[like.twitsnapId] = megusteado;
     }
@@ -71,6 +72,7 @@ export async function mappedTwits(data: [], curretUserId: string) {
     const sharedBy = userMap[tweet.sharedBy] || {};
     const likedByMe = userLikes[tweet.id] || false;
     const sharedByMe = sharedTwit[tweet.id] || false;
+    const favourite = curretUser.favourites.includes(tweet.id);
     return {
         id: tweet.id,
         avatar: `https://robohash.org/${mappedUser.id}.png`,
@@ -86,6 +88,7 @@ export async function mappedTwits(data: [], curretUserId: string) {
         sharedByMe: sharedByMe,
         parentId: tweet.parentId,
         createdAt: tweet.createdAt,
+        favourite: favourite,
     };
     });
 

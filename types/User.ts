@@ -8,6 +8,7 @@ export interface User {
   followeds: Array<string>;
   location: string;
   interests: Array<string>;
+  favourites: Array<string>;
 }
 
 export interface UserRecommendations {

@@ -13,4 +13,5 @@ export interface Tweet {
   sharedByMe: boolean;
   parentId: string;
   createdAt: string;
+  favourite: boolean;
 }

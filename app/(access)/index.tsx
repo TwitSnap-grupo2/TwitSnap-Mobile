@@ -64,12 +64,14 @@ export default function HomeScreen() {
 
       if (!hasBiometricAuth) {
         console.log("No biometric hardware found");
+        handleLogin();
         return;
       }
 
       const biometricRecords = await LocalAuthentication.isEnrolledAsync();
       if (!biometricRecords) {
         console.log("No biometric records found");
+        handleLogin();
         return;
       }
 

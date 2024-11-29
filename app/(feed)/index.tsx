@@ -19,6 +19,7 @@ import { mappedTwits } from "@/utils/mappedTwits";
 import messaging from "@react-native-firebase/messaging";
 import auth from "@react-native-firebase/auth";
 import { NotificationContext } from "@/context/NotificationContext";
+import SnackBarComponent from "@/components/Snackbar";
 
 const FeedScreen = () => {
   const [tweets, setTweets] = useState<Tweet[]>([]);
@@ -53,6 +54,15 @@ const FeedScreen = () => {
     } catch (error) {
       console.error("Error al registrar el token FCM", error);
     }
+  }
+
+  function favoriteTweet(fav: boolean) {
+    if (!fav) {
+      setMessage("Tweet eliminado de favoritos");
+    } else {
+      setMessage("Tweet agregado a favoritos");
+    }
+    setVisible(true);
   }
 
   async function deleteTweet(tweetId: string) {
@@ -158,7 +168,7 @@ const FeedScreen = () => {
 
       if (response.status === 200) {
         const data = await response.json();
-        const mappedTweets = await mappedTwits(data, user?.id);
+        const mappedTweets = await mappedTwits(data, user);
         setTweets((prevTweets) =>
           timestamp ? [...prevTweets, ...mappedTweets] : mappedTweets
         );
@@ -261,6 +271,7 @@ const FeedScreen = () => {
               shareTweet={onRefresh}
               deleteTweet={() => deleteTweet(tweet.id)}
               editTweet={() => editTweet(tweet.message, tweet.id)}
+              favTweet={favoriteTweet}
             />
           ))}
       </ScrollView>
@@ -274,19 +285,12 @@ const FeedScreen = () => {
         }}
       />
 
-      <View className="px-8">
-        <Snackbar
+      <View className="flex-1 ">
+        <SnackBarComponent
           visible={visible}
-          onDismiss={() => {}}
-          action={{
-            label: "Cerrar",
-            onPress: () => {
-              setVisible(false);
-            },
-          }}
-        >
-          {message}
-        </Snackbar>
+          action={() => setVisible(false)}
+          message={message}
+        />
       </View>
     </SafeAreaView>
   );

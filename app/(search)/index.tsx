@@ -65,7 +65,7 @@ export default function Search() {
     );
     if (response.status === 200) {
       const data = await response.json();
-      const mapped_twits = await mappedTwits(data, currentUser.id);
+      const mapped_twits = await mappedTwits(data, currentUser);
       setSearching(false);
       setIsSearchingTwit(true);
       setTweets(mapped_twits);
@@ -90,7 +90,7 @@ export default function Search() {
     );
     if (response.status === 200) {
       const data = await response.json();
-      const mapped_twits = await mappedTwits(data, currentUser.id);
+      const mapped_twits = await mappedTwits(data, currentUser);
       setSearching(false);
       setIsSearchingHashtag(true);
       setTweets(mapped_twits);

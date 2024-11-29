@@ -1,12 +1,15 @@
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { auth } from "@/utils/config";
 import { useRouter } from "expo-router";
-import { View } from "react-native";
-import { Button } from "react-native-paper";
+import { View, Text, TouchableOpacity } from "react-native";
+import { Button, List, Menu } from "react-native-paper";
+import Modal from "react-native-modal";
+import { useState } from "react";
+import ModalQuestion from "@/components/ModalQuestion";
 
 export default function Configuracion() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
+  const [isModalVisible, setModalVisible] = useState(false);
   async function handleSignOut() {
     auth()
       .signOut()
@@ -18,16 +21,32 @@ export default function Configuracion() {
       });
   }
 
+  function toggleModal() {
+    setModalVisible(!isModalVisible);
+  }
+
   return (
-    <View className="flex-1 bg-white justify-center items-center dark:bg-black">
-      <Button
-        mode="contained"
-        onPress={handleSignOut}
-        textColor={colorScheme === "dark" ? "white" : "black"}
-        style={{ backgroundColor: "#1DA1F2" }}
-      >
-        Cerrar Sesión
-      </Button>
+    <View className="flex-1 bg-white pl-4  dark:bg-black">
+      {/* Menu con dos opciones */}
+      <List.Section>
+        <List.Item
+          title="Twits Favoritos"
+          left={() => <List.Icon icon="bookmark" />}
+          onPress={() => router.push("../(favs)")}
+        />
+        <List.Item
+          title="Cerrar Sesión"
+          left={() => <List.Icon icon="logout" />}
+          onPress={toggleModal}
+        />
+      </List.Section>
+
+      <ModalQuestion
+        question="¿Estás seguro de cerrar sesión?"
+        isModalVisible={isModalVisible}
+        cancelAction={toggleModal}
+        confirmAction={handleSignOut}
+      />
     </View>
   );
 }
