@@ -5,8 +5,8 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
     "userInterfaceStyle": "automatic",
+    "scheme": "com.twitsnap.app",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -31,6 +31,20 @@
         "CAMERA",
         "USE_FINGERPRINT",
         "USE_BIOMETRIC"
+      ],
+      "intentFilters": [
+        {
+          "autoVerify": true,
+          "data":[ {
+            "host": "com.twitsnap.app",
+            "scheme": "https"
+          }],
+          "actions": "VIEW",
+          "categories": [
+            "DEFAULT",
+            "BROWSABLE"
+          ]
+        }
       ]
     },
     "web": {
