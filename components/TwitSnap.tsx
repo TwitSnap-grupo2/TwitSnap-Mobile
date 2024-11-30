@@ -1,18 +1,17 @@
 import { Tweet } from "@/types/tweets";
 import { Avatar, IconButton, Menu } from "react-native-paper";
-import { Text, TouchableOpacity, View, StyleSheet, Share } from "react-native";
+import { Text, View, StyleSheet, Share } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { fetch_to } from "@/utils/fetch";
 import { useContext, useState } from "react";
 import { UserContext } from "@/context/context";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 import * as Sharing from "expo-sharing";
 import * as Linking from "expo-linking";
 
-import SnackBarComponent from "./Snackbar";
+import ModalQuestion from "./ModalQuestion";
 
 export default function TweetComponent({
   initialTweet,
@@ -32,6 +31,7 @@ export default function TweetComponent({
   const router = useRouter();
   const [menuVisible, setMenuVisible] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState("");
   const userContext = useContext(UserContext);
   if (!userContext) {
@@ -78,6 +78,10 @@ export default function TweetComponent({
         console.error("Error al dar share al tweet", response.status);
       }
     }
+  }
+
+  function toggleModal() {
+    setModalVisible(!isModalVisible);
   }
 
   async function handleLike() {
@@ -149,10 +153,7 @@ export default function TweetComponent({
 
   const handleDelete = async () => {
     setMenuVisible(false);
-    if (!deleteTweet) {
-      return;
-    }
-    deleteTweet(tweet.id);
+    toggleModal();
   };
 
   async function shareTwit() {
@@ -333,6 +334,14 @@ export default function TweetComponent({
             </TouchableWithoutFeedback>
           </View>
         </View>
+        <ModalQuestion
+          question="¿Estás seguro de borra el twit?"
+          isModalVisible={isModalVisible}
+          cancelAction={toggleModal}
+          confirmAction={() => {
+            if (deleteTweet) deleteTweet(tweet.id);
+          }}
+        />
       </View>
     </TouchableWithoutFeedback>
   );
