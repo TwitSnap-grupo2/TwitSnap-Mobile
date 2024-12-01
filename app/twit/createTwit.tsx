@@ -26,7 +26,13 @@ const CreateTweetScreen = () => {
   const colorScheme = useColorScheme();
   const router = useRouter();
   const userContext = useContext(UserContext);
-  const user = userContext ? userContext.user : null;
+  if (!userContext) {
+    throw new Error("UserContext is null");
+  }
+  if (!userContext.user) {
+    throw new Error("UserContext.user is null");
+  }
+  const user = userContext.user;
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -163,7 +169,6 @@ const CreateTweetScreen = () => {
           "POST",
           {
             message: tweet,
-            // @ts-ignore
             createdBy: user.id,
           }
         );

@@ -19,9 +19,13 @@ import { mappedTwits } from "@/utils/mappedTwits";
 import messaging from "@react-native-firebase/messaging";
 import auth from "@react-native-firebase/auth";
 import { NotificationContext } from "@/context/NotificationContext";
+import * as Linking from "expo-linking";
 import SnackBarComponent from "@/components/Snackbar";
 
 const FeedScreen = () => {
+  const urls = Linking.useURL();
+  console.log(urls);
+
   const [tweets, setTweets] = useState<Tweet[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -89,8 +93,7 @@ const FeedScreen = () => {
 
   async function editTweet(message: string, id: string) {
     router.push({
-      pathname: "/(twit)/createTwit",
-      // @ts-ignore
+      pathname: "/twit/createTwit",
       params: {
         initialMessage: message,
         id: id,
@@ -281,7 +284,7 @@ const FeedScreen = () => {
         className="absolute bottom-4 right-4"
         icon="plus"
         onPress={() => {
-          router.push("../(twit)/createTwit");
+          router.push("../twit/createTwit");
         }}
       />
 

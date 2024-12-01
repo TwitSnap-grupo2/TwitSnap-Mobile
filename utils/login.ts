@@ -82,6 +82,7 @@ export async function FindUserByEmail(email: string | null) {
     console.log("The user is blocked");
     throw new Error(`El usuario con email: ${email} está bloqueado`);
   } else {
+    console.log("Error al obtener el usuario", response.status);
     return null;
   }
 }

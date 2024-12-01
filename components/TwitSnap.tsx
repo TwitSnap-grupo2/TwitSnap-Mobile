@@ -125,7 +125,7 @@ export default function TweetComponent({
 
   function handleViewTwit() {
     router.push({
-      pathname: "/(twit)/[id]",
+      pathname: "/twit/[id]",
       params: {
         id: tweet.id,
         twit: JSON.stringify(tweet),
@@ -137,7 +137,7 @@ export default function TweetComponent({
     router.push({
       pathname: "/(profile)/[id]",
       params: {
-        id: tweet?.createdBy,
+        id: tweet.createdBy,
         initialFollowed: user.followeds.includes(tweet.createdBy) ? "1" : "0",
       },
     });
@@ -162,7 +162,7 @@ export default function TweetComponent({
         alert("No se puede compartir en este dispositivo");
         return;
       }
-      const deepLink = Linking.createURL(`(twit)/${tweet.id}`);
+      const deepLink = Linking.createURL(`twit/${tweet.id}`);
 
       await Share.share({
         message: `Mira este twit de @${tweet.name} en TwitSnap: ${deepLink}`,

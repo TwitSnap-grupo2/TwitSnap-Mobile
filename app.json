@@ -36,9 +36,17 @@
         {
           "autoVerify": true,
           "data":[ {
-            "host": "com.twitsnap.app",
+            "scheme": "com.twitsnap.app"
+          },
+          {
+            "host": "twitsnap.app",
             "scheme": "https"
-          }],
+          },
+          {
+            "host": "twitsnap.app",
+            "scheme": "http"
+          }
+        ],
           "actions": "VIEW",
           "categories": [
             "DEFAULT",

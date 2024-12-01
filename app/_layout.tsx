@@ -75,7 +75,7 @@ export default function RootLayout() {
                   name="(profile)"
                   options={{ headerShown: false }}
                 />
-                <Stack.Screen name="(twit)" options={{ headerShown: false }} />
+                <Stack.Screen name="twit" options={{ headerShown: false }} />
                 <Stack.Screen
                   name="(config)"
                   options={{ headerShown: false }}

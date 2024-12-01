@@ -4,7 +4,7 @@
         "target": {
         "namespace": "android_app",
         "package_name": "com.twitsnap.app",
-        "sha256_cert_fingerprints": ["B3:F4:D3:B9:69:20:67:B5:C5:0C:A4:CC:62:A7:A2:6A:B3:03:30:07:6D:FB:95:99:43:60:8F:89:8B:4F:72:23"]
+        "sha256_cert_fingerprints": ["53:96:44:FA:DD:1D:D4:7F:F2:D0:27:FF:E7:CE:A6:83:BC:5A:6F:1D:E4:58:B2:EB:14:EE:21:54:37:44:37:8D"]
         }   
     }
 ]
