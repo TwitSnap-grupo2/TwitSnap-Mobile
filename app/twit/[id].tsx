@@ -15,10 +15,16 @@ import {
   View,
 } from "react-native";
 import { Button, Snackbar } from "react-native-paper";
+import * as Linking from "expo-linking";
 
 export default function Twit() {
+  const url = Linking.useURL();
+
   const router = useRouter();
   const { id, twit } = useLocalSearchParams();
+  const [tweet, setTweet] = useState<Tweet | {}>(
+    twit ? (JSON.parse(twit as string) as Tweet) : {}
+  );
   const [responses, setResponses] = useState(Array<Tweet>);
   const [visible, setVisible] = useState(false);
   const [messageSnack, setMessageSnack] = useState("");
@@ -27,16 +33,40 @@ export default function Twit() {
   const [loading, setLoading] = useState(true);
   const userContext = useContext(UserContext);
   if (!userContext) {
-    throw new Error("UserContext is null");
+    router.replace("/(login)/signin");
+    return;
   }
   const currentUser = userContext.user;
   if (!currentUser) {
-    throw new Error("UserContext.user is null");
+    router.replace("/(login)/signin");
+    return;
   }
 
-  async function fetchResponses() {
+  async function getTwit(idTwit?: string) {
+    setLoading(true);
     const response = await fetch_to(
-      `https://api-gateway-ccbe.onrender.com/twits/${id}/replies`,
+      `https://api-gateway-ccbe.onrender.com/twits/${idTwit}`,
+      "GET"
+    );
+    if (response.status != 200) {
+      console.log("Error al obtener twit");
+      setMessageSnack("Error al obtener twit");
+      setVisible(true);
+      setLoading(false);
+      return;
+    }
+    const data = await response.json();
+    //@ts-ignore
+    const mapped = await mappedTwits([data], currentUser);
+    setTweet(mapped[0]);
+    fetchResponses();
+  }
+
+  async function fetchResponses(twitId?: string) {
+    const response = await fetch_to(
+      `https://api-gateway-ccbe.onrender.com/twits/${
+        twitId ? twitId : id
+      }/replies`,
       "GET"
     );
     if (response.status != 200) {
@@ -76,8 +106,28 @@ export default function Twit() {
   }
 
   useEffect(() => {
-    fetchResponses();
+    if (id && twit) {
+      fetchResponses();
+    }
   }, []);
+
+  useEffect(() => {
+    if (id && !twit) {
+      getTwit(id as string);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (url) {
+      const { hostname, path, queryParams } = Linking.parse(url);
+      console.log(
+        `linked to app with hostname: ${hostname}, path: ${path} and queryParams: ${JSON.stringify(
+          queryParams
+        )}`
+      );
+      getTwit(path?.split("/")[1]);
+    }
+  }, [url]);
 
   if (loading) {
     return (
@@ -96,7 +146,7 @@ export default function Twit() {
       <View className="mt-2 px-2">
         <TweetComponent
           //@ts-ignore
-          initialTweet={JSON.parse(twit) as Tweet}
+          initialTweet={tweet}
           shareTweet={() => {}}
         />
         <Text className="py-4">Respuestas más relevantes</Text>
@@ -133,13 +183,14 @@ export default function Twit() {
             onChangeText={setMessageResponse}
             style={{
               flex: 1,
-              color: "#000",
               fontSize: 18,
-              backgroundColor: inputExpanded ? "white" : "transparent",
               borderColor: inputExpanded ? "#0068ff" : "#ddd",
               borderBottomWidth: 1,
               padding: inputExpanded ? 20 : 0,
             }}
+            className={
+              inputExpanded ? "dark:bg-black bg-white" : "bg-transparent"
+            }
             onFocus={() => setInputExpanded(true)}
           />
         </TouchableOpacity>

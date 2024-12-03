@@ -157,16 +157,16 @@ export default function TweetComponent({
   };
 
   async function shareTwit() {
+    setMenuVisible(false);
     try {
       if (!(await Sharing.isAvailableAsync())) {
         alert("No se puede compartir en este dispositivo");
         return;
       }
-      const deepLink = Linking.createURL(`twit/${tweet.id}`);
 
+      const deepLink = `https://api-gateway-ccbe.onrender.com/twit/${tweet.id}`;
       await Share.share({
         message: `Mira este twit de @${tweet.name} en TwitSnap: ${deepLink}`,
-        url: deepLink,
         title: "Compartir twit",
       });
     } catch (error) {

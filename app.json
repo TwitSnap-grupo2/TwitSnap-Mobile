@@ -35,20 +35,15 @@
       "intentFilters": [
         {
           "autoVerify": true,
-          "data":[ {
-            "scheme": "com.twitsnap.app"
-          },
-          {
-            "host": "twitsnap.app",
-            "scheme": "https"
-          },
-          {
-            "host": "twitsnap.app",
-            "scheme": "http"
-          }
-        ],
-          "actions": "VIEW",
-          "categories": [
+          "action": "VIEW",
+          "data":[ 
+            {
+              "scheme": "https",
+              "host": "api-gateway-ccbe.onrender.com",
+              "pathPrefix": "/twit/"
+            }
+          ],
+          "category": [
             "DEFAULT",
             "BROWSABLE"
           ]

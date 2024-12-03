@@ -31,12 +31,14 @@ export default function ProfileHomeScreen() {
   const { id, initialFollowed } = useLocalSearchParams();
   const userContext = useContext(UserContext);
   if (!userContext) {
-    throw new Error("UserContext is null");
+    router.replace("/(login)/signin");
+    return;
   }
   const { saveUser } = userContext;
   const currentUser = userContext.user;
   if (!currentUser) {
-    throw new Error("UserContext.user is null");
+    router.replace("/(login)/signin");
+    return;
   }
   const isCurrentUserProfile = currentUser?.id === id;
   const [followed, setFollowed] = useState(

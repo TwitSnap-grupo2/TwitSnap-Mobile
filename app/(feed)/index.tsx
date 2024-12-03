@@ -7,7 +7,7 @@ import {
   BackHandler,
 } from "react-native";
 import { Avatar, FAB, Snackbar } from "react-native-paper";
-import { useRouter } from "expo-router";
+import { Href, useRouter } from "expo-router";
 import TweetComponent from "@/components/TwitSnap";
 import { UserContext } from "@/context/context";
 import { fetch_to } from "@/utils/fetch";
@@ -23,9 +23,7 @@ import * as Linking from "expo-linking";
 import SnackBarComponent from "@/components/Snackbar";
 
 const FeedScreen = () => {
-  const urls = Linking.useURL();
-  console.log(urls);
-
+  const url = Linking.useURL();
   const [tweets, setTweets] = useState<Tweet[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -44,6 +42,22 @@ const FeedScreen = () => {
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
   const isFocused = useIsFocused();
+
+  useEffect(() => {
+    console.log("urlhomes", url);
+    if (url) {
+      const { hostname, path, queryParams } = Linking.parse(url);
+      console.log("path", path);
+      if (path) {
+        router.push({
+          pathname: "/twit/[id]",
+          params: {
+            id: path.split("/")[1],
+          },
+        });
+      }
+    }
+  }, [url]);
 
   async function addDevice() {
     const token = await messaging().getToken();
