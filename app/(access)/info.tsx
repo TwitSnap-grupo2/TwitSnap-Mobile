@@ -129,6 +129,7 @@ export default function InfoScreen() {
           followeds: data.followeds,
           location: data.location,
           interests: data.interests,
+          favourites: [],
         });
         setMessage("Bienvenid@ a TwitSnap " + name);
         setVisible(true);

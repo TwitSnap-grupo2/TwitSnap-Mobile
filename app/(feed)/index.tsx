@@ -21,9 +21,12 @@ import auth from "@react-native-firebase/auth";
 import { NotificationContext } from "@/context/NotificationContext";
 import * as Linking from "expo-linking";
 import SnackBarComponent from "@/components/Snackbar";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { AntDesign } from "@expo/vector-icons";
 
 const FeedScreen = () => {
   const url = Linking.useURL();
+  const colorScheme = useColorScheme();
   const [tweets, setTweets] = useState<Tweet[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -264,10 +267,11 @@ const FeedScreen = () => {
             source={require("@/assets/images/twitsnap-logo.webp")}
           />
 
-          <Avatar.Icon
-            size={50}
-            icon="dots-vertical"
-            className="bg-white dark:bg-black -mr-2"
+          <AntDesign
+            style={{ marginTop: 12 }}
+            name="setting"
+            size={30}
+            color={colorScheme == "dark" ? "white" : "black"}
             onTouchEnd={() => {
               router.push("../(config)");
             }}

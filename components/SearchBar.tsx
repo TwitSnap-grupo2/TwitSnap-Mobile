@@ -103,7 +103,7 @@ function getBackgroundColor({
   if (autoFocus) {
     return "#fff";
   }
-  return "#EFF3F4";
+  return "#ececec";
 }
 
 export default TwitterSearchBar;

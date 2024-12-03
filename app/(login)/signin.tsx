@@ -247,7 +247,7 @@ export default function SignInScreen() {
                 textColor={colorScheme === "dark" ? "white" : "black"}
                 mode="contained"
                 onPress={handleResetPassword}
-                className="bg-slate-600 mb-4 p-1 rounded-full"
+                className="bg-slate-300 mb-4 p-1 rounded-full"
               >
                 Restablecer contraseña
               </Button>

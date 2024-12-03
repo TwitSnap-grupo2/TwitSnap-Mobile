@@ -19,6 +19,7 @@ import {
 import { database } from "@/utils/config";
 import ChatItem from "@/components/ChatItem";
 import Loading from "@/components/Loading";
+import { AntDesign } from "@expo/vector-icons";
 
 interface ChatItem {
   username: string;
@@ -140,7 +141,7 @@ export default function TabTwoScreen() {
               className="-mt-1 dark:bg-gray-800 "
               placeholderTextColor={colorScheme === "dark" ? "#aaa" : "black"}
               iconColor={colorScheme === "dark" ? "#aaa" : "black"}
-              inputStyle={{ color: "#cfcccc" }}
+              inputStyle={{ color: colorScheme === "dark" ? "#aaa" : "black" }}
               placeholder="Buscar"
               onChangeText={handleTextChange}
               value={searchQuery}
@@ -164,10 +165,11 @@ export default function TabTwoScreen() {
               </View>
             ))}
           </View>
-          <Avatar.Icon
-            size={50}
-            icon="dots-vertical"
-            className="bg-black -mr-2 -ml-3"
+          <AntDesign
+            style={{ marginTop: 10 }}
+            name="setting"
+            size={30}
+            color={colorScheme == "dark" ? "white" : "black"}
             onTouchEnd={() => {
               router.push("../(config)");
             }}

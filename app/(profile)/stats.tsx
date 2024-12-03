@@ -108,19 +108,19 @@ export default function StatsScreen() {
       {stats && (
         <View className="flex space-y-10">
           <View className="px-4 flex gap-4 font-semibold">
-            <Text className="dark:text-white text-center font-bold text-base mb-4">
+            <Text className="dark:text-white text-black text-center font-bold text-base mb-4">
               Mostrando estadisticas con filtro: {filter}
             </Text>
-            <Text className="dark:text-white ">
+            <Text className="dark:text-white text-black">
               Numero de likes totales: {stats.likesTotal}
             </Text>
-            <Text className="text-white">
+            <Text className="dark:text-white text-black">
               Numero de shares totales: {stats.sharesTotal}
             </Text>
-            <Text className="text-white">
+            <Text className="dark:text-white text-black">
               Numero de respuestas totales: {stats.repliesTotal}
             </Text>
-            <Text className="text-white">
+            <Text className="dark:text-white text-black">
               Numero de twits totales: {stats.twitsTotal}
             </Text>
           </View>

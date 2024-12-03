@@ -102,6 +102,8 @@ export default function HomeScreen() {
       if (user) {
         if (!user.emailVerified) {
           alert("Por favor, verifica tu correo electrónico");
+          await user.sendEmailVerification();
+          setLoading(false);
           return;
         }
 

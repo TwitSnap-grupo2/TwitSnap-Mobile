@@ -151,6 +151,7 @@ export default function SignUpScreen() {
             followeds: data.followeds,
             location: data.location,
             interests: data.interests,
+            favourites: [],
           });
           fetch_to(
             `https://api-gateway-ccbe.onrender.com/metrics/register`,
@@ -293,7 +294,7 @@ export default function SignUpScreen() {
                           ? "#374151"
                           : "#f3f4f6",
                       paddingLeft: 12,
-                      height: 50,
+                      height: 60,
                     }}
                     title={values.country || "Select your country"}
                     titleStyle={{
@@ -307,7 +308,7 @@ export default function SignUpScreen() {
                     }}
                     id="1"
                   >
-                    <ScrollView className="h-40" nestedScrollEnabled={true  }>
+                    <ScrollView className="h-40" nestedScrollEnabled={true}>
                       {countriesList.map((country) => (
                         <List.Item
                           style={{ paddingLeft: 10 }}

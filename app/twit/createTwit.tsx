@@ -298,27 +298,7 @@ const CreateTweetScreen = () => {
             ))}
 
           {/* Barra inferior con íconos */}
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              display: "flex",
-              paddingVertical: 0,
-              paddingHorizontal: 10,
-              borderTopWidth: 1,
-              borderTopColor: "#333",
-            }}
-          >
-            {/* Íconos de la barra inferior */}
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <IconButton
-                iconColor={colorScheme === "dark" ? "#1DA1F2" : "black"}
-                icon="image"
-                size={30}
-                onPress={() => {}}
-              />
-            </View>
+          <View className="flex flex-row justify-end px-10 border-t-2 border-gray-300 ">
             <Button
               mode="contained"
               onPress={handleSubmit}

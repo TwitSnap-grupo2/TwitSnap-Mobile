@@ -23,7 +23,11 @@ const ChatRoomHeader = ({
         headerLeft: () => (
           <View className="flex-row items-center gap-4">
             <TouchableOpacity onPress={() => router.back()}>
-              <Entypo name="chevron-left" size={30} color="#fff"></Entypo>
+              <Entypo
+                name="chevron-left"
+                size={30}
+                className="dark:bg-white bg-black"
+              ></Entypo>
             </TouchableOpacity>
             <View className="flex-row items-center gap-3">
               <Avatar.Image

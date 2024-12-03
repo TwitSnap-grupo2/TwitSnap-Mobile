@@ -72,6 +72,7 @@ export async function mappedTwits(data: [], curretUser: User) {
     const sharedBy = userMap[tweet.sharedBy] || {};
     const likedByMe = userLikes[tweet.id] || false;
     const sharedByMe = sharedTwit[tweet.id] || false;
+    console.log(curretUser);
     const favourite = curretUser.favourites.includes(tweet.id);
     return {
         id: tweet.id,
