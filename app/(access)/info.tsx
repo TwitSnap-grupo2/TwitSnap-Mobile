@@ -1,4 +1,3 @@
-import Loading from "@/components/Loading";
 import SnackBarComponent from "@/components/Snackbar";
 import { UserContext } from "@/context/context";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
@@ -14,7 +13,6 @@ import {
   Image,
   ScrollView,
   SafeAreaView,
-  TextInput,
   TouchableOpacity,
 } from "react-native";
 import { Button, List } from "react-native-paper";

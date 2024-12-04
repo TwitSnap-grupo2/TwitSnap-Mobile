@@ -1,10 +1,9 @@
 import { Tabs, useRouter } from "expo-router";
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { NotificationContext } from "@/context/NotificationContext";
-import messaging from "@react-native-firebase/messaging";
 
 export default function FeedLayout() {
   const colorScheme = useColorScheme();

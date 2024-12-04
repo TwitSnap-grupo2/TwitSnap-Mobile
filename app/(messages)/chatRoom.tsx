@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import firestore, {
+import {
   collection,
   query,
   orderBy,
@@ -14,7 +14,6 @@ import { database } from "@/utils/config";
 import { getRoomId } from "@/utils/chats";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { UserContext } from "@/context/context";
-// import { ScrollView } from "react-native-gesture-handler";
 import {
   Alert,
   Keyboard,
@@ -22,12 +21,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-// import { StatusBar } from "expo-status-bar";
 import ChatRoomHeader from "@/components/ChatRoomHeader";
 import { Feather } from "@expo/vector-icons";
 import MessageList from "@/components/MessageList";
 import { fetch_to } from "@/utils/fetch";
-import auth from "@react-native-firebase/auth";
 
 const Chat = () => {
   const userContext = useContext(UserContext);

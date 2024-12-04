@@ -1,7 +1,7 @@
 import { UserContext } from "@/context/context";
-import { router, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useContext, useEffect, useRef, useState } from "react";
-import { RefreshControl, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { Avatar, Searchbar } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { User } from "@/types/User";
@@ -10,9 +10,7 @@ import UserCard from "@/components/UserCard";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import {
   collection,
-  getDocs,
   onSnapshot,
-  orderBy,
   query,
   where,
 } from "@react-native-firebase/firestore";

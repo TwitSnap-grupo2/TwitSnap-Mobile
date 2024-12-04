@@ -1,8 +1,3 @@
-//   twitsTotal: number;
-//     likesTotal: number;
-//     sharesTotal: number;
-//     repliesTotal: number;
-
 import Loading from "@/components/Loading";
 import { UserContext } from "@/context/context";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -12,7 +7,6 @@ import { View, Text, ScrollView, Image, Alert } from "react-native";
 import { List } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// }
 interface TwitSnapsStats {
   likesTotal: number;
   sharesTotal: number;
@@ -25,20 +19,6 @@ const data: TwitSnapsStats = {
   repliesTotal: 40,
   twitsTotal: 100,
 };
-//   export const statsSchema = z.object({
-//     limit: z.coerce.number().int(),
-//   });
-
-// router.get("/stats/:id", async (req, res, next) => {
-//   try {
-//     const twitsnapId = req.params.id;
-//     const result = statsSchema.parse(req.query);
-//     const stats = await twitSnapsService.getUserStats(twitsnapId, result.limit);
-//     res.status(200).json(stats);
-//   } catch (err: unknown) {
-//     next(err);
-//   }
-// });
 
 export default function StatsScreen() {
   const userContext = useContext(UserContext);
@@ -73,7 +53,6 @@ export default function StatsScreen() {
   const handleFilter = (value: number) => {
     try {
       fetch_to(
-        // `https://api-gateway-ccbe.onrender.com/twits/stats/${user.id}?limit=${value}`,
         `https://api-gateway-ccbe.onrender.com/twits/stats/${user.id}${
           value === 0 ? `?limit=${value}` : ""
         }`,

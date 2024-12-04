@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { View, Text, Image, SafeAreaView, TextInput } from "react-native";
+import { View, Text, Image, SafeAreaView } from "react-native";
 import { Button, Dialog, Portal, Text as PaperText } from "react-native-paper";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useContext, useState } from "react";
@@ -10,20 +10,11 @@ import { LoginWithEmailAndPassword } from "@/utils/login";
 import { Formik, FormikErrors } from "formik";
 import * as Yup from "yup";
 import Input from "@/components/Input";
-import firestore, {
-  addDoc,
-  arrayUnion,
-  collection,
-  doc,
-  orderBy,
-  query,
-  updateDoc,
-} from "@react-native-firebase/firestore";
+import firestore from "@react-native-firebase/firestore";
 import messaging from "@react-native-firebase/messaging";
 import { PermissionsAndroid } from "react-native";
 import { NotificationContext } from "@/context/NotificationContext";
 import { fetch_to } from "@/utils/fetch";
-import { ColorSchemeStore } from "nativewind/dist/style-sheet/color-scheme";
 
 interface loginValues {
   email: string;

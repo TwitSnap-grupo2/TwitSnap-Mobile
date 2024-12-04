@@ -1,8 +1,7 @@
-import { Button, Avatar, IconButton } from "react-native-paper";
+import { Button, Avatar } from "react-native-paper";
 import {
   TextInput,
   View,
-  TouchableOpacity,
   KeyboardAvoidingView,
   BackHandler,
   ScrollView,
@@ -18,7 +17,6 @@ import UserCard from "@/components/UserCard";
 import Loading from "@/components/Loading";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { useNavigation } from "@react-navigation/native";
 
 const StyledView = styled(View);
 

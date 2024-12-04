@@ -1,15 +1,12 @@
 import { View, Text, Image, SafeAreaView, TextInput } from "react-native";
 import { Button } from "react-native-paper";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { auth } from "@/utils/config";
-import { sendPasswordResetEmail } from "firebase/auth";
 import Loading from "@/components/Loading";
 import SnackBarComponent from "@/components/Snackbar";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { fetch_to } from "@/utils/fetch";
-import { UserContext } from "@/context/context";
-import { createdAt } from "expo-updates";
 
 export default function SignInScreen() {
   const colorScheme = useColorScheme();

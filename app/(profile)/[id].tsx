@@ -1,4 +1,3 @@
-import BackHeader from "@/components/BackHeader";
 import TweetComponent from "@/components/TwitSnap";
 import { UserContext } from "@/context/context";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -18,7 +17,6 @@ import SnackBarComponent from "@/components/Snackbar";
 import { ScrollView, RefreshControl } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { mappedTwits } from "@/utils/mappedTwits";
-import { List } from "react-native-paper";
 
 export default function ProfileHomeScreen() {
   const colorScheme = useColorScheme();

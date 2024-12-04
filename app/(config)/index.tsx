@@ -1,9 +1,7 @@
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { auth } from "@/utils/config";
 import { useRouter } from "expo-router";
-import { View, Text, TouchableOpacity } from "react-native";
-import { Button, List, Menu } from "react-native-paper";
-import Modal from "react-native-modal";
+import { View } from "react-native";
+import { List } from "react-native-paper";
 import { useState } from "react";
 import ModalQuestion from "@/components/ModalQuestion";
 

@@ -1,20 +1,12 @@
-import BackHeader from "@/components/BackHeader";
 import { UserContext } from "@/context/context";
 import { useContext, useEffect, useState } from "react";
-import {
-  Image,
-  SafeAreaView,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, SafeAreaView, ScrollView, Text, View } from "react-native";
 import { TextInput } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { Snackbar, Button, Chip, List } from "react-native-paper";
+import { Button, Chip, List } from "react-native-paper";
 import SnackBarComponent from "@/components/Snackbar";
 import { fetch_to } from "@/utils/fetch";
-import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import Loading from "@/components/Loading";
 import { router } from "expo-router";
 import { countriesList, getCountryNameByCode } from "@/utils/countries";

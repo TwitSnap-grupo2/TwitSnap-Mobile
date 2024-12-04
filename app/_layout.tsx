@@ -28,6 +28,10 @@ export default function RootLayout() {
 
   useEffect(() => {
     // Handle notification clicks
+    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+      console.log("Message handled in the background!", remoteMessage);
+    });
+
     messaging().onNotificationOpenedApp((remoteMessage) => {
       const url = remoteMessage?.data?.url;
       if (url) {

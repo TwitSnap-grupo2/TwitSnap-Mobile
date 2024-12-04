@@ -9,7 +9,6 @@ import { UserContext } from "@/context/context";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 import * as Sharing from "expo-sharing";
-import * as Linking from "expo-linking";
 
 import ModalQuestion from "./ModalQuestion";
 

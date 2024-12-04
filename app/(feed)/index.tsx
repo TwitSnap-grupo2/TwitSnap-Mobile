@@ -6,8 +6,8 @@ import {
   Text,
   BackHandler,
 } from "react-native";
-import { Avatar, FAB, Snackbar } from "react-native-paper";
-import { Href, useRouter } from "expo-router";
+import { Avatar, FAB } from "react-native-paper";
+import { useRouter } from "expo-router";
 import TweetComponent from "@/components/TwitSnap";
 import { UserContext } from "@/context/context";
 import { fetch_to } from "@/utils/fetch";
@@ -17,7 +17,6 @@ import { useIsFocused } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { mappedTwits } from "@/utils/mappedTwits";
 import messaging from "@react-native-firebase/messaging";
-import auth from "@react-native-firebase/auth";
 import { NotificationContext } from "@/context/NotificationContext";
 import * as Linking from "expo-linking";
 import SnackBarComponent from "@/components/Snackbar";

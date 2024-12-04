@@ -6,11 +6,9 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-// import statusCodes along with GoogleSignin
 import {
   GoogleSignin,
   isErrorWithCode,
-  isSuccessResponse,
   statusCodes,
   GoogleSigninButton,
 } from "@react-native-google-signin/google-signin";

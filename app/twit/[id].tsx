@@ -14,12 +14,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Button, Snackbar } from "react-native-paper";
+import { Button } from "react-native-paper";
 import * as Linking from "expo-linking";
 
 export default function Twit() {
   const url = Linking.useURL();
-
   const router = useRouter();
   const { id, twit } = useLocalSearchParams();
   const [tweet, setTweet] = useState<Tweet | {}>(

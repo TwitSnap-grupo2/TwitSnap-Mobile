@@ -1,6 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import Modal from "react-native-modal";
-import { useState } from "react";
 
 export default function ModalQuestion({
   question,

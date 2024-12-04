@@ -58,7 +58,6 @@ export default function Search() {
   async function searchTwits(query: string) {
     setSearching(true);
     setSearchingHashtag("");
-    setListOfUsers([]);
     const response = await fetch_to(
       `https://api-gateway-ccbe.onrender.com/twits/search?text=${query}`,
       "GET"
@@ -131,11 +130,11 @@ export default function Search() {
     }, 500);
   };
   return (
-    <SafeAreaView className="mt-6 px-3 py-2">
+    <SafeAreaView className="dark:bg-black bg-white mt-6 px-3 py-2">
       {/* <View className="flex flex-row justify-between my-4 shadow-lg  pb-1 "> */}
-      <View className="flex flex-row justify-between items-center my-4 shadow-lg pb-1 ">
+      <View className=" flex flex-row justify-between items-center my-4 shadow-lg pb-1 ">
         <AntDesign
-          color="#fff"
+          color={colorScheme === "dark" ? "#fff" : "#000"}
           // style={{ marginTop: 18 }}
           name="arrowleft"
           size={30}
@@ -169,7 +168,7 @@ export default function Search() {
         </Text>
       )}
       {listOfUsers.map((user) => (
-        <View className="p-1" key={user.id}>
+        <View className="p-1 mb-1" key={user.id}>
           <UserCard user={user} />
         </View>
       ))}

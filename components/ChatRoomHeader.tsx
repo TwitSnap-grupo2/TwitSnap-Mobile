@@ -1,6 +1,5 @@
 import { Stack } from "expo-router";
 import { View, Text } from "react-native";
-import { User } from "@/types/User";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Router } from "expo-router";
 import { Entypo } from "@expo/vector-icons";
@@ -15,6 +14,10 @@ const ChatRoomHeader = ({
   name: string;
   router: Router;
 }) => {
+  function goBack() {
+    router.replace("/(feed)/messages");
+  }
+
   return (
     <Stack.Screen
       options={{
@@ -22,7 +25,7 @@ const ChatRoomHeader = ({
         headerShadowVisible: false,
         headerLeft: () => (
           <View className="flex-row items-center gap-4">
-            <TouchableOpacity onPress={() => router.back()}>
+            <TouchableOpacity onPress={goBack}>
               <Entypo
                 name="chevron-left"
                 size={30}

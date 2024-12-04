@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { Notification as NotificationType } from "@/types/notifications";
 import Notification from "@/components/Notification";
 import { Divider } from "react-native-paper";
