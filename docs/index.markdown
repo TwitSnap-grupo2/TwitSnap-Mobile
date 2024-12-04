@@ -1,123 +1,102 @@
 ---
 layout: default
+title: TwitSnap Mobile App
+description: "Guía de usuario de la aplicación mobile TwitSnap."
 ---
 
-Text can be **bold**, _italic_, or ~~strikethrough~~.
 
-[Link to another page](./another-page.html).
+- [¿Qué es TwitSnap?](#qué-es-twitsnap)
+- [Descarga Twitsnap](#descarga-twitsnap)
+- [Crea una cuenta en TwitSnap](#crea-una-cuenta-en-twitsnap)
+- [Crea tu primer twit](#crea-tu-primer-twit)
+- [Tu perfil](#tu-perfil)
+- [Visualiza tus twits favoritos](#visualiza-tus-twits-favoritos)
+- [Realizá búsquedas](#realizá-búsquedas)
+- [Revisa tus notificaciones](#revisa-tus-notificaciones)
+- [Visualiza tus mensajes directos](#visualiza-tus-mensajes-directos)
+- [Disfruta de TwitSnap y comparte tus ideas con el mundo.](#disfruta-de-twitsnap-y-comparte-tus-ideas-con-el-mundo)
+- [Equipo de desarrollo](#equipo-de-desarrollo)
 
-There should be whitespace between paragraphs.
+## ¿Qué es TwitSnap?
 
-There should be whitespace between paragraphs. We recommend including a README, or a file with information about your project.
+TwitSnap es una red social que permite a los usuarios compartir ideas, noticias y pensamientos en mensajes cortos, establecer conexiones con otros usuarios y seguir su progreso a lo largo del tiempo. El objetivo principal de TwitSnap es brindar una comunidad interactiva en la cual los usuarios puedan conectarse entre sí, compartir contenido relevante y lograr sus objetivos individuales en un entorno social enriquecedor.
 
-# Header 1
+## Descarga Twitsnap
 
-This is a normal paragraph following a header. GitHub is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere.
-
-## Header 2
-
-> This is a blockquote following a header.
->
-> When something is important enough, you do it even if the odds are not in your favor.
-
-### Header 3
-
-```js
-// Javascript code with syntax highlighting.
-var fun = function lang(l) {
-  dateformat.i18n = require('./lang/' + l)
-  return true;
-}
-```
-
-```ruby
-# Ruby code with syntax highlighting
-GitHubPages::Dependencies.gems.each do |gem, version|
-  s.add_dependency(gem, "= #{version}")
-end
-```
-
-#### Header 4
-
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
-
-##### Header 5
-
-1.  This is an ordered list following a header.
-2.  This is an ordered list following a header.
-3.  This is an ordered list following a header.
-
-###### Header 6
-
-| head1        | head two          | three |
-|:-------------|:------------------|:------|
-| ok           | good swedish fish | nice  |
-| out of stock | good and plenty   | nice  |
-| ok           | good `oreos`      | hmm   |
-| ok           | good `zoute` drop | yumm  |
-
-### There's a horizontal rule below this.
-
-* * *
-
-### Here is an unordered list:
-
-*   Item foo
-*   Item bar
-*   Item baz
-*   Item zip
-
-### And an ordered list:
-
-1.  Item one
-1.  Item two
-1.  Item three
-1.  Item four
-
-### And a nested list:
-
-- level 1 item
-  - level 2 item
-  - level 2 item
-    - level 3 item
-    - level 3 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-  - level 2 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-- level 1 item
-
-### Small image
-
-![Octocat](https://github.githubassets.com/images/icons/emoji/octocat.png)
-
-### Large image
-
-![Branching](https://guides.github.com/activities/hello-world/branching.png)
+* [Descarga la aplicación TwitSnap aquí](https://expo.dev/accounts/lghosn/projects/TwitSnap/builds/a9f00c49-4968-420f-8873-077deb9b8e15).
 
 
-### Definition lists can be used with HTML syntax.
+## Crea una cuenta en TwitSnap
 
-<dl>
-<dt>Name</dt>
-<dd>Godzilla</dd>
-<dt>Born</dt>
-<dd>1952</dd>
-<dt>Birthplace</dt>
-<dd>Japan</dd>
-<dt>Color</dt>
-<dd>Green</dd>
-</dl>
+Para crear una cuenta en TwitSnap, sigue los siguientes pasos:
+1. Abre la aplicación TwitSnap y da click sobre el botón "Registrarse" o inicia con Google.
+   ![inicio](img/01-inicio.jpg){:height="30%" width="30%"}
 
-```
-Long, single-line code blocks should not wrap. They should horizontally scroll if they are too long. This line should be long enough to demonstrate this.
-```
+2. Completa el formulario con tu email, constraseña, nombre, nombre de usuario y país. 
+   ![registro](img/02-registrar.jpg){:height="30%" width="30%"}
 
-```
-The final element.
-```
+3. ¡Listo! Ya puedes comenzar a disfrutar de TwitSnap.
+
+   ![registro](img/03-feed.jpg){:height="30%" width="30%"}
+
+## Crea tu primer twit
+
+Para crear tu primer twit, sigue los siguientes pasos:
+1. Da click sobre el botón "+" en la parte inferior derecha de la pantalla.
+2. Escribe tu twit en el campo de texto y luego "Publicar".
+   
+   ![crear twit](img/04-crear_twit.jpg){:height="30%" width="30%"}
+
+3. ¡Listo! Ya has creado tu primer twit.
+
+   ![twit creado](img/05-primer_twit.jpg){:height="30%" width="30%"}
+
+## Tu perfil
+En tu perfil podrás ver tus datos personales, tus twits y tus seguidores. Para ir, de click sobre tu foto de perfil en la parte superior izquierda de la pantalla.
+
+   ![perfil](img/11-perfil.jpg){:height="30%" width="30%"}
+
+Además también podrá ver sus estadísticas de twits y editar sus intereses, nombre de usuario y nacionalidad.
+   
+   ![perfil](img/12-stats.jpg){:height="30%" width="30%"}
+   ![perfil](img/13-edit.jpg){:height="30%" width="30%"}
+
+## Visualiza tus twits favoritos
+
+Para visualizar tus twits favoritos, sigue los siguientes pasos:
+1. Da click sobre la rueda de configuración en la parte superior derecha de la pantalla.
+2. Selecciona "Twits Favoritos" en el menú desplegable.
+   
+   ![favoritos](img/07-configuracion.jpg){:height="30%" width="30%"}
+   ![favoritos](img/06-vista_favoritos.jpg){:height="30%" width="30%"}
+
+## Realizá búsquedas
+
+En la sección de búsqueda podrás buscar twits por palabras clave, usuarios y hashtags. Además en esta pestaña podrás ver usuarios sugeridos para seguir.
+
+   ![buscar](img/08-busqueda.jpg){:height="30%" width="30%"}
+
+## Revisa tus notificaciones
+
+En la sección de notificaciones podrás ver los nuevos mensajes que no hayas leído.
+
+   ![notificaciones](img/09-notificaciones.jpg){:height="30%" width="30%"}
+
+## Visualiza tus mensajes directos
+
+En la sección de mensajes directos podrás ver los mensajes que te han enviado otros usuarios.
+
+   ![mensajes](img/10-mensajes.jpg){:height="30%" width="30%"}
+
+
+## Disfruta de TwitSnap y comparte tus ideas con el mundo.
+
+Ya estás listo para disfrutar de TwitSnap. ¡Diviértete compartiendo tus ideas con el mundo!
+
+## Equipo de desarrollo
+
+| Nombre y apellido | Padrón | Mail | GitHub |
+|:-------------------|:--------|:------|:--------|
+| Gianni Antonio Boccazzi | 109304 | jperezd@fi.uba.ar | [gianniboccazzi](https://github.com/gianniboccazzi) |
+| Juan Ignacio Perez Di Chiazza | 109887 | gbocazzi@fi.uba.ar | [JuaniPDC](https://github.com/Juani-tech) |
+| Lautaro Gabriel Ghosn | 106998 | lghosn@fi.uba.ar | [LGhosn](https://github.com/LGhosn) |
