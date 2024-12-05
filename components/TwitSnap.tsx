@@ -165,7 +165,7 @@ export default function TweetComponent({
 
       const deepLink = `https://api-gateway-ccbe.onrender.com/twit/${tweet.id}`;
       await Share.share({
-        message: `Mira este twit de @${tweet.name} en TwitSnap: ${deepLink}`,
+        message: `Mira este twit de @${tweet.username} en TwitSnap: ${deepLink}`,
         title: "Compartir twit",
       });
     } catch (error) {
