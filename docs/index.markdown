@@ -9,7 +9,9 @@ description: "Guía de usuario de la aplicación mobile TwitSnap."
 - [Descarga Twitsnap](#descarga-twitsnap)
 - [Crea una cuenta en TwitSnap](#crea-una-cuenta-en-twitsnap)
 - [Crea tu primer twit](#crea-tu-primer-twit)
+- [Comparte los mejores twits](#comparte-los-mejores-twits)
 - [Tu perfil](#tu-perfil)
+- [Sigue a otros usuarios](#sigue-a-otros-usuarios)
 - [Visualiza tus twits favoritos](#visualiza-tus-twits-favoritos)
 - [Realizá búsquedas](#realizá-búsquedas)
 - [Revisa tus notificaciones](#revisa-tus-notificaciones)
@@ -51,6 +53,13 @@ Para crear tu primer twit, sigue los siguientes pasos:
 
    ![twit creado](img/05-primer_twit.jpg){:height="30%" width="30%"}
 
+## Comparte los mejores twits
+
+Comparte los mejores twits en la aplicación que quieras! Dale a los tres puntos y comparte!
+   
+   ![compartir](img/16-compartir.jpg){:height="30%" width="30%"}
+
+
 ## Tu perfil
 En tu perfil podrás ver tus datos personales, tus twits y tus seguidores. Para ir, de click sobre tu foto de perfil en la parte superior izquierda de la pantalla.
 
@@ -60,6 +69,15 @@ Además también podrá ver sus estadísticas de twits y editar sus intereses, n
    
    ![perfil](img/12-stats.jpg){:height="30%" width="30%"}
    ![perfil](img/13-edit.jpg){:height="30%" width="30%"}
+
+## Sigue a otros usuarios
+
+Sigue a tus amigos y a otros usuarios para ver sus twits en tu feed. Para seguir a un usuario, da click sobre el botón "Seguir" en su perfil.
+
+   ![seguir](img/08-busqueda2.jpg){:height="30%" width="30%"}
+   ![seguir](img/15-preseguir.jpg){:height="30%" width="30%"}
+   ![seguir](img/15-siguiendo.jpg){:height="30%" width="30%"}
+   ![seguir](img/15-updatefeed.jpg){:height="30%" width="30%"}
 
 ## Visualiza tus twits favoritos
 
