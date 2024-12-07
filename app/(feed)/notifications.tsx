@@ -21,23 +21,26 @@ export default function TabTwoScreen() {
     undefined | Array<Notification>
   >(undefined);
 
-  useEffect(() => {
+  async function fetch_notifications() {
     try {
-      fetch_to(
+      const response = await fetch_to(
         `https://api-gateway-ccbe.onrender.com/notifications/${user.id}`,
         "GET"
-      ).then((res) => {
-        if (res.status != 200) {
-          throw new Error();
-        }
-        res.json().then((r) => {
-          setNotifications(r);
-        });
-      });
+      );
+
+      if (response.status !== 200) {
+        console.log(response);
+      }
+
+      const data = await response.json();
+      setNotifications(data);
     } catch (err) {
-      console.error(err);
-      return Alert.alert("Error while fetching notifications");
+      console.log(err);
     }
+  }
+
+  useEffect(() => {
+    fetch_notifications();
   });
 
   return (

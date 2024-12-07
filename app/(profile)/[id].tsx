@@ -152,7 +152,7 @@ export default function ProfileHomeScreen() {
     }
 
     const response = await fetch_to(
-      `https://api-gateway-ccbe.onrender.com/twits/user/${id}`,
+      `https://api-gateway-ccbe.onrender.com/twits/${id}/user`,
       "GET"
     );
     if (response.status === 200) {
