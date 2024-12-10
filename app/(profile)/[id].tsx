@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Dialog, Portal, Text as PaperText, Button } from "react-native-paper";
 import { Tweet } from "@/types/tweets";
 import { User } from "@/types/User";
 import { fetch_to } from "@/utils/fetch";
@@ -17,14 +18,17 @@ import SnackBarComponent from "@/components/Snackbar";
 import { ScrollView, RefreshControl } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { mappedTwits } from "@/utils/mappedTwits";
+import PortalDialog from "@/components/PortalDialog";
 
 export default function ProfileHomeScreen() {
   const colorScheme = useColorScheme();
   const [tweets, setTweets] = useState(Array<Tweet>);
   const [user, setUser] = useState<User | null>(null);
   const [visible, setVisible] = useState(false);
-  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [message, setMessage] = useState("");
+  const hideDialog = () => setDialogVisible(false);
   const router = useRouter();
   const { id, initialFollowed } = useLocalSearchParams();
   const userContext = useContext(UserContext);
@@ -158,9 +162,17 @@ export default function ProfileHomeScreen() {
     if (response.status === 200) {
       const data = await response.json();
       setTweets([]);
-      const data_tweets = await mappedTwits(data, user);
-      setTweets(data_tweets);
-      setLoading(false);
+      try {
+        const data_tweets = await mappedTwits(data, user);
+        setTweets(data_tweets);
+      } catch (error) {
+        if (error instanceof Error) {
+          setMessage(error.message);
+        }
+        setDialogVisible(true);
+      } finally {
+        setLoading(false);
+      }
     } else {
       setMessage("Error al obtener los twits " + response.status);
     }
@@ -270,6 +282,12 @@ export default function ProfileHomeScreen() {
           message={message}
         />
       </View>
+
+      <PortalDialog
+        dialogVisible={dialogVisible}
+        hideDialog={hideDialog}
+        message={message}
+      />
     </SafeAreaView>
   );
 }

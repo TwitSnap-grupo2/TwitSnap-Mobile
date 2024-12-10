@@ -1,9 +1,17 @@
 import { Tweet } from "@/types/tweets";
 import { fetch_to } from "./fetch";
 import { User } from "@/types/User";
+import { Alert } from "react-native";
 
 
 export async function mappedTwits(data: [], curretUser: User) {
+    
+    const verifUser = await fetch_to(`https://api-gateway-ccbe.onrender.com/users/${curretUser.id}`, "GET");
+    if (verifUser.status === 403) {
+        console.log("The user is blocked");
+        throw new Error(`El usuario con email: ${curretUser.email} está bloqueado`);
+    }
+
     const uniqueUserIds = Array.from(
         new Set(data.map((tweet: Tweet) => tweet.createdBy))
     );

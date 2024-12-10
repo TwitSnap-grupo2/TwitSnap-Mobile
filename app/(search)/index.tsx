@@ -1,4 +1,5 @@
 import Loading from "@/components/Loading";
+import PortalDialog from "@/components/PortalDialog";
 import SearchBar from "@/components/SearchBar";
 import TweetComponent from "@/components/TwitSnap";
 import UserCard from "@/components/UserCard";
@@ -12,7 +13,8 @@ import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useContext, useRef, useState } from "react";
 import { SafeAreaView, Text, View } from "react-native";
-import { Button } from "react-native-paper";
+import { Dialog, Portal, Text as PaperText, Button } from "react-native-paper";
+
 export default function Search() {
   const router = useRouter();
   const colorScheme = useColorScheme();
@@ -26,6 +28,9 @@ export default function Search() {
   const [searchTwit, setSearchTwit] = useState("");
   const [isSearchingTwit, setIsSearchingTwit] = useState(false);
   const [searching, setSearching] = useState(false);
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [message, setMessage] = useState("");
+  const hideDialog = () => setDialogVisible(false);
 
   const userContext = useContext(UserContext);
   if (!userContext) {
@@ -64,11 +69,20 @@ export default function Search() {
     );
     if (response.status === 200) {
       const data = await response.json();
-      const mapped_twits = await mappedTwits(data, currentUser);
-      setSearching(false);
-      setIsSearchingTwit(true);
-      setTweets(mapped_twits);
-      setSearchTwit("");
+
+      try {
+        const mapped_twits = await mappedTwits(data, currentUser);
+        setTweets(mapped_twits);
+      } catch (error) {
+        if (error instanceof Error) {
+          setMessage(error.message);
+        }
+        setDialogVisible(true);
+      } finally {
+        setSearching(false);
+        setSearchTwit("");
+        setIsSearchingTwit(true);
+      }
     } else {
       console.error(
         "Error al obtener los twits",
@@ -89,10 +103,18 @@ export default function Search() {
     );
     if (response.status === 200) {
       const data = await response.json();
-      const mapped_twits = await mappedTwits(data, currentUser);
-      setSearching(false);
-      setIsSearchingHashtag(true);
-      setTweets(mapped_twits);
+      try {
+        const mapped_twits = await mappedTwits(data, currentUser);
+        setTweets(mapped_twits);
+      } catch (error) {
+        if (error instanceof Error) {
+          setMessage(error.message);
+        }
+        setDialogVisible(true);
+      } finally {
+        setSearching(false);
+        setIsSearchingHashtag(true);
+      }
     } else {
       console.error(
         "Error al obtener los hashtags",
@@ -212,6 +234,12 @@ export default function Search() {
             shareTweet={async () => searchHashtags}
           />
         ))}
+
+      <PortalDialog
+        dialogVisible={dialogVisible}
+        hideDialog={hideDialog}
+        message={message}
+      />
     </SafeAreaView>
   );
 }

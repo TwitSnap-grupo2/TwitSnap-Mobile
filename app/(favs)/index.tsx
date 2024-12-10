@@ -1,4 +1,5 @@
 import Loading from "@/components/Loading";
+import PortalDialog from "@/components/PortalDialog";
 import TweetComponent from "@/components/TwitSnap";
 import { UserContext } from "@/context/context";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -9,11 +10,14 @@ import { mappedTwits } from "@/utils/mappedTwits";
 import { useRouter } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { ScrollView, View, Text } from "react-native";
-import { Button } from "react-native-paper";
+
+import { Dialog, Portal, Text as PaperText, Button } from "react-native-paper";
 
 export default function FavLayout() {
   const [loading, setLoading] = useState(true);
   const [tweets, setTweet] = useState<Tweet[]>([]);
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [message, setMessage] = useState("");
   const userContext = useContext(UserContext);
   if (!userContext) {
     throw new Error("UserContext is null");
@@ -22,6 +26,8 @@ export default function FavLayout() {
     throw new Error("UserContext.user is null");
   }
   const currentUser = userContext.user;
+
+  const hideDialog = () => setDialogVisible(false);
 
   async function fetchFavs() {
     const saves = await fetch_to(
@@ -34,9 +40,18 @@ export default function FavLayout() {
       return null;
     }
     const savesData = await saves.json();
-    const mapped = await mappedTwits(savesData, currentUser);
-    setTweet(mapped);
-    setLoading(false);
+    try {
+      const mapped = await mappedTwits(savesData, currentUser);
+      setTweet(mapped);
+    } catch (error) {
+      if (error instanceof Error) {
+        setMessage(error.message);
+      }
+      setDialogVisible(true);
+      return;
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -70,6 +85,11 @@ export default function FavLayout() {
             shareTweet={() => {}}
           />
         ))}
+      <PortalDialog
+        dialogVisible={dialogVisible}
+        hideDialog={hideDialog}
+        message={message}
+      />
     </ScrollView>
   );
 }

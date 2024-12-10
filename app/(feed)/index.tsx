@@ -6,7 +6,14 @@ import {
   Text,
   BackHandler,
 } from "react-native";
-import { Avatar, FAB } from "react-native-paper";
+import {
+  Avatar,
+  FAB,
+  Dialog,
+  Portal,
+  Text as PaperText,
+  Button,
+} from "react-native-paper";
 import { useRouter } from "expo-router";
 import TweetComponent from "@/components/TwitSnap";
 import { UserContext } from "@/context/context";
@@ -42,8 +49,10 @@ const FeedScreen = () => {
   const user = userContext.user;
   const router = useRouter();
   const [visible, setVisible] = useState(false);
+  const [dialogVisible, setDialogVisible] = useState(false);
   const [message, setMessage] = useState("");
   const isFocused = useIsFocused();
+  const hideDialog = () => setDialogVisible(false);
 
   useEffect(() => {
     console.log("urlhomes", url);
@@ -165,10 +174,6 @@ const FeedScreen = () => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchTweets();
-
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
   }, []);
 
   const fetchTweets = async (timestamp?: string) => {
@@ -187,10 +192,20 @@ const FeedScreen = () => {
 
       if (response.status === 200) {
         const data = await response.json();
-        const mappedTweets = await mappedTwits(data, user);
-        setTweets((prevTweets) =>
-          timestamp ? [...prevTweets, ...mappedTweets] : mappedTweets
-        );
+        try {
+          const mappedTweets = await mappedTwits(data, user);
+          setTweets((prevTweets) =>
+            timestamp ? [...prevTweets, ...mappedTweets] : mappedTweets
+          );
+        } catch (error) {
+          if (error instanceof Error) {
+            setMessage(error.message);
+          }
+          setDialogVisible(true);
+          return;
+        } finally {
+          setLoading(false);
+        }
       } else {
         console.log("ERROR: ", response);
         setMessage("Error al obtener los twits " + response.status);
@@ -312,6 +327,17 @@ const FeedScreen = () => {
           message={message}
         />
       </View>
+      <Portal>
+        <Dialog visible={dialogVisible} onDismiss={hideDialog}>
+          <Dialog.Title>Oops...</Dialog.Title>
+          <Dialog.Content>
+            <PaperText variant="bodyMedium">{message}</PaperText>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={hideDialog}>Close</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </SafeAreaView>
   );
 };

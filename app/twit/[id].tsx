@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { Button } from "react-native-paper";
 import * as Linking from "expo-linking";
+import PortalDialog from "@/components/PortalDialog";
 
 export default function Twit() {
   const url = Linking.useURL();
@@ -30,6 +31,9 @@ export default function Twit() {
   const [messageResponse, setMessageResponse] = useState("");
   const [inputExpanded, setInputExpanded] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [message, setMessage] = useState("");
+  const hideDialog = () => setDialogVisible(false);
   const userContext = useContext(UserContext);
   if (!userContext) {
     router.replace("/(login)/signin");
@@ -55,9 +59,18 @@ export default function Twit() {
       return;
     }
     const data = await response.json();
-    //@ts-ignore
-    const mapped = await mappedTwits([data], currentUser);
-    setTweet(mapped[0]);
+    try {
+      //@ts-ignore
+      const mapped = await mappedTwits([data], currentUser);
+      setTweet(mapped[0]);
+    } catch (error) {
+      if (error instanceof Error) {
+        setMessage(error.message);
+      }
+      setLoading(false);
+      setDialogVisible(true);
+      return;
+    }
     fetchResponses();
   }
 
@@ -75,9 +88,19 @@ export default function Twit() {
     const data = await response.json();
 
     setResponses([]);
-    // @ts-ignore
-    const mappedTweets = await mappedTwits(data, currentUser);
-    setResponses(mappedTweets);
+    try {
+      // @ts-ignore
+      const mappedTweets = await mappedTwits(data, currentUser);
+      setResponses(mappedTweets);
+    } catch (error) {
+      if (error instanceof Error) {
+        setMessage(error.message);
+      }
+      setLoading(false);
+      setDialogVisible(true);
+      return;
+    }
+
     setLoading(false);
   }
 
@@ -216,6 +239,12 @@ export default function Twit() {
           action={() => setVisible(false)}
         ></SnackBarComponent>
       </View>
+
+      <PortalDialog
+        dialogVisible={dialogVisible}
+        hideDialog={hideDialog}
+        message={message}
+      />
     </KeyboardAvoidingView>
   );
 }

@@ -23,6 +23,7 @@ import { NotificationContext } from "@/context/NotificationContext";
 import * as LocalAuthentication from "expo-local-authentication";
 import SnackBarComponent from "@/components/Snackbar";
 import { Dialog, Portal, Text as PaperText, Button } from "react-native-paper";
+import PortalDialog from "@/components/PortalDialog";
 
 GoogleSignin.configure({
   webClientId:
@@ -297,17 +298,11 @@ export default function HomeScreen() {
             />
           </TouchableOpacity>
         )}
-        <Portal>
-          <Dialog visible={dialogVisible} onDismiss={hideDialog}>
-            <Dialog.Title>Oops...</Dialog.Title>
-            <Dialog.Content>
-              <PaperText variant="bodyMedium">{message}</PaperText>
-            </Dialog.Content>
-            <Dialog.Actions>
-              <Button onPress={hideDialog}>Close</Button>
-            </Dialog.Actions>
-          </Dialog>
-        </Portal>
+        <PortalDialog
+          dialogVisible={dialogVisible}
+          hideDialog={hideDialog}
+          message={message}
+        />
       </View>
 
       <View className="flex-1 ">
