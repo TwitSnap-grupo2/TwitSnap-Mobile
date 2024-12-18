@@ -25,7 +25,7 @@ TwitSnap es una red social que permite a los usuarios compartir ideas, noticias 
 
 ## Descarga Twitsnap
 
-* [Descarga la aplicación TwitSnap aquí]([https://expo.dev/accounts/lghosn/projects/TwitSnap/builds/a9f00c49-4968-420f-8873-077deb9b8e15](https://expo.dev/accounts/lghosn/projects/TwitSnap/builds/83d30d4e-4ba1-44b7-a2ca-eb8276454cc6)).
+* [Descarga la aplicación TwitSnap aquí](https://expo.dev/accounts/lghosn/projects/TwitSnap/builds/83d30d4e-4ba1-44b7-a2ca-eb8276454cc6).
 
 
 ## Crea una cuenta en TwitSnap
